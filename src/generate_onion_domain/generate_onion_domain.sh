@@ -39,14 +39,14 @@ prepare_onion_domain_creation() {
 
   # F. Verify that content is in the file.
   verify_has_two_consecutive_lines "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"
+
+  # Make root owner of tor directory.
+  sudo chown -R root "$TOR_SERVICE_DIR"
+  sudo chmod 700 "$TOR_SERVICE_DIR/$project_name"
 }
 
 start_onion_domain_creation() {
   local project_name="$1"
-
-  # Make root owner of tor directory.
-  sudo chown -R root /var/lib/tor
-  sudo chmod 700 "/var/lib/tor/$project_name"
 
   # Start "sudo tor" in the background
   sudo tor | tee "$TOR_LOG_FILEPATH" >/dev/null

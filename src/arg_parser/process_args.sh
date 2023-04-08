@@ -34,6 +34,7 @@ process_delete_onion_domain_flag() {
 
   if [ "$delete_onion_domain_flag" == "true" ]; then
     echo "Deleting your onion domain for:$project_name"
+    delete_onion_domain "$project_name" "$hidden_service_port" "$local_project_port"
   fi
 }
 

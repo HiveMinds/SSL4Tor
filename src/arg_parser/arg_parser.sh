@@ -77,7 +77,7 @@ parse_args() {
 
   process_project_name_flag "$project_name_flag" "$project_name"
   process_local_project_port_flag "$local_project_port_flag" "$local_project_port"
-  process_delete_onion_domain_flag "$delete_onion_domain_flag"
+  process_delete_onion_domain_flag "$delete_onion_domain_flag" "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
   process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
   process_generate_onion_domain_flag "$generate_onion_domain_flag" "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
   process_generate_ssl_certs_flag "$generate_ssl_certs_flag"
