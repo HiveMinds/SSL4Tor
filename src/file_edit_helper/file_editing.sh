@@ -81,13 +81,49 @@ verify_has_two_consecutive_lines() {
 # Structure:Parsing
 # allows a string with spaces, hence allows a line
 file_contains_string() {
-  STRING=$1
-  relative_filepath=$2
+  local some_string="$1"
+  local relative_filepath="$2"
+  local use_sudo="$3"
 
-  if grep -q "$STRING" "$relative_filepath"; then
-    echo "FOUND"
+  if [[ "$use_sudo" == "true" ]]; then
+    if sudo grep -q "$some_string" "$relative_filepath"; then
+      echo "FOUND"
+    else
+      echo "NOTFOUND"
+    fi
   else
-    echo "NOTFOUND"
+    if grep -q "$some_string" "$relative_filepath"; then
+      echo "FOUND"
+    else
+      echo "NOTFOUND"
+    fi
+  fi
+}
+
+assert_file_contains_string() {
+  local some_string="$1"
+  local relative_filepath="$2"
+  local use_sudo="$3"
+
+  manual_assert_file_exists "$relative_filepath" "true"
+
+  if [ "$(file_contains_string "$some_string" "$relative_filepath" "$use_sudo")" != "FOUND" ]; then
+    echo "Error, the string:$some_string was not found in:$relative_filepath"
+    exit 6
+  fi
+}
+
+assert_file_does_not_contains_string() {
+  local some_string="$1"
+  local relative_filepath="$2"
+  local use_sudo="$3"
+
+  manual_assert_file_exists "$relative_filepath" "true"
+
+  # read -p "use_sudo=$use_sudo"
+  if [ "$(file_contains_string "$some_string" "$relative_filepath" "$use_sudo")" != "NOTFOUND" ]; then
+    echo "Error, the string:$some_string was found in:$relative_filepath"
+    exit 6
   fi
 }
 

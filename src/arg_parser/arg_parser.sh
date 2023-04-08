@@ -43,13 +43,9 @@ parse_args() {
         shift # past argument
         ;;
       -hps | --hiddenservice_ssl_port)
-        hiddenservice_ssl_port="$2"
-
+        hiddenservice_ssl_port_flag='true'
         # Assign default hiddenservice_ssl_port if none is specified in CLI.
-        if [[ "$hiddenservice_ssl_port" == "" ]]; then
-          hiddenservice_ssl_port="$DEFAULT_HIDDENSERVICE_SSL_PORT"
-        fi
-        assert_is_non_empty_string "${hiddenservice_ssl_port}"
+        hiddenservice_ssl_port="$2"
         shift # past argument
         shift
         ;;
@@ -63,7 +59,6 @@ parse_args() {
       -lpp | --local-project-port)
         local_project_port_flag='true'
         local_project_port="$2"
-        assert_is_non_empty_string "${local_project_port}"
         shift # past argument
         shift
         ;;
@@ -75,8 +70,21 @@ parse_args() {
     esac
   done
 
+  # Ensure ports are populated.
+  if [[ "$local_project_port" == "" ]]; then
+    local_project_port="$DEFAULT_LOCAL_PROJECT_PORT"
+  fi
+  assert_is_non_empty_string "${local_project_port}"
+
+  if [[ "$hiddenservice_ssl_port" == "" ]]; then
+    hiddenservice_ssl_port="$DEFAULT_HIDDENSERVICE_SSL_PORT"
+  fi
+  assert_is_non_empty_string "${hiddenservice_ssl_port}"
+
+  # Run the functions that are asked for in the CLI args.
   process_project_name_flag "$project_name_flag" "$project_name"
   process_local_project_port_flag "$local_project_port_flag" "$local_project_port"
+  process_hiddenservice_ssl_port_flag "$hiddenservice_ssl_port_flag" "$hiddenservice_ssl_port"
   process_delete_onion_domain_flag "$delete_onion_domain_flag" "$project_name"
   process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
   process_generate_onion_domain_flag "$generate_onion_domain_flag" "$project_name" "$local_project_port" "$hiddenservice_ssl_port"

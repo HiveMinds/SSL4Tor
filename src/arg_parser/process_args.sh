@@ -14,7 +14,16 @@ process_local_project_port_flag() {
   local local_project_port="$2"
 
   if [ "$local_project_port_flag" == "true" ]; then
-    echo "Verified the port:$port is in valid range and unused."
+    echo "Verified the port:$hiddenservice_ssl_port is in valid range and unused."
+  fi
+}
+
+process_hiddenservice_ssl_port_flag() {
+  local hiddenservice_ssl_port_flag="$1"
+  local hiddenservice_ssl_port="$2"
+
+  if [ "$hiddenservice_ssl_port_flag" == "true" ]; then
+    echo "Verified the port:$hiddenservice_ssl_port is in valid range and unused."
   fi
 }
 
@@ -29,12 +38,10 @@ process_delete_ssl_certs_flag() {
 
 process_delete_onion_domain_flag() {
   local delete_onion_domain_flag="$1"
-  local project_name="$2"
-  local port="$3"
 
   if [ "$delete_onion_domain_flag" == "true" ]; then
     echo "Deleting your onion domain for:$project_name"
-    delete_onion_domain "$project_name" "$hidden_service_port" "$local_project_port"
+    delete_onion_domain "$project_name"
   fi
 }
 
@@ -42,11 +49,11 @@ process_generate_onion_domain_flag() {
   local generate_onion_domain_flag="$1"
   local project_name="$2"
   local local_project_port="$3"
-  local hidden_service_port="$4"
+  local hiddenservice_ssl_port="$4"
 
   if [ "$generate_onion_domain_flag" == "true" ]; then
     echo "Generating your onion domain for:$project_name"
-    generate_onion_domain "$project_name" "$hidden_service_port" "$local_project_port"
+    generate_onion_domain "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
   fi
 }
 

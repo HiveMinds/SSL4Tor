@@ -2,21 +2,71 @@
 
 generate_onion_domain() {
   local project_name="$1"
-  local hidden_service_port="$2"
-  local local_project_port="$3"
+  local local_project_port="$2"
+  local hiddenservice_ssl_port="$3"
 
+  assert_is_non_empty_string "$hiddenservice_ssl_port"
   assert_is_non_empty_string "$local_project_port"
   ensure_apt_pkg "tor" 1
+  ensure_apt_pkg "net-tools" 1
+  kill_tor_if_already_running
+  sleep 2
+  assert_tor_is_not_running
 
-  prepare_onion_domain_creation "$project_name" "$hidden_service_port" "$local_project_port"
+  prepare_onion_domain_creation "$project_name" "$hiddenservice_ssl_port" "$local_project_port"
 
   start_onion_domain_creation "$project_name"
+  sleep 2
+
+  # TODO: assert the tor_log.txt does not contain error.
+  assert_file_does_not_contains_string "\[err\]" "$TOR_LOG_FILEPATH"
+}
+
+kill_tor_if_already_running() {
+  local output
+  local normal_tor_closed
+  local sudo_tor_closed
+  while true; do
+    output=$(netstat -ano | grep LISTEN | grep 9050)
+    if [[ "$output" != "" ]]; then
+      sudo killall tor
+      sudo systemctl stop tor
+      normal_tor_closed="false"
+      sleep 2
+    else
+      normal_tor_closed="true"
+    fi
+
+    sudo_output=$(sudo netstat -ano | grep LISTEN | grep 9050)
+    if [[ "$sudo_output" != "" ]]; then
+      # sudo kill -9 `pidof tor`
+      sudo killall tor
+      sudo systemctl stop tor
+      sleep 2
+    else
+      sudo_tor_closed="false"
+      sudo_tor_closed="true"
+    fi
+    if [[ "$normal_tor_closed" == "true" ]] && [[ "$sudo_tor_closed" == "true" ]]; then
+      return 0
+    fi
+  done
+}
+
+assert_tor_is_not_running() {
+  local output
+  output=$(netstat -ano | grep LISTEN | grep 9050)
+  if [[ "$output" != "" ]]; then
+    echo "ERROR, tor/something is still running on port 9050:$output"
+    exit 6
+  fi
+
 }
 
 prepare_onion_domain_creation() {
   local project_name="$1"
-  local hidden_service_port="$2"
-  local local_project_port="$3"
+  local local_project_port="$2"
+  local hiddenservice_ssl_port="$3"
 
   # TODO: include verify_apt_installedin project.
   verify_apt_installed "tor"
@@ -36,7 +86,9 @@ prepare_onion_domain_creation() {
   local torrc_line_1
   torrc_line_1="HiddenServiceDir $TOR_SERVICE_DIR/$project_name/"
   local torrc_line_2
-  torrc_line_2="HiddenServicePort $hidden_service_port 127.0.0.1:$local_project_port"
+  # TODO: allow user to override DEFAULT_LOCAL_TOR_PORT.
+  assert_is_non_empty_string "$DEFAULT_LOCAL_TOR_PORT"
+  torrc_line_2="HiddenServicePort $DEFAULT_LOCAL_TOR_PORT 127.0.0.1:$local_project_port"
 
   # E. If that content is not in the torrc file, append it at file end.
   append_lines_if_not_found "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"
@@ -53,9 +105,11 @@ start_onion_domain_creation() {
   local project_name="$1"
   #local max_tor_wait_time="$2"
   # TODO: include max_tor_wait_time as parameter
+  printf "Now starting tor, and waiting (max) 120 seconds to generate onion url."
 
   # Start "sudo tor" in the background
-  sudo tor | tee "$TOR_LOG_FILEPATH" >/dev/null
+  sudo tor | tee "$TOR_LOG_FILEPATH" >/dev/null &
+  # sudo tor & | tee "$TOR_LOG_FILEPATH" >/dev/null
 
   # Set the start time of the function
   start_time=$(date +%s)
@@ -66,10 +120,17 @@ start_onion_domain_creation() {
     onion_exists=$(check_onion_url_exists_in_hostname "$project_name")
 
     # Check if the onion URL exists in the hostname
-    if [[ "$onion_exists" -eq 0 ]]; then
-      # If the onion URL exists, terminate the "sudo tor" process and return 0
-      pkill -f "sudo tor"
-      return 0
+    if sudo test -f "$TOR_SERVICE_DIR/$project_name/hostname"; then
+      if [[ "$onion_exists" -eq 0 ]]; then
+        # If the onion URL exists, terminate the "sudo tor" process and return 0
+        kill_tor_if_already_running
+        echo "Successfully created your onion domain locally. Proceeding.."
+        sleep 5
+
+        # TODO: verify the private key is valid for the onion domain.
+        # TODO: verify whether it is reachable over tor.
+        return 0
+      fi
     fi
 
     sleep 1
@@ -79,9 +140,9 @@ start_onion_domain_creation() {
 
     # If 2 minutes have passed, raise an exception and return 7
     if ((elapsed_time > 120)); then
-      pkill -f "sudo tor"
+      kill_tor_if_already_running
       echo >&2 "Error: Onion URL does not exist in hostname after 2 minutes."
-      return 7
+      exit 6
     fi
 
     # Wait for 5 seconds before checking again

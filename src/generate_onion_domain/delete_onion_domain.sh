@@ -2,10 +2,9 @@
 
 delete_onion_domain() {
   local project_name="$1"
-
   apt_remove "tor" 1
+  apt_remove "net-tools" 1
   remove_onion_domain_files "$project_name"
-
 }
 remove_onion_domain_files() {
   local project_name="$1"
