@@ -1,15 +1,27 @@
 #!/bin/bash
 
+# shellcheck source=src/arg_parser/arg_parser.sh
 source src/arg_parser/arg_parser.sh
+# shellcheck source=src/arg_parser/process_args.sh
 source src/arg_parser/process_args.sh
+# shellcheck source=src/arg_parser/print_usage.sh
 source src/arg_parser/print_usage.sh
+# shellcheck source=src/arg_parser/arg_verification.sh
 source src/arg_parser/arg_verification.sh
+# shellcheck source=src/generate_onion_domain/generate_onion_domain.sh
 source src/generate_onion_domain/generate_onion_domain.sh
+# shellcheck source=src/installation/install_apt.sh
 source src/installation/install_apt.sh
+# shellcheck source=src/uninstallation/uninstall_apt.sh
 source src/uninstallation/uninstall_apt.sh
+# shellcheck source=src/logging/cli_logging.sh
 source src/logging/cli_logging.sh
+# shellcheck source=src/verification/manual_asserts.sh
 source src/verification/manual_asserts.sh
+# shellcheck source=src/GLOBAL_VARS.sh
 source src/GLOBAL_VARS.sh
+# shellcheck source=src/file_edit_helper/file_editing.sh
+source src/file_edit_helper/file_editing.sh
 
 # Get application name/dir from CLI.
 

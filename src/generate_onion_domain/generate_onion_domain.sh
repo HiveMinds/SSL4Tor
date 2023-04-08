@@ -19,13 +19,15 @@ prepare_onion_domain_creation() {
 
   # Verify tor configuration file exists (Should be created at installation of
   # sudo apt tor).
-  manual_assert_file_exists "$TORRC_FILEPATH"
+  manual_assert_file_exists "$TORRC_FILEPATH" "true"
 
-  # TODO: create the project dir for the onion domain.
+  #Create the project dir for the onion domain and verify it exists.
   sudo mkdir -p "$TOR_SERVICE_DIR/$project_name"
+  manual_assert_dir_exists "$TOR_SERVICE_DIR/$project_name" "true"
 
-  # Verify the project dir for the onion domain exists.
-  manual_assert_file_exists "$TOR_SERVICE_DIR/$project_name"
+  # Create the hostname file for the onion domain and verify it exists.
+  sudo touch "$TOR_SERVICE_DIR/$project_name/hostname"
+  manual_assert_file_exists "$TOR_SERVICE_DIR/$project_name/hostname" "true"
 
   local torrc_line_1
   torrc_line_1="HiddenServiceDir $TOR_SERVICE_DIR/$project_name/"
