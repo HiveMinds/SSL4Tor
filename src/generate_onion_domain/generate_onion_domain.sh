@@ -5,7 +5,9 @@ generate_onion_domain() {
   local hidden_service_port="$2"
   local local_project_port="$3"
 
+  assert_is_non_empty_string "$local_project_port"
   ensure_apt_pkg "tor" 1
+
   prepare_onion_domain_creation "$project_name" "$hidden_service_port" "$local_project_port"
 }
 

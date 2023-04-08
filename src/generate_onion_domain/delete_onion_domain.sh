@@ -2,14 +2,13 @@
 
 delete_onion_domain() {
   local project_name="$1"
-  local hidden_service_port="$2"
-  local local_project_port="$3"
 
   apt_remove "tor" 1
-  remove_onion_domain_files "$project_name" "$hidden_service_port" "$local_project_port"
+  remove_onion_domain_files "$project_name"
 
 }
 remove_onion_domain_files() {
+  local project_name="$1"
 
   # After uninstalling tor, this file should not exist anymore.
   manual_assert_file_not_exists "$TORRC_FILEPATH" "true"

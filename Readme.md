@@ -19,7 +19,10 @@ That way, you start your project in a clean, tested environment.
 The main code can be ran with:
 
 ```sh
-./src/main.sh -go -n gitlab -hps
+# Install tor and create onion domain for the gitlab service
+./src/main.sh -go -n gitlab -lpp 81
+# Remove tor and accompanying files.
+./src/main.sh -do -n gitlab
 ```
 
 ## Testing
