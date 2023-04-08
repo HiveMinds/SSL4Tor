@@ -10,15 +10,13 @@ generate_onion_domain() {
   ensure_apt_pkg "tor" 1
   ensure_apt_pkg "net-tools" 1
   kill_tor_if_already_running
-  sleep 2
   assert_tor_is_not_running
 
   prepare_onion_domain_creation "$project_name" "$hiddenservice_ssl_port" "$local_project_port"
 
   start_onion_domain_creation "$project_name"
-  sleep 2
 
-  # TODO: assert the tor_log.txt does not contain error.
+  # Assert the tor_log.txt does not contain error.
   assert_file_does_not_contains_string "\[err\]" "$TOR_LOG_FILEPATH"
 }
 
