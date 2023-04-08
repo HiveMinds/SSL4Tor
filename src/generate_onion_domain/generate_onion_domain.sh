@@ -9,6 +9,8 @@ generate_onion_domain() {
   ensure_apt_pkg "tor" 1
 
   prepare_onion_domain_creation "$project_name" "$hidden_service_port" "$local_project_port"
+
+  start_onion_domain_creation "$project_name"
 }
 
 prepare_onion_domain_creation() {
@@ -49,6 +51,8 @@ prepare_onion_domain_creation() {
 
 start_onion_domain_creation() {
   local project_name="$1"
+  #local max_tor_wait_time="$2"
+  # TODO: include max_tor_wait_time as parameter
 
   # Start "sudo tor" in the background
   sudo tor | tee "$TOR_LOG_FILEPATH" >/dev/null
@@ -59,7 +63,7 @@ start_onion_domain_creation() {
   # Check if the onion URL exists in the hostname every 5 seconds, until 2 minutes have passed
   while true; do
     local onion_exists
-    onion_exists=$(check_onion_url_exists_in_hostname "$TOR_SERVICE_DIR/$project_name/hostname")
+    onion_exists=$(check_onion_url_exists_in_hostname "$project_name")
 
     # Check if the onion URL exists in the hostname
     if [[ "$onion_exists" -eq 0 ]]; then
@@ -84,4 +88,41 @@ start_onion_domain_creation() {
     sleep 5
   done
 
+}
+
+#######################################
+# Checks that a file exists and that its content is an onion URL in the correct format.
+#
+# Local variables:
+#  - filepath: path to the file to verify
+#
+# Globals:
+#  None.
+# Arguments:
+#  - $1: filepath to verify
+#
+# Returns:
+#  0 if the file exists and has a valid onion URL as its content
+#  7 if the file does not exist
+#  8 if the file exists, but its content is not a valid onion URL
+# Outputs:
+#  None.
+#######################################
+check_onion_url_exists_in_hostname() {
+  local project_name="$1"
+
+  local file_content
+  file_content=$(sudo cat "$TOR_SERVICE_DIR/$project_name/hostname")
+
+  # Verify that the file exists
+  if sudo test -f "$TOR_SERVICE_DIR/$project_name/hostname"; then
+    # Verify that the file's content is a valid onion URL
+    if [[ "$file_content" =~ ^[a-z0-9]{56}\.onion$ ]]; then
+      return 0 # file exists and has valid onion URL as its content
+    else
+      return 8 # file exists, but has invalid onion URL as its content
+    fi
+  else
+    return 7 # file does not exist
+  fi
 }
