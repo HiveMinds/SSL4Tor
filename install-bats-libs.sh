@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Remove the submodules if they were still in the repo.
 git rm --cached test/libs/bats

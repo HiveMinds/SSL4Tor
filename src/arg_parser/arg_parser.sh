@@ -1,5 +1,4 @@
 #!/bin/bash
-
 parse_args() {
   # The incoming function arguments are the cli arguments.
 
@@ -7,9 +6,9 @@ parse_args() {
   local apply_certs_flag='false'
   local check_http_flag='false'
   local check_https_flag='false'
-  local generate_certs_flag='false'
+  local generate_ssl_certs_flag='false'
   local project_name_flag='false'
-  local port_flag='false'
+  local local_project_port_flag='false'
 
   # $# gives the length/number of the incoming function arguments.
   # the shift command eats the first element of that array, making it shorter.
@@ -27,9 +26,32 @@ parse_args() {
         check_https_flag='true'
         shift # past argument
         ;;
-      -g | --generate-certs)
-        generate_certs_flag='true'
+      -ds | --delete-ssl-certs)
+        delete_ssl_certs_flag='true'
         shift # past argument
+        ;;
+      -do | --delete-onion-domain)
+        delete_onion_domain_flag='true'
+        shift # past argument
+        ;;
+      -gs | --generate-ssl-certs)
+        generate_ssl_certs_flag='true'
+        shift # past argument
+        ;;
+      -go | --generate-onion-domain)
+        generate_onion_domain_flag='true'
+        shift # past argument
+        ;;
+      -hps | --hiddenservice_ssl_port)
+        hiddenservice_ssl_port="$2"
+
+        # Assign default hiddenservice_ssl_port if none is specified in CLI.
+        if [[ "$hiddenservice_ssl_port" == "" ]]; then
+          hiddenservice_ssl_port="$DEFAULT_HIDDENSERVICE_SSL_PORT"
+        fi
+        assert_is_non_empty_string "${hiddenservice_ssl_port}"
+        shift # past argument
+        shift
         ;;
       -n | --project-name)
         project_name_flag='true'
@@ -38,10 +60,10 @@ parse_args() {
         shift # past argument
         shift
         ;;
-      -p | --port)
-        port_flag='true'
-        port="$2"
-        assert_is_non_empty_string "${project_name}"
+      -lpp | --local-project-port)
+        local_project_port_flag='true'
+        local_project_port="$2"
+        assert_is_non_empty_string "${local_project_port}"
         shift # past argument
         shift
         ;;
@@ -53,10 +75,14 @@ parse_args() {
     esac
   done
 
+  process_project_name_flag "$project_name_flag" "$project_name"
+  process_local_project_port_flag "$local_project_port_flag" "$local_project_port"
+  process_delete_onion_domain_flag "$delete_onion_domain_flag"
+  process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
+  process_generate_onion_domain_flag "$generate_onion_domain_flag" "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
+  process_generate_ssl_certs_flag "$generate_ssl_certs_flag"
   process_apply_certs_flag "$apply_certs_flag"
   process_check_http_flag "$check_http_flag"
   process_check_https_flag "$check_https_flag"
-  process_generate_certs_flag "$generate_certs_flag"
-  process_project_name_flag "$project_name_flag" "$project_name"
-  process_port_flag "$port_flag" "$port"
+
 }

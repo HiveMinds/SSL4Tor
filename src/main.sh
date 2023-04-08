@@ -3,6 +3,13 @@
 source src/arg_parser/arg_parser.sh
 source src/arg_parser/process_args.sh
 source src/arg_parser/print_usage.sh
+source src/arg_parser/arg_verification.sh
+source src/generate_onion_domain/generate_onion_domain.sh
+source src/installation/install_apt.sh
+source src/uninstallation/uninstall_apt.sh
+source src/logging/cli_logging.sh
+source src/verification/manual_asserts.sh
+source src/GLOBAL_VARS.sh
 
 # Get application name/dir from CLI.
 

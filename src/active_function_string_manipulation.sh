@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 ##################################################################
 # Purpose: Converts a string to lower case
 # Arguments:

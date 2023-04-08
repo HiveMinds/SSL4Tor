@@ -19,7 +19,7 @@ That way, you start your project in a clean, tested environment.
 The main code can be ran with:
 
 ```sh
-src/main.sh
+./src/main.sh -go -n gitlab -hps
 ```
 
 ## Testing
