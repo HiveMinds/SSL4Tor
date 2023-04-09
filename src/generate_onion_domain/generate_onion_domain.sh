@@ -7,8 +7,8 @@ generate_onion_domain() {
 
   assert_is_non_empty_string "$hiddenservice_ssl_port"
   assert_is_non_empty_string "$local_project_port"
-  ensure_apt_pkg "tor" 1
-  ensure_apt_pkg "net-tools" 1
+  #ensure_apt_pkg "tor" 1
+  #ensure_apt_pkg "net-tools" 1
   kill_tor_if_already_running
   assert_tor_is_not_running
 
@@ -101,6 +101,7 @@ prepare_onion_domain_creation() {
 
 start_onion_domain_creation() {
   local project_name="$1"
+  local kill_if_domain_exists="$2"
   #local max_tor_wait_time="$2"
   # TODO: include max_tor_wait_time as parameter
   printf "Now starting tor, and waiting (max) 120 seconds to generate onion url."
@@ -120,14 +121,23 @@ start_onion_domain_creation() {
     # Check if the onion URL exists in the hostname
     if sudo test -f "$TOR_SERVICE_DIR/$project_name/hostname"; then
       if [[ "$onion_exists" -eq 0 ]]; then
-        # If the onion URL exists, terminate the "sudo tor" process and return 0
-        kill_tor_if_already_running
-        echo "Successfully created your onion domain locally. Proceeding.."
-        sleep 5
+        if [[ "$kill_if_domain_exists" == "true" ]]; then
+          # If the onion URL exists, terminate the "sudo tor" process and return 0
+          kill_tor_if_already_running
+          echo "Successfully created your onion domain locally. Proceeding.."
+          sleep 5
 
-        # TODO: verify the private key is valid for the onion domain.
-        # TODO: verify whether it is reachable over tor.
-        return 0
+          # TODO: verify the private key is valid for the onion domain.
+          # TODO: verify whether it is reachable over tor.
+          return 0
+        else
+          local tor_connection_is_found
+          tor_connection_is_found=$(tor_is_connected)
+          if [[ "$tor_connection_is_found" == "FOUND" ]]; then
+            echo "Successfully reached a tor connection. Proceeding.."
+            return 0
+          fi
+        fi
       fi
     fi
 

@@ -13,6 +13,7 @@ source src/verification/assert_exists.sh
 source src/verification/assert_not_exists.sh
 source src/GLOBAL_VARS.sh
 source src/file_edit_helper/file_editing.sh
+source src/tor_status/tor_status.sh
 
 # Get application name/dir from CLI.
 
