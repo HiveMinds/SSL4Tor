@@ -14,7 +14,11 @@ generate_onion_domain() {
 
   prepare_onion_domain_creation "$project_name" "$hiddenservice_ssl_port" "$local_project_port"
 
-  start_onion_domain_creation "$project_name"
+  # start_onion_domain_creation "$project_name" "false" "$local_project_port" "false"
+  start_onion_domain_creation "$project_name" "false" "$hiddenservice_ssl_port" "false"
+
+  # start_onion_domain_creation "$project_name" "false" "$local_project_port" "true"
+  # start_onion_domain_creation "$project_name" "false" "$hiddenservice_ssl_port" "true"
 
   # Assert the tor_log.txt does not contain error.
   assert_file_does_not_contains_string "\[err\]" "$TOR_LOG_FILEPATH"
@@ -102,6 +106,8 @@ prepare_onion_domain_creation() {
 start_onion_domain_creation() {
   local project_name="$1"
   local kill_if_domain_exists="$2"
+  local local_project_port="$3"
+  local use_https="$4"
   #local max_tor_wait_time="$2"
   # TODO: include max_tor_wait_time as parameter
   printf "Now starting tor, and waiting (max) 120 seconds to generate onion url."
@@ -135,6 +141,7 @@ start_onion_domain_creation() {
           tor_connection_is_found=$(tor_is_connected)
           if [[ "$tor_connection_is_found" == "FOUND" ]]; then
             echo "Successfully reached a tor connection. Proceeding.."
+            assert_onion_is_available "$use_https" "$local_project_port"
             return 0
           fi
         fi
