@@ -3,9 +3,9 @@
 make_onion_domain() {
   local project_name="$1"
   local local_project_port="$2"
-  local hiddenservice_ssl_port="$3"
+  local public_port_to_access_onion="$3"
 
-  assert_is_non_empty_string "$hiddenservice_ssl_port"
+  assert_is_non_empty_string "$public_port_to_access_onion"
   assert_is_non_empty_string "$local_project_port"
   ensure_apt_pkg "tor" 1
   ensure_apt_pkg "net-tools" 1
@@ -13,13 +13,13 @@ make_onion_domain() {
   kill_tor_if_already_running
   assert_tor_is_not_running
 
-  prepare_onion_domain_creation "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
+  prepare_onion_domain_creation "$project_name" "$local_project_port" "$public_port_to_access_onion"
 
   start_onion_domain_creation "$project_name" "false" "$local_project_port" "false"
-  # start_onion_domain_creation "$project_name" "false" "$hiddenservice_ssl_port" "false"
+  # start_onion_domain_creation "$project_name" "false" "$public_port_to_access_onion" "false"
 
   # start_onion_domain_creation "$project_name" "false" "$local_project_port" "true"
-  # start_onion_domain_creation "$project_name" "false" "$hiddenservice_ssl_port" "true"
+  # start_onion_domain_creation "$project_name" "false" "$public_port_to_access_onion" "true"
 
   # Assert the tor_log.txt does not contain error.
   assert_file_does_not_contains_string "\[err\]" "$TOR_LOG_FILEPATH"
@@ -69,7 +69,7 @@ assert_tor_is_not_running() {
 prepare_onion_domain_creation() {
   local project_name="$1"
   local local_project_port="$2"
-  local hiddenservice_ssl_port="$3"
+  local public_port_to_access_onion="$3"
 
   # TODO: include verify_apt_installedin project.
   verify_apt_installed "tor"
@@ -89,9 +89,9 @@ prepare_onion_domain_creation() {
   local torrc_line_1
   torrc_line_1="HiddenServiceDir $TOR_SERVICE_DIR/$project_name/"
   local torrc_line_2
-  # TODO: allow user to override DEFAULT_TOR_PORT_WITHOUT_SSL.
-  assert_is_non_empty_string "$DEFAULT_TOR_PORT_WITHOUT_SSL"
-  torrc_line_2="HiddenServicePort $hiddenservice_ssl_port 127.0.0.1:$local_project_port"
+  # TODO: allow user to override PUBLIC_PORT_TO_ACCESS_ONION_SITE_WITHOUT_SSL.
+  assert_is_non_empty_string "$PUBLIC_PORT_TO_ACCESS_ONION_SITE_WITHOUT_SSL"
+  torrc_line_2="HiddenServicePort $public_port_to_access_onion 127.0.0.1:$local_project_port"
   read -p "torrc_line_2=$torrc_line_2"
 
   # E. If that content is not in the torrc file, append it at file end.

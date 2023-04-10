@@ -47,10 +47,10 @@ parse_args() {
         make_onion_domain_flag='true'
         shift # past argument
         ;;
-      -hps | --hiddenservice_ssl_port)
-        hiddenservice_ssl_port_flag='true'
-        # Assign default hiddenservice_ssl_port if none is specified in CLI.
-        hiddenservice_ssl_port="$2"
+      -ppo | --public_port_to_access_onion)
+        public_port_to_access_onion_flag='true'
+        # Assign default public_port_to_access_onion if none is specified in CLI.
+        public_port_to_access_onion="$2"
         shift # past argument
         shift
         ;;
@@ -92,23 +92,23 @@ parse_args() {
   fi
   assert_is_non_empty_string "${local_project_port}"
 
-  if [[ "$hiddenservice_ssl_port" == "" ]]; then
+  if [[ "$public_port_to_access_onion" == "" ]]; then
     if [[ "$use_ssl_flag" == "true" ]]; then
-      hiddenservice_ssl_port="$DEFAULT_TOR_PORT_WITH_SSL"
+      public_port_to_access_onion="$PUBLIC_PORT_TO_ACCESS_ONION_SITE_WITH_SSL"
     else
-      hiddenservice_ssl_port="$DEFAULT_TOR_PORT_WITHOUT_SSL"
+      public_port_to_access_onion="$PUBLIC_PORT_TO_ACCESS_ONION_SITE_WITHOUT_SSL"
     fi
   fi
-  assert_is_non_empty_string "${hiddenservice_ssl_port}"
+  assert_is_non_empty_string "${public_port_to_access_onion}"
 
   # Run the functions that are asked for in the CLI args.
   process_project_name_flag "$project_name_flag" "$project_name"
   process_local_project_port_flag "$local_project_port_flag" "$local_project_port"
-  process_hiddenservice_ssl_port_flag "$hiddenservice_ssl_port_flag" "$hiddenservice_ssl_port"
+  process_public_port_to_access_onion_flag "$public_port_to_access_onion_flag" "$public_port_to_access_onion"
   process_delete_onion_domain_flag "$delete_onion_domain_flag" "$project_name"
   process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
   process_get_onion_domain_flag "$get_onion_domain_flag"
-  process_make_onion_domain_flag "$make_onion_domain_flag" "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
+  process_make_onion_domain_flag "$make_onion_domain_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
   process_make_ssl_certs_flag "$make_ssl_certs_flag" "$project_name" "$ssl_password"
   process_apply_certs_flag "$apply_certs_flag"
   process_check_http_flag "$check_http_flag"

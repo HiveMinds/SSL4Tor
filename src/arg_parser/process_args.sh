@@ -14,16 +14,16 @@ process_local_project_port_flag() {
   local local_project_port="$2"
 
   if [ "$local_project_port_flag" == "true" ]; then
-    echo "Verified the port:$hiddenservice_ssl_port is in valid range and unused."
+    echo "Verified the port:$public_port_to_access_onion is in valid range and unused."
   fi
 }
 
-process_hiddenservice_ssl_port_flag() {
-  local hiddenservice_ssl_port_flag="$1"
-  local hiddenservice_ssl_port="$2"
+process_public_port_to_access_onion_flag() {
+  local public_port_to_access_onion_flag="$1"
+  local public_port_to_access_onion="$2"
 
-  if [ "$hiddenservice_ssl_port_flag" == "true" ]; then
-    echo "Verified the port:$hiddenservice_ssl_port is in valid range and unused."
+  if [ "$public_port_to_access_onion_flag" == "true" ]; then
+    echo "Verified the port:$public_port_to_access_onion is in valid range and unused."
   fi
 }
 
@@ -61,11 +61,11 @@ process_make_onion_domain_flag() {
   local make_onion_domain_flag="$1"
   local project_name="$2"
   local local_project_port="$3"
-  local hiddenservice_ssl_port="$4"
+  local public_port_to_access_onion="$4"
 
   if [ "$make_onion_domain_flag" == "true" ]; then
     echo "Generating your onion domain for:$project_name"
-    make_onion_domain "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
+    make_onion_domain "$project_name" "$local_project_port" "$public_port_to_access_onion"
   fi
 }
 
