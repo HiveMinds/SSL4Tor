@@ -90,7 +90,8 @@ prepare_onion_domain_creation() {
   local torrc_line_2
   # TODO: allow user to override DEFAULT_LOCAL_TOR_PORT.
   assert_is_non_empty_string "$DEFAULT_LOCAL_TOR_PORT"
-  torrc_line_2="HiddenServicePort $DEFAULT_LOCAL_TOR_PORT 127.0.0.1:$local_project_port"
+  torrc_line_2="HiddenServicePort $hiddenservice_ssl_port 127.0.0.1:$local_project_port"
+  read -p "torrc_line_2=$torrc_line_2"
 
   # E. If that content is not in the torrc file, append it at file end.
   append_lines_if_not_found "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"

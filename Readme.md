@@ -19,6 +19,7 @@ That way, you start your project in a clean, tested environment.
 The main code can be ran with:
 
 ```sh
+git clone git@github.com:HiveMinds/SSL4Tor.git
 # Install tor and create onion domain for the gitlab service
 ./src/main.sh -mo -n gitlab -lpp 81
 ./src/main.sh -ms -n gitlab -sp somepassword
@@ -29,6 +30,11 @@ The main code can be ran with:
 ## Testing
 
 Put your unit test files (with extension .bats) in folder: `/test/`
+
+```bash
+pip install dash
+pip install pandas
+```
 
 ### Prerequisites
 
