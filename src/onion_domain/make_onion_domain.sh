@@ -92,7 +92,8 @@ prepare_onion_domain_creation() {
   # TODO: allow user to override PUBLIC_PORT_TO_ACCESS_ONION_SITE_WITHOUT_SSL.
   assert_is_non_empty_string "$PUBLIC_PORT_TO_ACCESS_ONION_SITE_WITHOUT_SSL"
   torrc_line_2="HiddenServicePort $public_port_to_access_onion 127.0.0.1:$local_project_port"
-  read -p "torrc_line_2=$torrc_line_2"
+  echo "torrc_line_2=$torrc_line_2"
+  echo ""
 
   # E. If that content is not in the torrc file, append it at file end.
   append_lines_if_not_found "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"

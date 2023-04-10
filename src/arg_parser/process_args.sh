@@ -82,7 +82,7 @@ process_make_ssl_certs_flag() {
     local onion_domain
     onion_domain="$(get_onion_url "$project_name")"
     assert_is_non_empty_string "${onion_domain}"
-    make_ssl_certs "$onion_domain" "$ssl_password"
+    make_ssl_certs "$onion_domain" "$project_name" "$ssl_password"
   fi
 }
 

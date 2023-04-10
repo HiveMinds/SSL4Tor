@@ -52,9 +52,6 @@ SSL_PUBLIC_KEY_FILENAME="cert.pem"
 # Then merge the CA and SLL cert into one.
 MERGED_CA_SSL_CERT_FILENAME="fullchain.pem"
 
-# Firefox CA folder path:
-FIREFOX_CA_DIR='nextcloud_ssl'
-
 TEMP_SSL_PWD_FILENAME="ssl_password.txt"
 COUNTRY_CODE="FR"
 
@@ -64,7 +61,8 @@ ROOT_CA_PEM_PATH="$ROOT_CA_DIR/$CA_PUBLIC_KEY_FILENAME"
 
 make_ssl_certs() {
   local onion_domain="$1"
-  local ssl_password="$2"
+  local project_name="$2"
+  local ssl_password="$3"
 
   # TODO: if files already exist, perform double check on whether user wants to
   # overwrite the files.
@@ -74,7 +72,7 @@ make_ssl_certs() {
   domains="DNS:localhost,DNS:$onion_domain"
   echo "domains=$domains.end_without_space"
 
-  delete_target_files
+  delete_target_files "$project_name"
 
   # Generate and apply certificate.
   generate_ca_cert "$CA_PRIVATE_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$ssl_password"
@@ -89,7 +87,7 @@ make_ssl_certs() {
 
   copy_file "$CA_PUBLIC_KEY_FILENAME" "$ROOT_CA_PEM_PATH" "true"
 
-  make_self_signed_root_cert_trusted_on_ubuntu
+  make_self_signed_root_cert_trusted_on_ubuntu "$project_name"
 
 }
 
@@ -172,6 +170,8 @@ install_the_ca_cert_as_a_trusted_root_ca() {
 }
 
 delete_target_files() {
+  local project_name
+  project_name="$1"
   rm -f "$CA_PRIVATE_KEY_FILENAME"
   rm -f "$CA_PUBLIC_CERT_FILENAME"
   rm -f "$CA_PUBLIC_KEY_FILENAME"
@@ -183,10 +183,7 @@ delete_target_files() {
   rm -f "$ROOT_CA_PEM_PATH"
   sudo rm -f "/usr/local/share/ca-certificates/$CA_PUBLIC_KEY_FILENAME"
   sudo rm -f "/usr/local/share/ca-certificates/$CA_PUBLIC_CERT_FILENAME"
-  sudo rm -f "/var/snap/nextcloud/current/$SSL_PUBLIC_KEY_FILENAME"
-  sudo rm -f "/var/snap/nextcloud/current/$SSL_PRIVATE_KEY_FILENAME"
-  sudo rm -f "/var/snap/nextcloud/current/$MERGED_CA_SSL_CERT_FILENAME"
-  sudo rm -r "/usr/local/share/ca-certificates/$FIREFOX_CA_DIR"
+  sudo rm -r "/usr/local/share/ca-certificates/$project_name"
 }
 
 # On Android (This has been automated)
@@ -202,13 +199,15 @@ delete_target_files() {
 make_self_signed_root_cert_trusted_on_ubuntu() {
   # source: https://ubuntu.com/server/docs/security-trust-store
   # source: https://askubuntu.com/questions/73287/how-do-i-install-a-root-certificate
+  local project_name
+  project_name="$1"
 
   ensure_apt_pkg "ca-certificates"
 
-  sudo mkdir -p /usr/local/share/ca-certificates/$FIREFOX_CA_DIR
+  sudo mkdir -p /usr/local/share/ca-certificates/"$project_name"
 
-  sudo cp "$CA_PUBLIC_CERT_FILENAME" "/usr/local/share/ca-certificates/$FIREFOX_CA_DIR/$CA_PUBLIC_CERT_FILENAME"
-  manual_assert_file_exists "/usr/local/share/ca-certificates/$FIREFOX_CA_DIR/$CA_PUBLIC_CERT_FILENAME"
+  sudo cp "$CA_PUBLIC_CERT_FILENAME" "/usr/local/share/ca-certificates/$project_name/$CA_PUBLIC_CERT_FILENAME"
+  manual_assert_file_exists "/usr/local/share/ca-certificates/$project_name/$CA_PUBLIC_CERT_FILENAME"
 
   # TODO: determine whether these comments are relevant.
   # Add the .crt file's path relative to /usr/local/share/ca-certificates to:
@@ -226,10 +225,12 @@ make_self_signed_root_cert_trusted_on_ubuntu() {
 }
 
 add_self_signed_root_cert_to_firefox() {
+  local project_name
+  project_name="$1"
 
   local policies_filepath="/etc/firefox/policies/policies.json"
 
-  local policies_line="/usr/local/share/ca-certificates/$FIREFOX_CA_DIR/$CA_PUBLIC_CERT_FILENAME"
+  local policies_line="/usr/local/share/ca-certificates/$project_name/$CA_PUBLIC_CERT_FILENAME"
 
   if [ "$(file_exists $policies_filepath)" == "FOUND" ]; then
 
@@ -237,6 +238,7 @@ add_self_signed_root_cert_to_firefox() {
 
       # Generate content to put in policies.json.
       local new_json_content
+      # shellcheck disable=SC2086
       new_json_content=$(jq '.policies.Certificates += [{
                     "Install": ["'$policies_line'"]
                }]' $policies_filepath)
