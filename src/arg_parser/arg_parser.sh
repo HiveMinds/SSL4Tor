@@ -9,6 +9,7 @@ parse_args() {
   local make_ssl_certs_flag='false'
   local project_name_flag='false'
   local local_project_port_flag='false'
+  local use_ssl_flag='false'
 
   # $# gives the length/number of the incoming function arguments.
   # the shift command eats the first element of that array, making it shorter.
@@ -73,6 +74,10 @@ parse_args() {
         shift # past argument
         shift
         ;;
+      -us | --use-ssl)
+        use_ssl_flag='true'
+        shift # past argument
+        ;;
       -*)
         echo "Unknown option $1"
         print_usage
@@ -88,7 +93,11 @@ parse_args() {
   assert_is_non_empty_string "${local_project_port}"
 
   if [[ "$hiddenservice_ssl_port" == "" ]]; then
-    hiddenservice_ssl_port="$DEFAULT_HIDDENSERVICE_SSL_PORT"
+    if [[ "$use_ssl_flag" == "true" ]]; then
+      hiddenservice_ssl_port="$DEFAULT_TOR_PORT_WITH_SSL"
+    else
+      hiddenservice_ssl_port="$DEFAULT_TOR_PORT_WITHOUT_SSL"
+    fi
   fi
   assert_is_non_empty_string "${hiddenservice_ssl_port}"
 

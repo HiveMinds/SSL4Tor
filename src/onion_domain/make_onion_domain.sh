@@ -12,7 +12,7 @@ make_onion_domain() {
   kill_tor_if_already_running
   assert_tor_is_not_running
 
-  prepare_onion_domain_creation "$project_name" "$hiddenservice_ssl_port" "$local_project_port"
+  prepare_onion_domain_creation "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
 
   start_onion_domain_creation "$project_name" "false" "$local_project_port" "false"
   # start_onion_domain_creation "$project_name" "false" "$hiddenservice_ssl_port" "false"
@@ -88,8 +88,8 @@ prepare_onion_domain_creation() {
   local torrc_line_1
   torrc_line_1="HiddenServiceDir $TOR_SERVICE_DIR/$project_name/"
   local torrc_line_2
-  # TODO: allow user to override DEFAULT_LOCAL_TOR_PORT.
-  assert_is_non_empty_string "$DEFAULT_LOCAL_TOR_PORT"
+  # TODO: allow user to override DEFAULT_TOR_PORT_WITHOUT_SSL.
+  assert_is_non_empty_string "$DEFAULT_TOR_PORT_WITHOUT_SSL"
   torrc_line_2="HiddenServicePort $hiddenservice_ssl_port 127.0.0.1:$local_project_port"
   read -p "torrc_line_2=$torrc_line_2"
 
