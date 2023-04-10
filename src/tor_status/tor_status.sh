@@ -34,7 +34,7 @@ onion_is_available() {
 
 assert_onion_is_available() {
   local use_https="$1"
-  local port="$2"
+  local public_port_to_access_onion="$2"
 
   local onion_domain
   onion_domain="$(get_onion_url "$project_name")"
@@ -47,10 +47,10 @@ assert_onion_is_available() {
   fi
 
   local onion_address
-  if [ "$port" == "" ]; then
+  if [ "$public_port_to_access_onion" == "" ]; then
     onion_address="$onion_url"
   else
-    onion_address="$onion_url:$port"
+    onion_address="$onion_url:$public_port_to_access_onion"
   fi
   if [ "$(onion_is_available "$onion_address")" != "FOUND" ]; then
     echo "Error, was not able to connect to:$onion_address"
