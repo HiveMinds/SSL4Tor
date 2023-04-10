@@ -1,10 +1,5 @@
 #!/bin/bash
 
-generate_ssl_certs() {
-  local project_name="$1"
-  echo "TODO: use $project_name"
-}
-
 # To set up a self-signed SSL/HTTPS on a website you need to:
 # 0. become the certificate authorateh (CA) (on your server/main device).
 # 1. generate an SSL certificate based on the (CA) certificate you created.
@@ -63,8 +58,12 @@ FIREFOX_CA_DIR='nextcloud_ssl'
 TEMP_SSL_PWD_FILENAME="ssl_password.txt"
 COUNTRY_CODE="FR"
 
-setup_tor_ssl() {
-  local onion_url="$1"
+USERNAME=$(whoami)
+ROOT_CA_DIR="/home/$USERNAME"
+ROOT_CA_PEM_PATH="$ROOT_CA_DIR/$CA_PUBLIC_KEY_FILENAME"
+
+make_ssl_certs() {
+  local onion_domain="$1"
   local ssl_password="$2"
 
   # TODO: if files already exist, perform double check on whether user wants to
@@ -72,7 +71,7 @@ setup_tor_ssl() {
 
   # Create domains accepted by certificate.
   local domains
-  domains="DNS:localhost,DNS:$onion_url"
+  domains="DNS:localhost,DNS:$onion_domain"
   echo "domains=$domains.end_without_space"
 
   delete_target_files
@@ -91,6 +90,7 @@ setup_tor_ssl() {
   copy_file "$CA_PUBLIC_KEY_FILENAME" "$ROOT_CA_PEM_PATH" "true"
 
   make_self_signed_root_cert_trusted_on_ubuntu
+
 }
 
 generate_ca_cert() {
@@ -220,7 +220,9 @@ make_self_signed_root_cert_trusted_on_ubuntu() {
   # certificates: /etc/ssl/certs(/ca.pem)
   manual_assert_file_exists "/etc/ssl/certs/$CA_PUBLIC_KEY_FILENAME"
 
-  add_self_signed_root_cert_to_firefox
+  # TODO: make argument optional.
+  # TODO: include apt Firefox instead of snap.
+  # add_self_signed_root_cert_to_firefox
 }
 
 add_self_signed_root_cert_to_firefox() {

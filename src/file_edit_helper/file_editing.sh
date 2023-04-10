@@ -176,3 +176,29 @@ get_line_by_nr() {
   the_line=$(sed "${number}q;d" "$relative_filepath")
   echo "$the_line"
 }
+
+#######################################
+#
+# Local variables:
+#
+# Globals:
+#  None.
+# Arguments:
+#
+# Returns:
+#  0 if
+#  7 if
+# Outputs:
+#  None.
+# TODO(a-t-0):
+#######################################
+file_exists() {
+  local filepath="$1"
+
+  if test -f "$filepath"; then
+    echo "FOUND"
+  else
+    echo "NOTFOUND"
+  fi
+
+}

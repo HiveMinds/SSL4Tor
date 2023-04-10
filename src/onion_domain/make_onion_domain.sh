@@ -1,21 +1,21 @@
 #!/bin/bash
 
-generate_onion_domain() {
+make_onion_domain() {
   local project_name="$1"
   local local_project_port="$2"
   local hiddenservice_ssl_port="$3"
 
   assert_is_non_empty_string "$hiddenservice_ssl_port"
   assert_is_non_empty_string "$local_project_port"
-  #ensure_apt_pkg "tor" 1
-  #ensure_apt_pkg "net-tools" 1
+  ensure_apt_pkg "tor" 1
+  ensure_apt_pkg "net-tools" 1
   kill_tor_if_already_running
   assert_tor_is_not_running
 
   prepare_onion_domain_creation "$project_name" "$hiddenservice_ssl_port" "$local_project_port"
 
-  # start_onion_domain_creation "$project_name" "false" "$local_project_port" "false"
-  start_onion_domain_creation "$project_name" "false" "$hiddenservice_ssl_port" "false"
+  start_onion_domain_creation "$project_name" "false" "$local_project_port" "false"
+  # start_onion_domain_creation "$project_name" "false" "$hiddenservice_ssl_port" "false"
 
   # start_onion_domain_creation "$project_name" "false" "$local_project_port" "true"
   # start_onion_domain_creation "$project_name" "false" "$hiddenservice_ssl_port" "true"

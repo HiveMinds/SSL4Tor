@@ -45,24 +45,44 @@ process_delete_onion_domain_flag() {
   fi
 }
 
-process_generate_onion_domain_flag() {
-  local generate_onion_domain_flag="$1"
+process_get_onion_domain_flag() {
+  local process_get_onion_domain="$1"
+  local project_name="$2"
+
+  if [ "$process_get_onion_domain" == "true" ]; then
+    local onion_domain
+    onion_domain=$(get_onion_url "$project_name")
+    echo "Your onion domain for:$project_name, is:$onion_domain"
+
+  fi
+}
+
+process_make_onion_domain_flag() {
+  local make_onion_domain_flag="$1"
   local project_name="$2"
   local local_project_port="$3"
   local hiddenservice_ssl_port="$4"
 
-  if [ "$generate_onion_domain_flag" == "true" ]; then
+  if [ "$make_onion_domain_flag" == "true" ]; then
     echo "Generating your onion domain for:$project_name"
-    generate_onion_domain "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
+    make_onion_domain "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
   fi
 }
 
-process_generate_ssl_certs_flag() {
-  local generate_ssl_certs_flag="$1"
+process_make_ssl_certs_flag() {
+  local make_ssl_certs_flag="$1"
   local project_name="$2"
+  local ssl_password="$3"
 
-  if [ "$generate_ssl_certs_flag" == "true" ]; then
+  if [ "$make_ssl_certs_flag" == "true" ]; then
     echo "Generating your self-signed SSL certificates for:$project_name"
+
+    assert_is_non_empty_string "${project_name}"
+    assert_is_non_empty_string "${ssl_password}"
+    local onion_domain
+    onion_domain="$(get_onion_url "$project_name")"
+    assert_is_non_empty_string "${onion_domain}"
+    make_ssl_certs "$onion_domain" "$ssl_password"
   fi
 }
 

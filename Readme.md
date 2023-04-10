@@ -20,7 +20,8 @@ The main code can be ran with:
 
 ```sh
 # Install tor and create onion domain for the gitlab service
-./src/main.sh -go -n gitlab -lpp 81
+./src/main.sh -mo -n gitlab -lpp 81
+./src/main.sh -ms -n gitlab -sp somepassword
 # Remove tor and accompanying files.
 ./src/main.sh -do -n gitlab
 ```

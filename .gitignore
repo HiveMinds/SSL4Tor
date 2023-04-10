@@ -1,2 +1,15 @@
 coverage/*
 tor_log.txt
+
+# SSL certificates.
+ca.crt
+ca-cert.crt
+ca-key.pem
+cert-key.pem
+cert.scr
+extfile.cnf
+ca.pem
+ca.srl
+cert.csr
+cert.pem
+fullchain.pem

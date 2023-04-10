@@ -6,7 +6,7 @@ parse_args() {
   local apply_certs_flag='false'
   local check_http_flag='false'
   local check_https_flag='false'
-  local generate_ssl_certs_flag='false'
+  local make_ssl_certs_flag='false'
   local project_name_flag='false'
   local local_project_port_flag='false'
 
@@ -34,12 +34,16 @@ parse_args() {
         delete_onion_domain_flag='true'
         shift # past argument
         ;;
-      -gs | --generate-ssl-certs)
-        generate_ssl_certs_flag='true'
+      -go | --get-onion-domain)
+        get_onion_domain_flag='true'
         shift # past argument
         ;;
-      -go | --generate-onion-domain)
-        generate_onion_domain_flag='true'
+      -ms | --make-ssl-certs)
+        make_ssl_certs_flag='true'
+        shift # past argument
+        ;;
+      -mo | --make-onion-domain)
+        make_onion_domain_flag='true'
         shift # past argument
         ;;
       -hps | --hiddenservice_ssl_port)
@@ -53,6 +57,13 @@ parse_args() {
         project_name_flag='true'
         project_name="$2"
         assert_is_non_empty_string "${project_name}"
+        shift # past argument
+        shift
+        ;;
+      -sp | --ssl-password)
+        local ssl_password
+        ssl_password="$2"
+        assert_is_non_empty_string "${ssl_password}"
         shift # past argument
         shift
         ;;
@@ -87,8 +98,9 @@ parse_args() {
   process_hiddenservice_ssl_port_flag "$hiddenservice_ssl_port_flag" "$hiddenservice_ssl_port"
   process_delete_onion_domain_flag "$delete_onion_domain_flag" "$project_name"
   process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
-  process_generate_onion_domain_flag "$generate_onion_domain_flag" "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
-  process_generate_ssl_certs_flag "$generate_ssl_certs_flag"
+  process_get_onion_domain_flag "$get_onion_domain_flag"
+  process_make_onion_domain_flag "$make_onion_domain_flag" "$project_name" "$local_project_port" "$hiddenservice_ssl_port"
+  process_make_ssl_certs_flag "$make_ssl_certs_flag" "$project_name" "$ssl_password"
   process_apply_certs_flag "$apply_certs_flag"
   process_check_http_flag "$check_http_flag"
   process_check_https_flag "$check_https_flag"
