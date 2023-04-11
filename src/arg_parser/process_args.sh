@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Verify input argument validity.
 process_project_name_flag() {
   local project_name_flag="$1"
   local project_name="$2"
@@ -27,15 +28,7 @@ process_public_port_to_access_onion_flag() {
   fi
 }
 
-process_delete_ssl_certs_flag() {
-  local delete_ssl_certs_flag="$1"
-  local project_name="$2"
-
-  if [ "$delete_ssl_certs_flag" == "true" ]; then
-    echo "Deleting your self-signed SSL certificates for:$project_name"
-  fi
-}
-
+# Delete files from previous run.
 process_delete_onion_domain_flag() {
   local delete_onion_domain_flag="$1"
 
@@ -45,6 +38,16 @@ process_delete_onion_domain_flag() {
   fi
 }
 
+process_delete_ssl_certs_flag() {
+  local delete_ssl_certs_flag="$1"
+  local project_name="$2"
+
+  if [ "$delete_ssl_certs_flag" == "true" ]; then
+    echo "Deleting your self-signed SSL certificates for:$project_name"
+  fi
+}
+
+# Prepare Firefox version.
 process_firefox_to_apt_flag() {
   local firefox_to_apt_flag="$1"
 
@@ -53,15 +56,16 @@ process_firefox_to_apt_flag() {
   fi
 }
 
-process_add_to_apt_firefox_flag() {
-  local add_to_apt_firefox_flag="$1"
+# Create onion domain(s).
+process_make_onion_domain_flag() {
+  local make_onion_domain_flag="$1"
   local project_name="$2"
+  local local_project_port="$3"
+  local public_port_to_access_onion="$4"
 
-  if [ "$add_to_apt_firefox_flag" == "true" ]; then
-    echo "Adding your SSL certificates to firefox."
-
-    assert_is_non_empty_string "${project_name}"
-    add_self_signed_root_cert_to_firefox "$project_name"
+  if [ "$make_onion_domain_flag" == "true" ]; then
+    echo "Generating your onion domain for:$project_name"
+    make_onion_domain "$project_name" "$local_project_port" "$public_port_to_access_onion"
   fi
 }
 
@@ -77,18 +81,15 @@ process_get_onion_domain_flag() {
   fi
 }
 
-process_make_onion_domain_flag() {
-  local make_onion_domain_flag="$1"
-  local project_name="$2"
-  local local_project_port="$3"
-  local public_port_to_access_onion="$4"
+process_check_http_flag() {
+  local check_http_flag="$1"
 
-  if [ "$make_onion_domain_flag" == "true" ]; then
-    echo "Generating your onion domain for:$project_name"
-    make_onion_domain "$project_name" "$local_project_port" "$public_port_to_access_onion"
+  if [ "$check_http_flag" == "true" ]; then
+    echo "Checking your tor domain is available over http."
   fi
 }
 
+# Create SSL certificates.
 process_make_ssl_certs_flag() {
   local make_ssl_certs_flag="$1"
   local project_name="$2"
@@ -106,26 +107,32 @@ process_make_ssl_certs_flag() {
   fi
 }
 
-process_apply_certs_flag() {
-  local apply_certs_flag="$1"
+process_apply_certs_to_project_flag() {
+  local apply_certs_to_project_flag="$1"
 
-  if [ "$apply_certs_flag" == "true" ]; then
+  if [ "$apply_certs_to_project_flag" == "true" ]; then
     echo "applying certs"
   fi
 }
 
-process_check_http_flag() {
-  local check_http_flag="$1"
-
-  if [ "$check_http_flag" == "true" ]; then
-    echo "Checking your tor domain is available over http."
-  fi
-}
-
+# Verify https access to onion domain.
 process_check_https_flag() {
   local check_https_flag="$1"
 
   if [ "$check_https_flag" == "true" ]; then
     echo "Checking your tor domain is available over https."
+  fi
+}
+
+# Add self-signed ssl certificate to (apt) Firefox.
+process_add_ssl_root_cert_to_apt_firefox_flag() {
+  local add_ssl_root_cert_to_apt_firefox_flag="$1"
+  local project_name="$2"
+
+  if [ "$add_ssl_root_cert_to_apt_firefox_flag" == "true" ]; then
+    echo "Adding your SSL certificates to firefox."
+
+    assert_is_non_empty_string "${project_name}"
+    add_self_signed_root_cert_to_firefox "$project_name"
   fi
 }

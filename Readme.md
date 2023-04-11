@@ -16,11 +16,43 @@ That way, you start your project in a clean, tested environment.
 
 ## Usage
 
-The main code can be ran with:
+4 sets of commands are given, pre-requisites, uninstallation, installation, and
+step-by-step commands with commented explanations.
+
+### Prerequisites
 
 ```sh
 git clone git@github.com:HiveMinds/SSL4Tor.git
+pip install dash
+pip install pandas
+python3 src/website/mwe_dash.py
+```
 
+Then open a new termina.
+
+### Delete Pre-existing Data
+
+```bash
+./src/main.sh --delete-onion-domain \
+  --project-name gitlab \
+  --delete-ssl-certs
+```
+
+### Single command
+
+```bash
+./src/main.sh --make-onion-domain \
+  --project-name gitlab \
+  --local-project-port 8050 \
+  --public-port-to-access-onion 90 \
+  --make-ssl-certs \
+  --ssl-password somepassword \
+  --add-ssl-root-cert-to-apt-firefox \
+```
+
+### Step-by-step
+
+```bash
 # Remove tor and accompanying files.
 ./src/main.sh -do -n gitlab
 
@@ -30,10 +62,8 @@ git clone git@github.com:HiveMinds/SSL4Tor.git
 # To access a local project running on localhost:8050 via: <code>.onion:443
 ./src/main.sh -mo -n gitlab -lpp 8050 -ppo 443
 ./src/main.sh -fta # Convert snap Firefox to apt firefox.
-./src/main.sh -af -n gitlab # add root CA cert to APT firefox.
-./src/main.sh -ms -n gitlab -sp somepassword
-
-
+./src/main.sh -asf -n gitlab # add root CA cert to APT firefox.
+./src/main.sh -ms -n gitlab -sp somepassword # Make ssl cert
 ```
 
 ## Testing
@@ -45,7 +75,7 @@ pip install dash
 pip install pandas
 ```
 
-### Prerequisites
+### Developer Requirements
 
 (Re)-install the required submodules with:
 

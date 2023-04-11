@@ -3,8 +3,8 @@ parse_args() {
   # The incoming function arguments are the cli arguments.
 
   # Specify default argument values.
-  local apply_certs_flag='false'
-  local add_to_apt_firefox_flag='false'
+  local apply_certs_to_project_flag='false'
+  local add_ssl_root_cert_to_apt_firefox_flag='false'
   local check_http_flag='false'
   local check_https_flag='false'
   local firefox_to_apt_flag='false'
@@ -18,11 +18,11 @@ parse_args() {
   while [[ $# -gt 0 ]]; do
     case $1 in
       -a | --apply-certs)
-        apply_certs_flag='true'
+        apply_certs_to_project_flag='true'
         shift # past argument
         ;;
-      -af | --add-to-apt-firefox)
-        add_to_apt_firefox_flag='true'
+      -asf | --add-ssl-root-cert-to-apt-firefox)
+        add_ssl_root_cert_to_apt_firefox_flag='true'
         shift # past argument
         ;;
       -ch | --check-http)
@@ -49,6 +49,12 @@ parse_args() {
         get_onion_domain_flag='true'
         shift # past argument
         ;;
+      -lpp | --local-project-port)
+        local_project_port_flag='true'
+        local_project_port="$2"
+        shift # past argument
+        shift
+        ;;
       -ms | --make-ssl-certs)
         make_ssl_certs_flag='true'
         shift # past argument
@@ -57,7 +63,7 @@ parse_args() {
         make_onion_domain_flag='true'
         shift # past argument
         ;;
-      -ppo | --public_port_to_access_onion)
+      -ppo | --public-port-to-access-onion)
         public_port_to_access_onion_flag='true'
         # Assign default public_port_to_access_onion if none is specified in CLI.
         public_port_to_access_onion="$2"
@@ -75,12 +81,6 @@ parse_args() {
         local ssl_password
         ssl_password="$2"
         assert_is_non_empty_string "${ssl_password}"
-        shift # past argument
-        shift
-        ;;
-      -lpp | --local-project-port)
-        local_project_port_flag='true'
-        local_project_port="$2"
         shift # past argument
         shift
         ;;
@@ -112,20 +112,32 @@ parse_args() {
   assert_is_non_empty_string "${public_port_to_access_onion}"
 
   # Run the functions that are asked for in the CLI args.
+
+  # Verify input argument validity.
   process_project_name_flag "$project_name_flag" "$project_name"
   process_local_project_port_flag "$local_project_port_flag" "$local_project_port"
   process_public_port_to_access_onion_flag "$public_port_to_access_onion_flag" "$public_port_to_access_onion"
 
+  # Delete files from previous run.
   process_delete_onion_domain_flag "$delete_onion_domain_flag" "$project_name"
   process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
 
+  # Prepare Firefox version.
   process_firefox_to_apt_flag "$firefox_to_apt_flag"
-  process_add_to_apt_firefox_flag "$add_to_apt_firefox_flag" "$project_name"
-  process_get_onion_domain_flag "$get_onion_domain_flag"
+
+  # Create onion domain(s).
   process_make_onion_domain_flag "$make_onion_domain_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
-  process_make_ssl_certs_flag "$make_ssl_certs_flag" "$project_name" "$ssl_password"
-  process_apply_certs_flag "$apply_certs_flag"
+  process_get_onion_domain_flag "$get_onion_domain_flag"
+  # Verify http access to onion domain.
   process_check_http_flag "$check_http_flag"
+
+  # Create SSL certificates.
+  process_make_ssl_certs_flag "$make_ssl_certs_flag" "$project_name" "$ssl_password"
+  process_apply_certs_to_project_flag "$apply_certs_to_project_flag"
+  # Verify https access to onion domain.
   process_check_https_flag "$check_https_flag"
+
+  # Add self-signed ssl certificate to (apt) Firefox.
+  process_add_ssl_root_cert_to_apt_firefox_flag "$add_ssl_root_cert_to_apt_firefox_flag" "$project_name"
 
 }
