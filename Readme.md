@@ -22,9 +22,13 @@ step-by-step commands with commented explanations.
 ### Prerequisites
 
 ```sh
-git clone git@github.com:HiveMinds/SSL4Tor.git
+
+sudo apt install git -y
+sudo apt install pip -y
 pip install dash
 pip install pandas
+git clone https://github.com/HiveMinds/SSL4Tor.git
+cd SSL4Tor
 python3 src/website/mwe_dash.py
 ```
 
@@ -44,10 +48,10 @@ Then open a new termina.
 ./src/main.sh --make-onion-domain \
   --project-name gitlab \
   --local-project-port 8050 \
-  --public-port-to-access-onion 90 \
+  --public-port-to-access-onion 443 \
   --make-ssl-certs \
   --ssl-password somepassword \
-  --add-ssl-root-cert-to-apt-firefox \
+  --add-ssl-root-cert-to-apt-firefox
 ```
 
 ### Step-by-step
