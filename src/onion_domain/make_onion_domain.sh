@@ -7,9 +7,9 @@ make_onion_domain() {
 
   assert_is_non_empty_string "$public_port_to_access_onion"
   assert_is_non_empty_string "$local_project_port"
-  # ensure_apt_pkg "tor" 1
-  # ensure_apt_pkg "net-tools" 1
-  # ensure_apt_pkg "httping" 1
+  ensure_apt_pkg "tor" 1
+  ensure_apt_pkg "net-tools" 1
+  ensure_apt_pkg "httping" 1
   kill_tor_if_already_running
   assert_tor_is_not_running
 

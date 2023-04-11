@@ -21,6 +21,9 @@ The main code can be ran with:
 ```sh
 git clone git@github.com:HiveMinds/SSL4Tor.git
 
+# Remove tor and accompanying files.
+./src/main.sh -do -n gitlab
+
 # Install tor and create onion domain for the gitlab service
 # To access a local project running on port localhost:8050 via: <code>.onion:90
 ./src/main.sh -mo -n gitlab -lpp 8050 -ppo 90
@@ -29,8 +32,8 @@ git clone git@github.com:HiveMinds/SSL4Tor.git
 ./src/main.sh -fta # Convert snap Firefox to apt firefox.
 ./src/main.sh -af -n gitlab # add root CA cert to APT firefox.
 ./src/main.sh -ms -n gitlab -sp somepassword
-# Remove tor and accompanying files.
-./src/main.sh -do -n gitlab
+
+
 ```
 
 ## Testing
