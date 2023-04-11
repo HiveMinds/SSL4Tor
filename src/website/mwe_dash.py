@@ -5,6 +5,8 @@ from dash import Dash, html, dcc
 import plotly.express as px
 import pandas as pd
 
+port=443
+
 app = Dash(__name__)
 
 # assume you have a "long-form" data frame
@@ -31,4 +33,4 @@ app.layout = html.Div(children=[
 ])
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(port=port, debug=True)
