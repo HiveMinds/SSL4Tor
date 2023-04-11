@@ -49,7 +49,7 @@ SIGNED_DOMAINS_FILENAME="extfile.cnf"
 # Then create the signed public SSL cert.
 SSL_PUBLIC_KEY_FILENAME="cert.pem"
 
-# Then merge the CA and SLL cert into one.
+# Then merge the CA and SSL cert into one.
 MERGED_CA_SSL_CERT_FILENAME="fullchain.pem"
 
 TEMP_SSL_PWD_FILENAME="ssl_password.txt"
