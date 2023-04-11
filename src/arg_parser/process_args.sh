@@ -45,6 +45,14 @@ process_delete_onion_domain_flag() {
   fi
 }
 
+process_firefox_to_apt_flag() {
+  local firefox_to_apt_flag="$1"
+
+  if [ "$firefox_to_apt_flag" == "true" ]; then
+    wap_snap_firefox_with_ppa_apt_firefox_installation
+  fi
+}
+
 process_add_to_apt_firefox_flag() {
   local add_to_apt_firefox_flag="$1"
   local project_name="$2"

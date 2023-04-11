@@ -26,6 +26,8 @@ git clone git@github.com:HiveMinds/SSL4Tor.git
 ./src/main.sh -mo -n gitlab -lpp 8050 -ppo 90
 # To access a local project running on localhost:8050 via: <code>.onion:443
 ./src/main.sh -mo -n gitlab -lpp 8050 -ppo 443
+./src/main.sh -fta # Convert snap Firefox to apt firefox.
+./src/main.sh -af -n gitlab # add root CA cert to APT firefox.
 ./src/main.sh -ms -n gitlab -sp somepassword
 # Remove tor and accompanying files.
 ./src/main.sh -do -n gitlab

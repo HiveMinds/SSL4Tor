@@ -7,6 +7,7 @@ parse_args() {
   local add_to_apt_firefox_flag='false'
   local check_http_flag='false'
   local check_https_flag='false'
+  local firefox_to_apt_flag='false'
   local make_ssl_certs_flag='false'
   local project_name_flag='false'
   local local_project_port_flag='false'
@@ -38,6 +39,10 @@ parse_args() {
         ;;
       -do | --delete-onion-domain)
         delete_onion_domain_flag='true'
+        shift # past argument
+        ;;
+      -fta | --firefox-to-apt)
+        firefox_to_apt_flag='true'
         shift # past argument
         ;;
       -go | --get-onion-domain)
@@ -114,6 +119,7 @@ parse_args() {
   process_delete_onion_domain_flag "$delete_onion_domain_flag" "$project_name"
   process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
 
+  process_firefox_to_apt_flag "$firefox_to_apt_flag"
   process_add_to_apt_firefox_flag "$add_to_apt_firefox_flag" "$project_name"
   process_get_onion_domain_flag "$get_onion_domain_flag"
   process_make_onion_domain_flag "$make_onion_domain_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
