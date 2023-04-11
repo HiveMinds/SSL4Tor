@@ -113,9 +113,12 @@ start_onion_domain_creation() {
   local local_project_port="$3"
   local public_port_to_access_onion="$4"
   local use_https="$4"
+  local wait_time_sec=180
+
+  local onion_domain
   #local max_tor_wait_time="$2"
   # TODO: include max_tor_wait_time as parameter
-  printf "Now starting tor, and waiting (max) 120 seconds to generate onion url."
+  echo "Now starting tor, and waiting (max) $wait_time_sec seconds to generate onion url."
 
   # Start "sudo tor" in the background
   sudo tor | tee "$TOR_LOG_FILEPATH" >/dev/null &
@@ -132,6 +135,9 @@ start_onion_domain_creation() {
     # Check if the onion URL exists in the hostname
     if sudo test -f "$TOR_SERVICE_DIR/$project_name/hostname"; then
       if [[ "$onion_exists" -eq 0 ]]; then
+
+        onion_domain="$(get_onion_url "$project_name")"
+        echo "$onion_domain"
         if [[ "$kill_if_domain_exists" == "true" ]]; then
           # If the onion URL exists, terminate the "sudo tor" process and return 0
           kill_tor_if_already_running
@@ -159,10 +165,9 @@ start_onion_domain_creation() {
     elapsed_time=$(($(date +%s) - start_time))
 
     # If 2 minutes have passed, raise an exception and return 7
-    if ((elapsed_time > 180)); then
+    if ((elapsed_time > wait_time_sec)); then
       kill_tor_if_already_running
-      get_onion_url "$project_name"
-      echo >&2 "Error: Onion URL: does not exist in hostname after 180 seconds."
+      echo >&2 "Error: Onion URL:$onion_domain does not exist in hostname after $wait_time_sec seconds."
       exit 6
     fi
 
