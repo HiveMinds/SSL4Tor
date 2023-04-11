@@ -51,6 +51,7 @@ Then open a new termina.
   --public-port-to-access-onion 443 \
   --make-ssl-certs \
   --ssl-password somepassword \
+  --firefox-to-apt \
   --add-ssl-root-cert-to-apt-firefox
 ```
 

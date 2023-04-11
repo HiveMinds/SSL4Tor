@@ -159,9 +159,10 @@ start_onion_domain_creation() {
     elapsed_time=$(($(date +%s) - start_time))
 
     # If 2 minutes have passed, raise an exception and return 7
-    if ((elapsed_time > 120)); then
+    if ((elapsed_time > 180)); then
       kill_tor_if_already_running
-      echo >&2 "Error: Onion URL does not exist in hostname after 2 minutes."
+      get_onion_url "$project_name"
+      echo >&2 "Error: Onion URL: does not exist in hostname after 180 seconds."
       exit 6
     fi
 
