@@ -49,7 +49,7 @@ process_firefox_to_apt_flag() {
   local firefox_to_apt_flag="$1"
 
   if [ "$firefox_to_apt_flag" == "true" ]; then
-    wap_snap_firefox_with_ppa_apt_firefox_installation
+    swap_snap_firefox_with_ppa_apt_firefox_installation
   fi
 }
 

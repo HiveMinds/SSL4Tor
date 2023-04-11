@@ -4,6 +4,7 @@ source src/arg_parser/arg_parser.sh
 source src/arg_parser/process_args.sh
 source src/arg_parser/print_usage.sh
 source src/arg_parser/arg_verification.sh
+source src/firefox_version/firefox_version.sh
 source src/onion_domain/delete_onion_domain.sh
 source src/ssl_certs/make_ssl_certs.sh
 source src/onion_domain/make_onion_domain.sh
