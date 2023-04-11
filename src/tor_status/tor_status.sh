@@ -38,7 +38,6 @@ assert_onion_is_available() {
 
   local onion_domain
   onion_domain="$(get_onion_url "$project_name")"
-  echo "onion_domain=$onion_domain"
   local onion_url
   if [[ "$use_https" == "true" ]]; then
     onion_url="https://$onion_domain"

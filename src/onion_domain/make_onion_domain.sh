@@ -110,7 +110,7 @@ start_onion_domain_creation() {
   local local_project_port="$3"
   local public_port_to_access_onion="$4"
   local use_https="$4"
-  local wait_time_sec=180
+  local wait_time_sec=260
 
   local onion_domain
   #local max_tor_wait_time="$2"
@@ -152,6 +152,8 @@ start_onion_domain_creation() {
           if [[ "$tor_connection_is_found" == "FOUND" ]]; then
             echo "Successfully reached a tor connection. Proceeding.."
             assert_onion_is_available "$use_https" "$public_port_to_access_onion"
+            echo "Successfully verified your onion is available at:TODO"
+            echo "and use_https=$use_https."
             return 0
           fi
         fi
