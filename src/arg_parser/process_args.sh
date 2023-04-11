@@ -45,6 +45,18 @@ process_delete_onion_domain_flag() {
   fi
 }
 
+process_add_to_apt_firefox_flag() {
+  local add_to_apt_firefox_flag="$1"
+  local project_name="$2"
+
+  if [ "$add_to_apt_firefox_flag" == "true" ]; then
+    echo "Adding your SSL certificates to firefox."
+
+    assert_is_non_empty_string "${project_name}"
+    add_self_signed_root_cert_to_firefox "$project_name"
+  fi
+}
+
 process_get_onion_domain_flag() {
   local process_get_onion_domain="$1"
   local project_name="$2"

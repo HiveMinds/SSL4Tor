@@ -4,6 +4,7 @@ parse_args() {
 
   # Specify default argument values.
   local apply_certs_flag='false'
+  local add_to_apt_firefox_flag='false'
   local check_http_flag='false'
   local check_https_flag='false'
   local make_ssl_certs_flag='false'
@@ -17,6 +18,10 @@ parse_args() {
     case $1 in
       -a | --apply-certs)
         apply_certs_flag='true'
+        shift # past argument
+        ;;
+      -af | --add-to-apt-firefox)
+        add_to_apt_firefox_flag='true'
         shift # past argument
         ;;
       -ch | --check-http)
@@ -105,8 +110,11 @@ parse_args() {
   process_project_name_flag "$project_name_flag" "$project_name"
   process_local_project_port_flag "$local_project_port_flag" "$local_project_port"
   process_public_port_to_access_onion_flag "$public_port_to_access_onion_flag" "$public_port_to_access_onion"
+
   process_delete_onion_domain_flag "$delete_onion_domain_flag" "$project_name"
   process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
+
+  process_add_to_apt_firefox_flag "$add_to_apt_firefox_flag" "$project_name"
   process_get_onion_domain_flag "$get_onion_domain_flag"
   process_make_onion_domain_flag "$make_onion_domain_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
   process_make_ssl_certs_flag "$make_ssl_certs_flag" "$project_name" "$ssl_password"

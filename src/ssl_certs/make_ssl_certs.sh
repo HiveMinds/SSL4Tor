@@ -221,12 +221,11 @@ make_self_signed_root_cert_trusted_on_ubuntu() {
 
   # TODO: make argument optional.
   # TODO: include apt Firefox instead of snap.
-  # add_self_signed_root_cert_to_firefox
+  # add_self_signed_root_cert_to_firefox "$project_name"
 }
 
 add_self_signed_root_cert_to_firefox() {
-  local project_name
-  project_name="$1"
+  local project_name="$1"
 
   local policies_filepath="/etc/firefox/policies/policies.json"
 
