@@ -61,8 +61,10 @@ assert_onion_is_available() {
 
 get_onion_url() {
   local project_name="$1"
+  local onion_exists
   onion_exists=$(check_onion_url_exists_in_hostname "$project_name")
-  if [[ "$onion_exists" -eq 0 ]]; then
+
+  if [[ "$onion_exists" == "FOUND" ]]; then
     sudo cat "$TOR_SERVICE_DIR/$project_name/hostname"
   else
     echo "Error, the onion url was not found in file."

@@ -134,10 +134,11 @@ start_onion_domain_creation() {
 
     # Check if the onion URL exists in the hostname
     if sudo test -f "$TOR_SERVICE_DIR/$project_name/hostname"; then
-      if [[ "$onion_exists" -eq 0 ]]; then
+      if [[ "$onion_exists" == "FOUND" ]]; then
 
         onion_domain="$(get_onion_url "$project_name")"
         echo "$onion_domain"
+        echo "kill_if_domain_exists=$kill_if_domain_exists"
         if [[ "$kill_if_domain_exists" == "true" ]]; then
           # If the onion URL exists, terminate the "sudo tor" process and return 0
           kill_tor_if_already_running
@@ -150,6 +151,7 @@ start_onion_domain_creation() {
         else
           local tor_connection_is_found
           tor_connection_is_found=$(tor_is_connected)
+          echo "tor_connection_is_found=$tor_connection_is_found"
           if [[ "$tor_connection_is_found" == "FOUND" ]]; then
             echo "Successfully reached a tor connection. Proceeding.."
             assert_onion_is_available "$use_https" "$public_port_to_access_onion"
@@ -205,11 +207,11 @@ check_onion_url_exists_in_hostname() {
   if sudo test -f "$TOR_SERVICE_DIR/$project_name/hostname"; then
     # Verify that the file's content is a valid onion URL
     if [[ "$file_content" =~ ^[a-z0-9]{56}\.onion$ ]]; then
-      return 0 # file exists and has valid onion URL as its content
+      echo "FOUND" # file exists and has valid onion URL as its content
     else
-      return 8 # file exists, but has invalid onion URL as its content
+      echo "NOTFOUND" # file exists, but has invalid onion URL as its content
     fi
   else
-    return 7 # file does not exist
+    echo "NOTFOUND" # file does not exist
   fi
 }
