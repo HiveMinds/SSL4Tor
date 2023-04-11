@@ -9,6 +9,19 @@
 # Run with:
 # bash -c "source src/import.sh && src/prerequisites/firefox_version.sh swap_snap_firefox_with_ppa_apt_firefox_installation"
 
+command_output_contains() {
+  local substring="$1"
+  shift
+  # shellcheck disable=SC2124
+  local command_output="$@"
+  if grep -q "$substring" <<<"$command_output"; then
+    #if "$command" | grep -q "$substring"; then
+    echo "FOUND"
+  else
+    echo "NOTFOUND"
+  fi
+}
+
 #######################################
 # Checks if firefox is installed using snap or not.
 # Locals:
