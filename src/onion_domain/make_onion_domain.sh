@@ -16,11 +16,8 @@ make_onion_domain() {
 
   prepare_onion_domain_creation "$project_name" "$local_project_port" "$public_port_to_access_onion"
 
-  start_onion_domain_creation "$project_name" "false" "$local_project_port" "$public_port_to_access_onion" "false"
-  # start_onion_domain_creation "$project_name" "false" "$public_port_to_access_onion" "false"
-
-  # start_onion_domain_creation "$project_name" "false" "$local_project_port" "true"
-  # start_onion_domain_creation "$project_name" "false" "$public_port_to_access_onion" "true"
+  # start_onion_domain_creation "$project_name" "false" "$local_project_port" "$public_port_to_access_onion" "false"
+  start_onion_domain_creation "$project_name" "false" "$local_project_port" "$public_port_to_access_onion" "true"
 
   # Assert the tor_log.txt does not contain error.
   assert_file_does_not_contains_string "\[err\]" "$TOR_LOG_FILEPATH"
