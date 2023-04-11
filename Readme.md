@@ -29,7 +29,7 @@ pip install dash
 pip install pandas
 git clone https://github.com/HiveMinds/SSL4Tor.git
 cd SSL4Tor
-python3 src/website/mwe_dash.py
+python3 src/website/mwe_dash.py --port 8050 --use-https
 ```
 
 Then open a new termina.
@@ -37,8 +37,8 @@ Then open a new termina.
 ### Delete Pre-existing Data
 
 ```bash
-./src/main.sh --delete-onion-domain \
-  --project-name gitlab \
+./src/main.sh --project-name gitlab \
+  --delete-onion-domain \
   --delete-ssl-certs
 ```
 

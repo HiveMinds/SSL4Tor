@@ -14,8 +14,6 @@ def parse_args() -> Tuple[str,bool]:
     parser.add_argument('--port', type=int, required=True)# Parse the argument
     parser.add_argument('--use-https', dest='use_https', action='store_true')# Parse the argument
     args = parser.parse_args()# Print "Hello" + the user input argument
-    print(f'port:{args.port}')
-    print(f'use_https:{args.use_https}')
     return args.port, args.use_https
 
 # TODO: support onion domain as host.
