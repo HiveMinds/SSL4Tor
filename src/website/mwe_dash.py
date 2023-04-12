@@ -49,7 +49,7 @@ if __name__ == '__main__':
         # context = ('local.crt','local.key')
         # Use the fullchain certificate and the SSL-certificate private key.
         # (Not the root CA, and definitely not the root CA private key.)
-        context = ('fullchain.pem','cert-key.pem')
+        context = ('cert.pem','cert-key.pem')
         app.run_server(host=dash_host_domain, port=dash_local_port, debug=True, ssl_context=context)
     else:
         app.run_server(port=dash_local_port, debug=True)
