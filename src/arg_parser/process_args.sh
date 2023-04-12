@@ -106,7 +106,6 @@ process_make_ssl_certs_flag() {
     assert_is_non_empty_string "${onion_domain}"
     make_ssl_certs "$onion_domain" "$project_name" "$ssl_password"
     verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
-    wait_time_sec
   fi
 }
 
