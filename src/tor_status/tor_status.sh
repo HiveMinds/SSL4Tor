@@ -82,5 +82,5 @@ get_onion_address() {
   else
     onion_address="$onion_url:$public_port_to_access_onion"
   fi
-
+  echo "$onion_address"
 }
