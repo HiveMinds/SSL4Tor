@@ -75,7 +75,7 @@ process_get_onion_domain_flag() {
 
   if [ "$process_get_onion_domain" == "true" ]; then
     local onion_domain
-    onion_domain=$(get_onion_url "$project_name")
+    onion_domain=$(get_onion_domain "$project_name")
     echo "Your onion domain for:$project_name, is:$onion_domain"
 
   fi
@@ -101,7 +101,7 @@ process_make_ssl_certs_flag() {
     assert_is_non_empty_string "${project_name}"
     assert_is_non_empty_string "${ssl_password}"
     local onion_domain
-    onion_domain="$(get_onion_url "$project_name")"
+    onion_domain="$(get_onion_domain "$project_name")"
     assert_is_non_empty_string "${onion_domain}"
     make_ssl_certs "$onion_domain" "$project_name" "$ssl_password"
   fi

@@ -17,7 +17,7 @@ make_onion_domain() {
   prepare_onion_domain_creation "$project_name" "$local_project_port" "$public_port_to_access_onion"
 
   # start_onion_domain_creation "$project_name" "false" "$local_project_port" "$public_port_to_access_onion" "false"
-  start_onion_domain_creation "$project_name" "false" "$local_project_port" "$public_port_to_access_onion" "true"
+  start_onion_domain_creation "$project_name" "true" "$local_project_port" "$public_port_to_access_onion" "true"
 
   # Assert the tor_log.txt does not contain error.
   assert_file_does_not_contains_string "\[err\]" "$TOR_LOG_FILEPATH"
@@ -133,7 +133,7 @@ start_onion_domain_creation() {
     if sudo test -f "$TOR_SERVICE_DIR/$project_name/hostname"; then
       if [[ "$onion_exists" == "FOUND" ]]; then
 
-        onion_domain="$(get_onion_url "$project_name")"
+        onion_domain="$(get_onion_domain "$project_name")"
         echo "$onion_domain"
         echo "kill_if_domain_exists=$kill_if_domain_exists"
         if [[ "$kill_if_domain_exists" == "true" ]]; then
@@ -151,7 +151,7 @@ start_onion_domain_creation() {
           echo "tor_connection_is_found=$tor_connection_is_found"
           if [[ "$tor_connection_is_found" == "FOUND" ]]; then
             echo "Successfully reached a tor connection. Proceeding.."
-            assert_onion_is_available "$use_https" "$public_port_to_access_onion"
+            assert_onion_address_is_available "$project_name" "$use_https" "$public_port_to_access_onion"
             echo "Successfully verified your onion is available at:TODO"
             echo "and use_https=$use_https."
             return 0

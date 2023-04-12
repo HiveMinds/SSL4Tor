@@ -15,9 +15,10 @@ tor_is_connected() {
     echo "FOUND"
   fi
 }
+
 # Returns "FOUND" if an onion was available on the first try.
 # TODO: allow for retries in parsing ping output.
-onion_is_available() {
+onion_address_is_available() {
   local onion_address="$1"
 
   local ping_output
@@ -32,12 +33,42 @@ onion_is_available() {
   fi
 }
 
-assert_onion_is_available() {
-  local use_https="$1"
-  local public_port_to_access_onion="$2"
+assert_onion_address_is_available() {
+  local project_name="$1"
+  local use_https="$2"
+  local public_port_to_access_onion="$3"
+
+  local onion_address
+  onion_address="$(get_onion_address "$project_name" "$use_https" "$public_port_to_access_onion")"
+
+  if [ "$(onion_address_is_available "$onion_address")" != "FOUND" ]; then
+    echo "Error, was not able to connect to:$onion_address"
+    exit 5
+  fi
+
+}
+
+get_onion_domain() {
+  local project_name="$1"
+  local onion_exists
+  onion_exists=$(check_onion_url_exists_in_hostname "$project_name")
+
+  if [[ "$onion_exists" == "FOUND" ]]; then
+    sudo cat "$TOR_SERVICE_DIR/$project_name/hostname"
+  else
+    echo "Error, the onion url was not found in file."
+    exit 6
+  fi
+}
+
+get_onion_address() {
+  local project_name="$1"
+  local use_https="$2"
+  local public_port_to_access_onion="$3"
 
   local onion_domain
-  onion_domain="$(get_onion_url "$project_name")"
+  onion_domain="$(get_onion_domain "$project_name")"
+
   local onion_url
   if [[ "$use_https" == "true" ]]; then
     onion_url="https://$onion_domain"
@@ -51,22 +82,5 @@ assert_onion_is_available() {
   else
     onion_address="$onion_url:$public_port_to_access_onion"
   fi
-  if [ "$(onion_is_available "$onion_address")" != "FOUND" ]; then
-    echo "Error, was not able to connect to:$onion_address"
-    exit 5
-  fi
 
-}
-
-get_onion_url() {
-  local project_name="$1"
-  local onion_exists
-  onion_exists=$(check_onion_url_exists_in_hostname "$project_name")
-
-  if [[ "$onion_exists" == "FOUND" ]]; then
-    sudo cat "$TOR_SERVICE_DIR/$project_name/hostname"
-  else
-    echo "Error, the onion url was not found in file."
-    exit 6
-  fi
 }
