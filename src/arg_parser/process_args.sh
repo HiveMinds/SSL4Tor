@@ -94,6 +94,7 @@ process_make_ssl_certs_flag() {
   local make_ssl_certs_flag="$1"
   local project_name="$2"
   local ssl_password="$3"
+  local public_port_to_access_onion="$4"
 
   if [ "$make_ssl_certs_flag" == "true" ]; then
     echo "Generating your self-signed SSL certificates for:$project_name"
@@ -104,6 +105,8 @@ process_make_ssl_certs_flag() {
     onion_domain="$(get_onion_domain "$project_name")"
     assert_is_non_empty_string "${onion_domain}"
     make_ssl_certs "$onion_domain" "$project_name" "$ssl_password"
+    verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
+    wait_time_sec
   fi
 }
 

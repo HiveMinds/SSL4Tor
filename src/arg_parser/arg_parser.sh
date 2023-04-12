@@ -132,7 +132,7 @@ parse_args() {
   process_check_http_flag "$check_http_flag"
 
   # Create SSL certificates.
-  process_make_ssl_certs_flag "$make_ssl_certs_flag" "$project_name" "$ssl_password"
+  process_make_ssl_certs_flag "$make_ssl_certs_flag" "$project_name" "$ssl_password" "$public_port_to_access_onion"
   process_apply_certs_to_project_flag "$apply_certs_to_project_flag"
   # Verify https access to onion domain.
   process_check_https_flag "$check_https_flag"

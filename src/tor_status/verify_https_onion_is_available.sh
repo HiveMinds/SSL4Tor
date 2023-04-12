@@ -1,9 +1,10 @@
 #!/bin/bash
 
-start_onion_domain_creation() {
+verify_onion_address_is_reachable() {
   local project_name="$1"
   local public_port_to_access_onion="$2"
   local use_https="$3"
+
   local wait_time_sec=260
 
   local onion_exists
