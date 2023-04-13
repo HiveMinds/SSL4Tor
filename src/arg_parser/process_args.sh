@@ -48,11 +48,9 @@ process_make_onion_domain_flag() {
         public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
 
         echo "Generating your onion domain for:$project_name"
-        make_onion_domain "$project_name" "$local_project_port" "$public_port_to_access_onion"
+        make_onion_domain "$one_domain_per_service_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
       done
-
     fi
-
   fi
 }
 

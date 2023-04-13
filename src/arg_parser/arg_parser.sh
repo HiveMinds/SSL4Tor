@@ -91,9 +91,8 @@ parse_args() {
 
   # Ensure ports are populated and valid, and that project names are valid.
   assert_services_are_valid "$services"
-
+  
   # Run the functions that are asked for in the CLI args.
-
   # Delete files from previous run.
   # TODO: make independent of project_name.
   process_delete_onion_domain_flag "$delete_onion_domain_flag" "$services"
@@ -109,12 +108,14 @@ parse_args() {
   process_check_http_flag "$check_http_flag"
 
   # Create SSL certificates.
+  # TODO: process services instead of project_name.
   process_make_ssl_certs_flag "$make_ssl_certs_flag" "$one_domain_per_service_flag" "$services" "$ssl_password"
   process_apply_certs_to_project_flag "$apply_certs_to_project_flag"
   # Verify https access to onion domain.
   process_check_https_flag "$check_https_flag"
 
   # Add self-signed ssl certificate to (apt) Firefox.
+  # TODO: process services instead of project_name.
   process_add_ssl_root_cert_to_apt_firefox_flag "$add_ssl_root_cert_to_apt_firefox_flag" "$services"
 
 }

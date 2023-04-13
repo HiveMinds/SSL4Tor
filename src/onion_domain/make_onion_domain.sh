@@ -1,9 +1,10 @@
 #!/bin/bash
 
 make_onion_domain() {
-  local project_name="$1"
-  local local_project_port="$2"
-  local public_port_to_access_onion="$3"
+  local one_domain_per_service_flag="$1"
+  local project_name="$2"
+  local local_project_port="$3"
+  local public_port_to_access_onion="$4"
 
   assert_is_non_empty_string "$public_port_to_access_onion"
   assert_is_non_empty_string "$local_project_port"
@@ -15,6 +16,13 @@ make_onion_domain() {
   assert_tor_is_not_running
 
   prepare_onion_domain_creation "$project_name" "$local_project_port" "$public_port_to_access_onion"
+  
+  if [ "$one_domain_per_service_flag" == "true" ]; then
+    create_torrc_lines_one_onion_per_service "$project_name" "$local_project_port" "$public_port_to_access_onion"
+  else
+    echo "Error multiple services on single onion domain not yet supported."
+    exit 5
+  fi
 
   # start_onion_domain_creation "$project_name" "false" "$local_project_port" "$public_port_to_access_onion" "false"
   start_onion_domain_creation "$project_name" "true" "$local_project_port" "$public_port_to_access_onion" "true"
@@ -84,6 +92,17 @@ prepare_onion_domain_creation() {
   sudo touch "$TOR_SERVICE_DIR/$project_name/hostname"
   manual_assert_file_exists "$TOR_SERVICE_DIR/$project_name/hostname" "true"
 
+
+  # Make root owner of tor directory.
+  sudo chown -R root "$TOR_SERVICE_DIR"
+  sudo chmod 700 "$TOR_SERVICE_DIR/$project_name"
+}
+
+create_torrc_lines_one_onion_per_service(){
+  local project_name="$1"
+  local local_project_port="$2"
+  local public_port_to_access_onion="$3"
+
   local torrc_line_1
   torrc_line_1="HiddenServiceDir $TOR_SERVICE_DIR/$project_name/"
   local torrc_line_2
@@ -98,10 +117,6 @@ prepare_onion_domain_creation() {
 
   # F. Verify that content is in the file.
   verify_has_two_consecutive_lines "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"
-
-  # Make root owner of tor directory.
-  sudo chown -R root "$TOR_SERVICE_DIR"
-  sudo chmod 700 "$TOR_SERVICE_DIR/$project_name"
 }
 
 start_onion_domain_creation() {

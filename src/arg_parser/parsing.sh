@@ -16,9 +16,6 @@ assert_services_are_valid() {
     output=$(get_project_property_by_index "$services" "$project_nr" "local_port" 2>&1) || echo "$output"
     output=$(get_project_property_by_index "$services" "$project_nr" "project_name" 2>&1) || echo "$output"
     output=$(get_project_property_by_index "$services" "$project_nr" "external_port" 2>&1) || echo "$output"
-    # get_project_property_by_index "$services" "$project_nr" "local_port"
-    # get_project_property_by_index "$services" "$project_nr" "project_name"
-    # get_project_property_by_index "$services" "$project_nr" "external_port"
   done
 
 }
