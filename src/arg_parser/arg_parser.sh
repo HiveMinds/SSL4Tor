@@ -91,7 +91,7 @@ parse_args() {
 
   # Ensure ports are populated and valid, and that project names are valid.
   assert_services_are_valid "$services"
-  
+
   # Run the functions that are asked for in the CLI args.
   # Delete files from previous run.
   # TODO: make independent of project_name.

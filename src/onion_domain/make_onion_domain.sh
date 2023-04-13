@@ -16,7 +16,7 @@ make_onion_domain() {
   assert_tor_is_not_running
 
   prepare_onion_domain_creation "$project_name" "$local_project_port" "$public_port_to_access_onion"
-  
+
   if [ "$one_domain_per_service_flag" == "true" ]; then
     create_torrc_lines_one_onion_per_service "$project_name" "$local_project_port" "$public_port_to_access_onion"
   else
@@ -92,13 +92,12 @@ prepare_onion_domain_creation() {
   sudo touch "$TOR_SERVICE_DIR/$project_name/hostname"
   manual_assert_file_exists "$TOR_SERVICE_DIR/$project_name/hostname" "true"
 
-
   # Make root owner of tor directory.
   sudo chown -R root "$TOR_SERVICE_DIR"
   sudo chmod 700 "$TOR_SERVICE_DIR/$project_name"
 }
 
-create_torrc_lines_one_onion_per_service(){
+create_torrc_lines_one_onion_per_service() {
   local project_name="$1"
   local local_project_port="$2"
   local public_port_to_access_onion="$3"
