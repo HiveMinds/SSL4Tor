@@ -10,10 +10,7 @@ parse_args() {
   local firefox_to_apt_flag='false'
   local make_ssl_certs_flag='false'
   local one_domain_per_service_flag='false'
-  local project_name_flag='false'
-  local local_project_port_flag='false'
-  local services_flag='false'
-  local use_ssl_flag='false'
+  local dont_use_ssl='false'
 
   # $# gives the length/number of the incoming function arguments.
   # the shift command eats the first element of that array, making it shorter.
@@ -39,12 +36,16 @@ parse_args() {
         check_https_flag='true'
         shift # past argument
         ;;
+      -do | --delete-onion-domain)
+        delete_onion_domain_flag='true'
+        shift # past argument
+        ;;
       -ds | --delete-ssl-certs)
         delete_ssl_certs_flag='true'
         shift # past argument
         ;;
-      -do | --delete-onion-domain)
-        delete_onion_domain_flag='true'
+      -dus | --dont-use-ssl)
+        dont_use_ssl='true'
         shift # past argument
         ;;
       -fta | --firefox-to-apt)
@@ -64,7 +65,6 @@ parse_args() {
         shift # past argument
         ;;
       -s | --services)
-        services_flag='true'
         services="$2"
         assert_is_non_empty_string "${services}"
         shift # past argument
@@ -77,10 +77,6 @@ parse_args() {
         shift # past argument
         shift
         ;;
-      -us | --use-ssl)
-        use_ssl_flag='true'
-        shift # past argument
-        ;;
       -*)
         echo "Unknown option $1"
         print_usage
@@ -89,13 +85,22 @@ parse_args() {
     esac
   done
 
+  if [ "$one_domain_per_service_flag" != "true" ]; then
+    echo "Error, multiple services per onion domain is not yet supported."
+    exit 5
+  fi
+
+  if [ "$dont_use_ssl" == "true" ]; then
+    echo "Error, using http only is currently not supported."
+    exit 5
+  fi
+
   # Ensure ports are populated and valid, and that project names are valid.
   assert_services_are_valid "$services"
 
   # Run the functions that are asked for in the CLI args.
   # Delete files from previous run.
-  # TODO: make independent of project_name.
-  process_delete_onion_domain_flag "$delete_onion_domain_flag" "$services"
+  process_delete_onion_domain_flag "$delete_onion_domain_flag"
   process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
 
   # Prepare Firefox version.
