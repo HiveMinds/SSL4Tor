@@ -35,6 +35,8 @@ process_make_onion_domain_flag() {
   local services="$3"
 
   if [ "$make_onion_domain_flag" == "true" ]; then
+    install_apt_prerequisites
+
     if [ "$one_domain_per_service_flag" == "true" ]; then
       nr_of_services=$(get_nr_of_services "$services")
       start=0
@@ -49,6 +51,7 @@ process_make_onion_domain_flag() {
 
         echo "Generating your onion domain for:$project_name"
         make_onion_domain "$one_domain_per_service_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
+        prepare_starting_tor "$project_name" "$local_project_port" "$public_port_to_access_onion"
       done
     fi
   fi

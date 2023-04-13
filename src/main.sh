@@ -11,6 +11,7 @@ source src/onion_domain/delete_onion_domain.sh
 source src/ssl_certs/make_ssl_certs.sh
 source src/onion_domain/make_onion_domain.sh
 source src/installation/install_apt.sh
+source src/installation/install_prerequisites.sh
 source src/uninstallation/uninstall_apt.sh
 source src/logging/cli_logging.sh
 source src/verification/assert_exists.sh
