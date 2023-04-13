@@ -1,33 +1,5 @@
 #!/bin/bash
 
-# Verify input argument validity.
-process_project_name_flag() {
-  local project_name_flag="$1"
-  local project_name="$2"
-
-  if [ "$project_name_flag" == "true" ]; then
-    echo "Verified project name:$project_name consists of valid characters."
-  fi
-}
-
-process_local_project_port_flag() {
-  local local_project_port_flag="$1"
-  local local_project_port="$2"
-
-  if [ "$local_project_port_flag" == "true" ]; then
-    echo "Verified the port:$public_port_to_access_onion is in valid range and unused."
-  fi
-}
-
-process_public_port_to_access_onion_flag() {
-  local public_port_to_access_onion_flag="$1"
-  local public_port_to_access_onion="$2"
-
-  if [ "$public_port_to_access_onion_flag" == "true" ]; then
-    echo "Verified the port:$public_port_to_access_onion is in valid range and unused."
-  fi
-}
-
 # Delete files from previous run.
 process_delete_onion_domain_flag() {
   local delete_onion_domain_flag="$1"
@@ -59,13 +31,28 @@ process_firefox_to_apt_flag() {
 # Create onion domain(s).
 process_make_onion_domain_flag() {
   local make_onion_domain_flag="$1"
-  local project_name="$2"
-  local local_project_port="$3"
-  local public_port_to_access_onion="$4"
+  local one_domain_per_service_flag="$2"
+  local services="$3"
 
   if [ "$make_onion_domain_flag" == "true" ]; then
-    echo "Generating your onion domain for:$project_name"
-    make_onion_domain "$project_name" "$local_project_port" "$public_port_to_access_onion"
+    if [ "$one_domain_per_service_flag" == "true" ]; then
+      nr_of_services=$(get_nr_of_services "$services")
+      start=0
+      for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+        local local_project_port
+        local project_name
+        local public_port_to_access_onion
+
+        local_project_port="$(get_project_property_by_index "$services" "$project_nr" "local_port")"
+        project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+        public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
+
+        echo "Generating your onion domain for:$project_name"
+        make_onion_domain "$project_name" "$local_project_port" "$public_port_to_access_onion"
+      done
+
+    fi
+
   fi
 }
 

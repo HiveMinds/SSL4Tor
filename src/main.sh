@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source src/arg_parser/arg_parser.sh
+source src/arg_parser/helper.sh
 source src/arg_parser/process_args.sh
 source src/arg_parser/print_usage.sh
 source src/arg_parser/arg_verification.sh

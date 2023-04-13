@@ -105,6 +105,7 @@ Install:
 
 ```sh
 sudo gem install bats
+sudo apt install bats -y
 sudo gem install bashcov
 sudo apt install shfmt -y
 pre-commit install
