@@ -105,8 +105,8 @@ create_torrc_lines_one_onion_per_service() {
   local torrc_line_1
   torrc_line_1="HiddenServiceDir $TOR_SERVICE_DIR/$project_name/"
   local torrc_line_2
-  # TODO: allow user to override PUBLIC_PORT_TO_ACCESS_ONION_SITE_WITHOUT_SSL.
-  assert_is_non_empty_string "$PUBLIC_PORT_TO_ACCESS_ONION_SITE_WITHOUT_SSL"
+
+  assert_is_non_empty_string "$public_port_to_access_onion"
   torrc_line_2="HiddenServicePort $public_port_to_access_onion 127.0.0.1:$local_project_port"
   echo "torrc_line_2=$torrc_line_2"
   echo ""

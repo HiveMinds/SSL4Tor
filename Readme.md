@@ -71,16 +71,16 @@ Then open a new termina.
 
 ```bash
 # Remove tor and accompanying files.
-./src/main.sh -do -s 8050:gitlab:8070
+./src/main.sh -do -1d1s -s 8050:gitlab:8070
 
 # Install tor and create onion domain for the gitlab service
 # To access a local project running on port localhost:8050 via: <code>.onion:90
-./src/main.sh -mo -s 8050:gitlab:8070
+./src/main.sh -mo -1d1s -s 8050:gitlab:8070
 # To access a local project running on localhost:8050 via: <code>.onion:443
-./src/main.sh -mo -n 8050:gitlab:8070
+./src/main.sh -mo -1d1s -n 8050:gitlab:8070
 ./src/main.sh -fta # Convert snap Firefox to apt firefox.
-./src/main.sh -asf -s 8050:gitlab:8070 # add root CA cert to APT firefox.
-./src/main.sh -ms -s 8050:gitlab:8070 -sp somepassword # Make ssl cert
+./src/main.sh -asf -1d1s -s 8050:gitlab:8070 # add root CA cert to APT firefox.
+./src/main.sh -ms -1d1s -s 8050:gitlab:8070 -sp somepassword # Make ssl cert
 ```
 
 ## Testing
