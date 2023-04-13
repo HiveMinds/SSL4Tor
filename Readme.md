@@ -19,6 +19,18 @@ That way, you start your project in a clean, tested environment.
 4 sets of commands are given, pre-requisites, uninstallation, installation, and
 step-by-step commands with commented explanations.
 
+### Starting QEMU
+
+```sh
+qemu-system-x86_64 --enable-kvm -m 4096 -machine smm=off -boot order=d \
+  ubuntu22_1.img -smp 4 \
+  -chardev qemu-vdagent,id=ch1,name=vdagent,clipboard=on \
+  -device virtio-serial-pci \
+  -device virtserialport,chardev=ch1,id=ch1,name=com.redhat.spice.0
+```
+
+Then press `Ctrl+Alt+G` to capture the keyboard (and mouse).
+
 ### Prerequisites
 
 ```sh
