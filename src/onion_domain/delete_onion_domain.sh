@@ -15,7 +15,7 @@ remove_onion_domain_files() {
 
   # Do not delete keys directory, (nor files lock,state).
   # Delete the project dir for the onion domains.
-  for dir_name in "$TOR_SERVICE_DIR/"*/; do
+  for dir_name in "$TOR_SERVICE_DIR/"*; do
     echo "dir_name=$dir_name"
     if [ "$dir_name" != "keys" ]; then
       read -p "Deleting:$dir_name"
