@@ -3,16 +3,10 @@
 # shellcheck disable=SC2153
 
 make_root_ssl_certs() {
-  local onion_domain="$1"
-  local ssl_password="$2"
+  local ssl_password="$1"
 
   # TODO: if files already exist, perform double check on whether user wants to
   # overwrite the files.
-
-  # Create domains accepted by certificate.
-  local domains
-  domains="DNS:localhost,DNS:$onion_domain"
-  echo "domains=$domains.end_without_space"
 
   delete_root_certificate
   create_root_certificate_directories

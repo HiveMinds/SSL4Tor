@@ -89,7 +89,7 @@ process_make_project_ssl_certs_flag() {
     assert_is_non_empty_string "${ssl_password}"
 
     assert_is_non_empty_string "${onion_domain}"
-    make_root_ssl_certs "$onion_domain" "$ssl_password"
+    make_root_ssl_certs "$ssl_password"
 
     if [ "$one_domain_per_service_flag" == "true" ]; then
       nr_of_services=$(get_nr_of_services "$services")
