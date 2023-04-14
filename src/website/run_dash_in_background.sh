@@ -55,5 +55,4 @@ terminate_processes_on_port() {
       return 0
     fi
   done
-
 }
