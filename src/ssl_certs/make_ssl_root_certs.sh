@@ -46,6 +46,8 @@ delete_root_certificate() {
 
 create_root_certificate_directories() {
   mkdir -p "certificates/root/"
+  sudo mkdir -p "/usr/local/share/ca-certificates/"
+
 }
 
 assert_root_ca_files_exist() {
@@ -102,8 +104,6 @@ install_the_ca_cert_as_a_trusted_root_ca() {
 make_self_signed_root_cert_trusted_on_ubuntu() {
   # source: https://ubuntu.com/server/docs/security-trust-store
   # source: https://askubuntu.com/questions/73287/how-do-i-install-a-root-certificate
-
-  ensure_apt_pkg "ca-certificates"
 
   sudo mkdir -p /usr/local/share/ca-certificates/
 
