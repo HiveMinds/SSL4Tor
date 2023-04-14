@@ -59,7 +59,7 @@ Then open a new termina.
 ./src/main.sh \
   --1-domain-1-service \
   --delete-onion-domain \
-  --services 8050:gitlab:8070/9001:dash:9002 \
+  --services 8050:gitlab:8070/9001:dash:9002/22:ssh:22 \
   --make-onion-domains \
   --ssl-password somepassword \
   --background-dash \

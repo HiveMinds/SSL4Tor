@@ -5,7 +5,7 @@ run_dash_in_background() {
   local project_name="$2"
 
   # TODO: instead of > /dev/null make it safely silent, and still output message upon error.
-  terminate_processes_on_port "$local_project_port" >/dev/null
+  terminate_processes_on_port "$local_project_port" >>/dev/null 2>&1
   python3 src/website/mwe_dash.py --port "$local_project_port" --project-name "$project_name" --use-https >/dev/null
 }
 
