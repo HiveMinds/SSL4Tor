@@ -141,7 +141,7 @@ generate_project_ssl_certificate() {
 verify_certificates() {
   local ca_public_key_filename="$1"
   local ssl_public_key_filename="$2"
-  openssl verify -CAfile "/certificates/root/$ca_public_key_filename" -verbose "certificates/ssl_cert/$project_name/$ssl_public_key_filename"
+  openssl verify -CAfile "certificates/root/$ca_public_key_filename" -verbose "certificates/ssl_cert/$project_name/$ssl_public_key_filename"
 }
 
 merge_ca_and_ssl_certs() {
@@ -150,7 +150,7 @@ merge_ca_and_ssl_certs() {
   local merged_ca_ssl_cert_filename="$3"
 
   cat "$ssl_public_key_filename" >"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
-  cat "/certificates/root/$ca_public_key_filename" >>"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
+  cat "certificates/root/$ca_public_key_filename" >>"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
 }
 
 install_the_ca_cert_as_a_trusted_root_ca() {

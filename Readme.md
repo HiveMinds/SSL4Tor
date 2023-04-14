@@ -79,6 +79,7 @@ Then open a new termina.
 # access dash running on localhost:9001 via <onion_code>.onion:9002
 ./src/main.sh -mo -1d1s -s 8050:gitlab:8070/9001:dash:9002
 ./src/main.sh -fta -1d1s # Convert snap Firefox to apt firefox.
+
 ./src/main.sh -ms -1d1s -s 8050:gitlab:8070 -sp somepassword # Make ssl cert
 
 ./src/main.sh -asf -1d1s -s 8050:gitlab:8070 # add root CA cert to APT firefox.
