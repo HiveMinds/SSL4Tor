@@ -80,21 +80,34 @@ process_check_http_flag() {
 # Create SSL certificates.
 process_make_project_ssl_certs_flag() {
   local make_project_ssl_certs_flag="$1"
-  local project_name="$2"
-  local ssl_password="$3"
-  local public_port_to_access_onion="$4"
+  local one_domain_per_service_flag="$2"
+  local services="$3"
+  local ssl_password="$4"
 
   if [ "$make_project_ssl_certs_flag" == "true" ]; then
-    echo "Generating your self-signed SSL certificates for:$project_name"
 
-    assert_is_non_empty_string "${project_name}"
     assert_is_non_empty_string "${ssl_password}"
-    local onion_domain
-    onion_domain="$(get_onion_domain "$project_name")"
+
     assert_is_non_empty_string "${onion_domain}"
     make_root_ssl_certs "$onion_domain" "$ssl_password"
-    make_project_ssl_certs "$onion_domain" "$project_name"
-    verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
+
+    if [ "$one_domain_per_service_flag" == "true" ]; then
+      nr_of_services=$(get_nr_of_services "$services")
+      start=0
+      for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+        local project_name
+        local public_port_to_access_onion
+
+        project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+        public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
+
+        local onion_domain
+        onion_domain="$(get_onion_domain "$project_name")"
+
+        make_project_ssl_certs "$onion_domain" "$project_name"
+        verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
+      done
+    fi
   fi
 }
 

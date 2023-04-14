@@ -45,8 +45,3 @@ source src/helper.sh
   exit 1
 }
 parse_args "$@"
-
-say_hello() {
-  echo "Done parsing args. Hello world."
-}
-say_hello
