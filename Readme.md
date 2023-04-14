@@ -40,7 +40,7 @@ pip install dash
 pip install pandas
 git clone https://github.com/HiveMinds/SSL4Tor.git
 cd SSL4Tor
-python3 src/website/mwe_dash.py --port 8050 --use-https
+python3 src/website/mwe_dash.py --port 8050 --project-name gitlab --use-https
 ```
 
 Then open a new termina.
@@ -56,12 +56,13 @@ Then open a new termina.
 ### Single command
 
 ```bash
-./src/main.sh --make-onion-domain \
-  --project-name gitlab \
-  --local-project-port 8050 \
-  --public-port-to-access-onion 443 \
-  --make-ssl-certs \
+./src/main.sh \
+  --1-domain-1-service \
+  --delete-onion-domain \
+  --services 8050:gitlab:8070/9001:dash:9002 \
+  --make-onion-domains \
   --ssl-password somepassword \
+  --make-ssl-certs \
   --firefox-to-apt \
   --add-ssl-root-cert-to-apt-firefox
 ```

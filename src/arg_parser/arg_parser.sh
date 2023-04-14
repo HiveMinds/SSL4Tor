@@ -60,7 +60,7 @@ parse_args() {
         make_project_ssl_certs_flag='true'
         shift # past argument
         ;;
-      -mo | --make-onion-domain)
+      -mo | --make-onion-domains)
         make_onion_domain_flag='true'
         shift # past argument
         ;;

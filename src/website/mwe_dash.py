@@ -13,7 +13,7 @@ def parse_args() -> Tuple[str,bool]:
     parser = argparse.ArgumentParser()# Add an argument
     parser.add_argument('--port', type=int, required=True)# Parse the argument
     parser.add_argument('--use-https', dest='use_https', action='store_true')# Parse the argument
-    parser.add_argument('--project_name', type=str, required=True)# Parse the argument
+    parser.add_argument('--project-name', type=str, required=True)# Parse the argument
     args = parser.parse_args()# Print "Hello" + the user input argument
     return args.port, args.project_name, args.use_https
 
@@ -33,7 +33,7 @@ df = pd.DataFrame({
 fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
 
 app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
+    html.H1(children=f'Hello this is project:{project_name}'),
 
     html.Div(children='''
         Dash: A web application framework for your data.
