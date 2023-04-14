@@ -51,7 +51,7 @@ create_root_certificate_directories() {
 }
 
 assert_root_ca_files_exist() {
-  echo "TODO"
+  echo "TODO: assert_root_ca_files_exist"
 }
 
 generate_root_ca_cert() {
@@ -156,6 +156,6 @@ add_self_signed_root_cert_to_firefox() {
     firefox &
   else
     echo "You have to add the self-signed root certificate authority to your"
-    echo "browser yourself."
+    echo "browser yourself. Because I did not find:$policies_filepath"
   fi
 }

@@ -6,7 +6,6 @@ parse_args() {
   local apply_certs_to_project_flag='false'
   local add_ssl_root_cert_to_apt_firefox_flag='false'
   local background_dash_flag='false'
-  local check_http_flag='false'
   local check_https_flag='false'
   local firefox_to_apt_flag='false'
   local make_project_ssl_certs_flag='false'
@@ -31,10 +30,6 @@ parse_args() {
         ;;
       -bd | --background-dash)
         background_dash_flag='true'
-        shift # past argument
-        ;;
-      -ch | --check-http)
-        check_http_flag='true'
         shift # past argument
         ;;
       -cs | --check-https)
@@ -115,8 +110,6 @@ parse_args() {
   # Create onion domain(s).
   process_make_onion_domain_flag "$make_onion_domain_flag" "$one_domain_per_service_flag" "$services"
   process_get_onion_domain_flag "$get_onion_domain_flag"
-  # Verify http access to onion domain.
-  process_check_http_flag "$check_http_flag"
 
   # Create SSL certificates.
   # TODO: process services instead of project_name.

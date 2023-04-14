@@ -10,11 +10,9 @@ ensure_apt_pkg() {
   local apt_package_name="${1}"
   local execute_apt_update="${2}"
 
-  # printf "\\n\\n Checking ${apt_package_name} in the system...\\n\\n\\n"
-  printf '\\n\\n Checking %s in the system...\\n\\n\\n' "${apt_package_name}".
-
   # Determine if apt package is installed or not.
   local apt_pckg_exists
+  # TODO: silence all dpkg-query commands.
   apt_pckg_exists=$(
     dpkg-query -W --showformat='${status}\n' "${apt_package_name}" | grep "ok installed"
     echo $?

@@ -5,7 +5,6 @@ process_delete_onion_domain_flag() {
   local delete_onion_domain_flag="$1"
 
   if [ "$delete_onion_domain_flag" == "true" ]; then
-    echo "Deleting your onion domain for:$project_name"
     delete_onion_domain "$project_name"
   fi
 }
@@ -70,14 +69,6 @@ process_get_onion_domain_flag() {
   fi
 }
 
-process_check_http_flag() {
-  local check_http_flag="$1"
-
-  if [ "$check_http_flag" == "true" ]; then
-    echo "Checking your tor domain is available over http."
-  fi
-}
-
 # Create SSL certificates.
 process_make_project_ssl_certs_flag() {
   local make_project_ssl_certs_flag="$1"
@@ -125,7 +116,7 @@ process_apply_certs_to_project_flag() {
   local apply_certs_to_project_flag="$1"
 
   if [ "$apply_certs_to_project_flag" == "true" ]; then
-    echo "applying certs"
+    echo "TODO: applying certs"
   fi
 }
 
@@ -134,7 +125,7 @@ process_check_https_flag() {
   local check_https_flag="$1"
 
   if [ "$check_https_flag" == "true" ]; then
-    echo "Checking your tor domain is available over https."
+    echo "TODO: (allow direct) Checking your tor domain is available over https."
   fi
 }
 

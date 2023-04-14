@@ -51,8 +51,6 @@ create_torrc_lines_one_onion_per_service() {
 
   assert_is_non_empty_string "$public_port_to_access_onion"
   torrc_line_2="HiddenServicePort $public_port_to_access_onion 127.0.0.1:$local_project_port"
-  echo "torrc_line_2=$torrc_line_2"
-  echo ""
 
   # E. If that content is not in the torrc file, append it at file end.
   append_lines_if_not_found "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"
@@ -107,7 +105,6 @@ start_onion_domain_creation() {
       if [[ "$onion_exists" == "FOUND" ]]; then
 
         onion_domain="$(get_onion_domain "$project_name")"
-        echo "$onion_domain"
 
         # If the onion URL exists, terminate the "sudo tor" process and return 0
         kill_tor_if_already_running

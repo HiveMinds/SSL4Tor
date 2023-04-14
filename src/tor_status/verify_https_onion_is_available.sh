@@ -13,8 +13,8 @@ verify_onion_address_is_reachable() {
     local onion_address
     onion_address="$(get_onion_address "$project_name" "$use_https" "$public_port_to_access_onion")"
 
-    echo "Now starting tor, and waiting (max) $wait_time_sec seconds to "
-    echo "    determine whether your tor website is reachable at: $onion_address"
+    echo "Now starting tor, and waiting (max) $wait_time_sec seconds to determine whether your tor website is reachable at:"
+    echo "$onion_address"
 
     # Start "sudo tor" in the background
     sudo tor | tee "$TOR_LOG_FILEPATH" >/dev/null &

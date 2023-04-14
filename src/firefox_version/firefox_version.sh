@@ -140,10 +140,11 @@ remove_snap_install_firefox_if_existant() {
 #######################################
 ask_user_swapping_firefox_install_is_ok() {
   echo "" >/dev/tty
-  echo "Hi, firefox is installed using snap. To automatically add your " >/dev/tty
-  echo "access tokens to GitHub, we need to control the firefox browser." >/dev/tty
-  echo "To control the firefox browser, we need to switch the installation" >/dev/tty
-  echo "method from snap to apt." >/dev/tty
+  echo "Hi, firefox is installed using snap. This code can currently only add " >/dev/tty
+  echo "a SSL root CA certificate to Firefox if it installed with apt." >/dev/tty
+  echo "Hence, we will switch the installation" >/dev/tty
+  echo "method from snap to apt. Feel free to send a pull request to support." >/dev/tty
+  echo "snap Firefox." >/dev/tty
   echo "" >/dev/tty
   echo "We will not preserve your bookmarks, history and extensions." >/dev/tty
   echo "" >/dev/tty
@@ -367,6 +368,7 @@ install_firefox_using_ppa() {
 }
 
 swap_snap_firefox_with_ppa_apt_firefox_installation() {
+  printf 'Ensuring Firefox is installed with apt instead of snap.\n'
   # Swap Firefox installation from snap to ppa/apt using functions above.
   # 0. Detect how firefox is installed.
   # 1. If firefox installed with snap:
@@ -393,4 +395,5 @@ swap_snap_firefox_with_ppa_apt_firefox_installation() {
   # 5.a Install Firefox using apt.
   # 5.v Verify firefox is installed successfully, and only once, using apt/PPA.
   install_firefox_using_ppa
+  printf 'Firefox is now installed with apt instead of snap.\n\n'
 }

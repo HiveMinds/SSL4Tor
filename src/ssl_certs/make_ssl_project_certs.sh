@@ -80,7 +80,6 @@ make_project_ssl_certs() {
   # Create domains accepted by certificate.
   local domains
   domains="DNS:localhost,DNS:$onion_domain"
-  echo "domains=$domains.end_without_space"
 
   delete_project_ssl_cert_files "$project_name"
   create_ssl_cert_storage_directories "$project_name"
