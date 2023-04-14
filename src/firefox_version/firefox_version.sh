@@ -118,6 +118,7 @@ remove_snap_install_firefox_if_existant() {
 
     # User permission is granted here, remove firefox snap installation.
     yes | sudo snap remove firefox 2>&1
+    sudo add-apt-repository --remove ppa:mozillateam/ppa --yes >>/dev/null 2>&1
     assert_firefox_is_not_installed_using_snap
     echo "2.a Firefox is removed." >/dev/tty
   fi
@@ -239,7 +240,7 @@ add_firefox_ppa_if_not_in_yet() {
   if [ "$(firefox_ppa_is_added)" == "NOTFOUND" ]; then
     echo "Now adding Firefox ppa to apt." >/dev/tty
     echo "" >/dev/tty
-    yes | sudo add-apt-repository ppa:mozillateam/ppa
+    sudo add-apt-repository ppa:mozillateam/ppa --yes >>/dev/null 2>&1
   fi
   assert_firefox_ppa_is_added_to_apt
 }
@@ -247,7 +248,7 @@ remove_firefox_ppa() {
   if [ "$(firefox_ppa_is_added)" == "FOUND" ]; then
     echo "Now removing Firefox ppa to apt." >/dev/tty
     echo "" >/dev/tty
-    yes | sudo add-apt-repository --remove ppa:mozillateam/ppa
+    sudo add-apt-repository --remove ppa:mozillateam/ppa --yes >>/dev/null 2>&1
   fi
   assert_firefox_ppa_is_removed_from_apt
 }
