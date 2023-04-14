@@ -4,9 +4,9 @@ run_dash_in_background() {
   local local_project_port="$1"
   local project_name="$2"
 
-  terminate_processes_on_port "$local_project_port"
-
-  python3 src/website/mwe_dash.py --port "$local_project_port" --project-name "$project_name" --use-https
+  # TODO: instead of > /dev/null make it safely silent, and still output message upon error.
+  terminate_processes_on_port "$local_project_port" >/dev/null
+  python3 src/website/mwe_dash.py --port "$local_project_port" --project-name "$project_name" --use-https >/dev/null
 }
 
 port_is_occupied() {
