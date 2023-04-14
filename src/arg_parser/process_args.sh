@@ -82,8 +82,9 @@ process_check_http_flag() {
 process_make_project_ssl_certs_flag() {
   local make_project_ssl_certs_flag="$1"
   local one_domain_per_service_flag="$2"
-  local services="$3"
-  local ssl_password="$4"
+  local background_dash_flag="$3"
+  local services="$4"
+  local ssl_password="$5"
 
   if [ "$make_project_ssl_certs_flag" == "true" ]; then
 
@@ -94,9 +95,11 @@ process_make_project_ssl_certs_flag() {
       nr_of_services=$(get_nr_of_services "$services")
       start=0
       for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+        local local_project_port
         local project_name
         local public_port_to_access_onion
 
+        local_project_port="$(get_project_property_by_index "$services" "$project_nr" "local_port")"
         project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
         public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
 
@@ -104,6 +107,10 @@ process_make_project_ssl_certs_flag() {
         onion_domain="$(get_onion_domain "$project_name")"
         assert_is_non_empty_string "${onion_domain}"
         make_project_ssl_certs "$onion_domain" "$project_name"
+
+        if [ "$background_dash_flag" == "true" ]; then
+          run_dash_in_background "$local_project_port" "$project_name"
+        fi
         verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
       done
       rm "$TEMP_SSL_PWD_FILENAME"
