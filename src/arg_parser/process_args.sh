@@ -99,16 +99,17 @@ process_make_project_ssl_certs_flag() {
         assert_is_non_empty_string "${onion_domain}"
         make_project_ssl_certs "$onion_domain" "$project_name"
 
-        if [ "$background_dash_flag" == "true" ]; then
-          # Don't kill the ssh service at port 22 that may already be running.
-          if [ "$project_name" != "ssh" ]; then
+        # Don't kill the ssh service at port 22 that may already be running.
+        if [ "$project_name" != "ssh" ]; then
+          if [ "$background_dash_flag" == "true" ]; then
+
             echo "Running dash in the background now."
             run_dash_in_background "$local_project_port" "$project_name" &
             echo "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
           fi
+          kill_tor_if_already_running
+          verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
         fi
-        kill_tor_if_already_running
-        verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
       done
       rm "$TEMP_SSL_PWD_FILENAME"
     fi
