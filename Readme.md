@@ -65,6 +65,12 @@ port `9002`) that you can actually visit:
 
 The third is your ssh tunnel.
 
+![hi](onion_example.png?raw=true)
+
+PS. The https says "not secure" because I did not copy the self-signed root ca
+certificate into the device on which I took the screenshot. Feel free to
+[fix it](https://github.com/HiveMinds/SSL4Tor/issues/4).
+
 ## Developer Requirements
 
 (Re)-install the required submodules with:
