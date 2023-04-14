@@ -62,6 +62,7 @@ Then open a new termina.
   --services 8050:gitlab:8070/9001:dash:9002 \
   --make-onion-domains \
   --ssl-password somepassword \
+  --background-dash \
   --make-ssl-certs \
   --firefox-to-apt \
   --add-ssl-root-cert-to-apt-firefox

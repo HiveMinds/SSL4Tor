@@ -41,6 +41,14 @@ assert_port_is_free() {
 terminate_process_on_port() {
   local local_project_port="$1"
 
-  sudo kill -9 "$(lsof -t -i:"$local_project_port")"
+  local pids
+  pids="$(sudo lsof -t -i:"$local_project_port")"
+  read -p "pids=$pids-ENDWITHOUTSPACE"
+  local first_pid
+  first_pid=${pids%$'\n'*}
+  read -p "first_pid=$first_pid-ENDWITHOUTSPACE"
+
+  # sudo kill -9 "$(lsof -t -i:"$local_project_port")"
+  sudo kill -9 "$(lsof -t -i:"$first_pid")"
   assert_port_is_free "$local_project_port"
 }
