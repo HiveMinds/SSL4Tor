@@ -41,7 +41,7 @@ parse_args() {
         shift # past argument
         ;;
       -ds | --delete-ssl-certs)
-        delete_ssl_certs_flag='true'
+        delete_projects_ssl_certs_flag='true'
         shift # past argument
         ;;
       -dus | --dont-use-ssl)
@@ -102,7 +102,7 @@ parse_args() {
   # Run the functions that are asked for in the CLI args.
   # Delete files from previous run.
   process_delete_onion_domain_flag "$delete_onion_domain_flag"
-  process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
+  process_delete_projects_ssl_certs_flag "$delete_projects_ssl_certs_flag"
 
   # Prepare Firefox version.
   process_firefox_to_apt_flag "$firefox_to_apt_flag"

@@ -10,12 +10,13 @@ process_delete_onion_domain_flag() {
   fi
 }
 
-process_delete_ssl_certs_flag() {
-  local delete_ssl_certs_flag="$1"
+process_delete_projects_ssl_certs_flag() {
+  local delete_projects_ssl_certs_flag="$1"
   local project_name="$2"
 
-  if [ "$delete_ssl_certs_flag" == "true" ]; then
-    echo "Deleting your self-signed SSL certificates for:$project_name"
+  if [ "$delete_projects_ssl_certs_flag" == "true" ]; then
+    echo "Deleting your self-signed project SSL certificates. Root CA is preserved."
+    delete_projects_ssl_certs
   fi
 }
 
