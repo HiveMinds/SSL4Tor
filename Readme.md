@@ -5,6 +5,12 @@
 Create your own <httpS://example31415926535.onion> websites, with your own
 self-signed https certificates, **in a single command**.
 
+![hi](onion_example.png?raw=true)
+
+PS. The https says "not secure" because I did not copy the self-signed root ca
+certificate into the device on which I took the screenshot. Feel free to
+[fix it](https://github.com/HiveMinds/SSL4Tor/issues/4).
+
 ## Usage
 
 3 sets of commands are given. One for a sandbox, one for the prerequisites, and
@@ -64,12 +70,6 @@ port `9002`) that you can actually visit:
   \<https://\<second_onion_url>.onion:9002>
 
 The third is your ssh tunnel.
-
-![hi](onion_example.png?raw=true)
-
-PS. The https says "not secure" because I did not copy the self-signed root ca
-certificate into the device on which I took the screenshot. Feel free to
-[fix it](https://github.com/HiveMinds/SSL4Tor/issues/4).
 
 ## Developer Requirements
 
