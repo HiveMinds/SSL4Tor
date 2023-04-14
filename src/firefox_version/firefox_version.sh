@@ -62,7 +62,7 @@ firefox_via_snap() {
 #######################################
 firefox_via_apt() {
   local respons_lines
-  respons_lines="$(apt list --installed)"
+  respons_lines="$(apt list --installed)" >>/dev/null 2>&1
   local found_firefox
   found_firefox=$(command_output_contains "firefox" "${respons_lines}")
   echo "$found_firefox"
@@ -87,7 +87,7 @@ firefox_via_apt() {
 firefox_ppa_is_added() {
   # Get list of ppa packages added for apt usage.
   local respons_lines
-  respons_lines="$(apt policy)"
+  respons_lines="$(apt policy)" >>/dev/null 2>&1
   # Specify identifier for firefox ppa presence.
   local ppa_indicator="https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu"
   local found_firefox_ppa
