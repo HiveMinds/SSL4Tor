@@ -111,11 +111,6 @@ delete_project_ssl_cert_files() {
   rm -f "certificates/ssl_cert/$project_name/sign_request/$SIGNED_DOMAINS_FILENAME"
   rm -f "certificates/ssl_cert/$project_name/$SSL_PUBLIC_KEY_FILENAME"
   rm -f "certificates/merged/$project_name/$MERGED_CA_SSL_CERT_FILENAME"
-  rm -f "$ROOT_CA_PEM_PATH"
-
-  # TODO: put the pwd file outside of the repo.
-  # TODO: pass pwd through commandline instead of via file.
-  rm -f "$TEMP_SSL_PWD_FILENAME"
 }
 
 create_ssl_cert_storage_directories() {
