@@ -1,9 +1,9 @@
-# Create self-signed SSL certificates for your https onion domains
+# Self-signed SSL for https onion urls
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-Create your own <httpS://example31415926535.onion> website, with your own
-self-signed https certificates, **in 1 command**.
+Create your own <httpS://example31415926535.onion> websites, with your own
+self-signed https certificates, **in a single command**.
 
 ## Usage
 
