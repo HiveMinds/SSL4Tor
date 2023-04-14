@@ -25,7 +25,7 @@ ensure_apt_pkg() {
     printf "==========================\\n"
     red_msg " ${apt_package_name} is not installed. Installing now.\\n"
     printf "==========================\\n\\n"
-    sudo apt --assume-yes install "${apt_package_name}" >/dev/null
+    sudo apt --assume-yes install "${apt_package_name}" >>/dev/null 2>&1
   else
     printf "======================\\n"
     green_msg " ${apt_package_name} is installed\\n"
@@ -43,7 +43,7 @@ ensure_apt_pkg() {
     # we need to enforce the time is set correctly before doing
     # an update - this can easily fail in virtual machines, otherwise
     # TODO: fix:force_update_of_time
-    sudo apt update >/dev/null
+    sudo apt update >>/dev/null 2>&1
   fi
 }
 

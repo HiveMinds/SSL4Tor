@@ -5,7 +5,7 @@
 apt_remove() {
   local apt_package_name="$1"
   yellow_msg "Removing ${apt_package_name}...\\n"
-  sudo apt purge "$apt_package_name" -y >/dev/null
+  sudo apt purge "$apt_package_name" -y >>/dev/null 2>&1
 
   verify_apt_removed "$apt_package_name"
 }
@@ -43,8 +43,8 @@ function cleanup() {
   sudo apt clean >/dev/null
 
   # Auto remove any remaining unneeded apt packages.
-  sudo apt autoremove >/dev/null
+  sudo apt autoremove >>/dev/null 2>&1
 
   # Fix any remaining broken installations.
-  sudo apt -f install >/dev/null
+  sudo apt -f install >>/dev/null 2>&1
 }
