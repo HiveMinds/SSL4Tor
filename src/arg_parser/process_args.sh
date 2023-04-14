@@ -105,6 +105,7 @@ process_make_project_ssl_certs_flag() {
         make_project_ssl_certs "$onion_domain" "$project_name"
         verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
       done
+      rm "$TEMP_SSL_PWD_FILENAME"
     fi
   fi
 }

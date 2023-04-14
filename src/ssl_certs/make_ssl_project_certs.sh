@@ -134,8 +134,6 @@ generate_project_ssl_certificate() {
   # Create the public SSL certificate.
   openssl x509 -passin file:$TEMP_SSL_PWD_FILENAME -req -sha256 -days 365 -in "certificates/ssl_cert/$project_name/sign_request/$ca_sign_ssl_cert_request_filename" -CA "certificates/root/$ca_public_key_filename" -CAkey "certificates/root/$ca_private_key_filename" -out "certificates/ssl_cert/$project_name/$ssl_public_key_filename" -extfile "certificates/ssl_cert/$project_name/sign_request/$signed_domains_filename" -CAcreateserial
 
-  rm "$TEMP_SSL_PWD_FILENAME"
-
 }
 
 verify_certificates() {
