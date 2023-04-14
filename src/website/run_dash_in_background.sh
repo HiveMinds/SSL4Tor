@@ -47,7 +47,7 @@ terminate_processes_on_port() {
       pids="$(sudo lsof -t -i:"$local_project_port")"
       local first_pid
       first_pid=${pids%$'\n'*}
-      echo "For port:$local_project_port, killing process:$first_pid"
+      echo "For local port:$local_project_port, killing process:$first_pid"
       # sudo kill -9 "$(lsof -t -i:"$first_pid")"
       sudo kill -9 "$first_pid"
     else
