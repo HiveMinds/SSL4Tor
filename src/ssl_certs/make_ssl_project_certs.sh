@@ -45,6 +45,7 @@
 CA_PRIVATE_KEY_FILENAME="ca-key.pem"
 CA_PUBLIC_KEY_FILENAME="ca.pem"
 # Same file as ca.pem except different file extension and content.
+# shellcheck disable=SC2034
 CA_PUBLIC_CERT_FILENAME="ca.crt"
 
 # Then you create a SSL certificate.
@@ -66,12 +67,12 @@ COUNTRY_CODE="FR"
 
 USERNAME=$(whoami)
 ROOT_CA_DIR="/home/$USERNAME"
+# shellcheck disable=SC2034
 ROOT_CA_PEM_PATH="$ROOT_CA_DIR/$CA_PUBLIC_KEY_FILENAME"
 
 make_project_ssl_certs() {
   local onion_domain="$1"
   local project_name="$2"
-  local ssl_password="$3"
 
   # TODO: if files already exist, perform double check on whether user wants to
   # overwrite the files.
@@ -86,20 +87,11 @@ make_project_ssl_certs() {
 
   # Assert root CA files exist.
 
-  # Generate and apply certificate.
-  generate_root_ca_cert "$CA_PRIVATE_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$ssl_password"
-
   generate_project_ssl_certificate "$CA_PUBLIC_KEY_FILENAME" "$CA_PRIVATE_KEY_FILENAME" "$CA_SIGN_SSL_CERT_REQUEST_FILENAME" "$SIGNED_DOMAINS_FILENAME" "$SSL_PUBLIC_KEY_FILENAME" "$SSL_PRIVATE_KEY_FILENAME" "$domains"
 
   verify_certificates "$CA_PUBLIC_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME"
 
   merge_ca_and_ssl_certs "$SSL_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$MERGED_CA_SSL_CERT_FILENAME"
-
-  install_the_ca_cert_as_a_trusted_root_ca "$CA_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_CERT_FILENAME"
-
-  copy_file "certificates/root/$CA_PUBLIC_KEY_FILENAME" "$ROOT_CA_PEM_PATH" "true"
-
-  make_self_signed_root_cert_trusted_on_ubuntu "$project_name"
 
 }
 

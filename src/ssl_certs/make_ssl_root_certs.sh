@@ -2,6 +2,38 @@
 
 # shellcheck disable=SC2153
 
+make_root_ssl_certs() {
+  local onion_domain="$1"
+  local ssl_password="$2"
+
+  # TODO: if files already exist, perform double check on whether user wants to
+  # overwrite the files.
+
+  # Create domains accepted by certificate.
+  local domains
+  domains="DNS:localhost,DNS:$onion_domain"
+  echo "domains=$domains.end_without_space"
+
+  delete_root_certificate
+  create_root_certificate_directories
+
+  # Generate and apply certificate.
+  generate_root_ca_cert "$CA_PRIVATE_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$ssl_password"
+
+  install_the_ca_cert_as_a_trusted_root_ca "$CA_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_CERT_FILENAME"
+
+  copy_file "certificates/root/$CA_PUBLIC_KEY_FILENAME" "$ROOT_CA_PEM_PATH" "true"
+
+  make_self_signed_root_cert_trusted_on_ubuntu
+
+  # TODO: make argument optional.
+  # TODO: include apt Firefox instead of snap.
+  # add_self_signed_root_cert_to_firefox
+
+  # Assert root CA files exist.
+
+}
+
 delete_root_certificate() {
   rm -f "certificates/root/$CA_PRIVATE_KEY_FILENAME"
   rm -f "certificates/root/$CA_PUBLIC_CERT_FILENAME"
@@ -22,6 +54,10 @@ create_root_certificate_directories() {
   mkdir -p "certificates/root/"
 }
 
+assert_root_ca_files_exist() {
+  echo "TODO"
+}
+
 generate_root_ca_cert() {
   local ca_private_key_filename="$1"
   local ca_public_key_filename="$2"
@@ -37,6 +73,37 @@ generate_root_ca_cert() {
 
   assert_root_ca_files_exist
 }
+
+install_the_ca_cert_as_a_trusted_root_ca() {
+  local ca_public_key_filename="$1"
+  local ca_public_cert_filename="$2"
+
+  # The file in the ca-certificates dir must be of extension .crt, so convert it into that (as a copy):
+  openssl x509 -outform der -in "certificates/root/$ca_public_key_filename" -out "certificates/root/$ca_public_cert_filename"
+
+  # First remove any old cert if it pre-existed.
+  sudo rm -f "/usr/local/share/ca-certificates/$ca_public_cert_filename"
+  sudo update-ca-certificates
+
+  # On Debian & Derivatives:
+  #- Move the CA certificate (`"$ca_private_key_filename"`) into `/usr/local/share/ca-certificates/ca.crt`.
+  manual_assert_dir_exists "/usr/local/share/ca-certificates/"
+  sudo cp "certificates/root/$ca_public_cert_filename" "/usr/local/share/ca-certificates/$ca_public_cert_filename"
+  manual_assert_file_exists "/usr/local/share/ca-certificates/$ca_public_cert_filename"
+
+  # Update the Cert Store with:
+  sudo update-ca-certificates
+}
+
+# On Android (This has been automated)
+# 1. Open Phone Settings
+# The exact steps vary device-to-device, but here is a generalised guide:
+# 2. Locate `Encryption and Credentials` section. It is generally found under `Settings > Security > Encryption and Credentials`
+# 3. Choose `Install a certificate`
+# 4. Choose `CA Certificate`
+# 5. Locate the certificate file `"$ca_private_key_filename"` on your SD Card/Internal Storage using the file manager.
+# 6. Select to load it.
+# 7. Done!
 
 make_self_signed_root_cert_trusted_on_ubuntu() {
   # source: https://ubuntu.com/server/docs/security-trust-store
@@ -98,72 +165,3 @@ add_self_signed_root_cert_to_firefox() {
     echo "browser yourself."
   fi
 }
-
-assert_root_ca_files_exist() {
-  echo "TODO"
-}
-
-make_root_ssl_certs() {
-  local onion_domain="$1"
-  local ssl_password="$2"
-
-  # TODO: if files already exist, perform double check on whether user wants to
-  # overwrite the files.
-
-  # Create domains accepted by certificate.
-  local domains
-  domains="DNS:localhost,DNS:$onion_domain"
-  echo "domains=$domains.end_without_space"
-
-  delete_root_certificate
-  create_root_certificate_directories
-
-  # Generate and apply certificate.
-  generate_root_ca_cert "$CA_PRIVATE_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$ssl_password"
-
-  verify_certificates "$CA_PUBLIC_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME"
-
-  install_the_ca_cert_as_a_trusted_root_ca "$CA_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_CERT_FILENAME"
-
-  copy_file "certificates/root/$CA_PUBLIC_KEY_FILENAME" "$ROOT_CA_PEM_PATH" "true"
-
-  make_self_signed_root_cert_trusted_on_ubuntu
-
-  # TODO: make argument optional.
-  # TODO: include apt Firefox instead of snap.
-  # add_self_signed_root_cert_to_firefox
-
-  # Assert root CA files exist.
-
-}
-
-install_the_ca_cert_as_a_trusted_root_ca() {
-  local ca_public_key_filename="$1"
-  local ca_public_cert_filename="$2"
-
-  # The file in the ca-certificates dir must be of extension .crt, so convert it into that (as a copy):
-  openssl x509 -outform der -in "certificates/root/$ca_public_key_filename" -out "certificates/root/$ca_public_cert_filename"
-
-  # First remove any old cert if it pre-existed.
-  sudo rm -f "/usr/local/share/ca-certificates/$ca_public_cert_filename"
-  sudo update-ca-certificates
-
-  # On Debian & Derivatives:
-  #- Move the CA certificate (`"$ca_private_key_filename"`) into `/usr/local/share/ca-certificates/ca.crt`.
-  manual_assert_dir_exists "/usr/local/share/ca-certificates/"
-  sudo cp "certificates/root/$ca_public_cert_filename" "/usr/local/share/ca-certificates/$ca_public_cert_filename"
-  manual_assert_file_exists "/usr/local/share/ca-certificates/$ca_public_cert_filename"
-
-  # Update the Cert Store with:
-  sudo update-ca-certificates
-}
-
-# On Android (This has been automated)
-# 1. Open Phone Settings
-# The exact steps vary device-to-device, but here is a generalised guide:
-# 2. Locate `Encryption and Credentials` section. It is generally found under `Settings > Security > Encryption and Credentials`
-# 3. Choose `Install a certificate`
-# 4. Choose `CA Certificate`
-# 5. Locate the certificate file `"$ca_private_key_filename"` on your SD Card/Internal Storage using the file manager.
-# 6. Select to load it.
-# 7. Done!
