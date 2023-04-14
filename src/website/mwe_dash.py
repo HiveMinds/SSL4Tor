@@ -13,12 +13,13 @@ def parse_args() -> Tuple[str,bool]:
     parser = argparse.ArgumentParser()# Add an argument
     parser.add_argument('--port', type=int, required=True)# Parse the argument
     parser.add_argument('--use-https', dest='use_https', action='store_true')# Parse the argument
+    parser.add_argument('--project_name', type=str, required=True)# Parse the argument
     args = parser.parse_args()# Print "Hello" + the user input argument
-    return args.port, args.use_https
+    return args.port, args.project_name, args.use_https
 
 # TODO: support onion domain as host.
 dash_host_domain:str="127.0.0.1"
-dash_local_port, use_https = parse_args()
+dash_local_port,project_name, use_https = parse_args()
 app = Dash(__name__)
 
 # assume you have a "long-form" data frame
@@ -49,7 +50,7 @@ if __name__ == '__main__':
         # context = ('local.crt','local.key')
         # Use the fullchain certificate and the SSL-certificate private key.
         # (Not the root CA, and definitely not the root CA private key.)
-        context = ('cert.pem','cert-key.pem')
+        context = (f'ssl_cert/{project_name}/cert.pem',f'ssl_cert/{project_name}/cert-key.pem')
         app.run_server(host=dash_host_domain, port=dash_local_port, debug=True, ssl_context=context)
     else:
         app.run_server(port=dash_local_port, debug=True)
