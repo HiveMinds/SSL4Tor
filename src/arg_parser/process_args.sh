@@ -1,33 +1,5 @@
 #!/bin/bash
 
-# Verify input argument validity.
-process_project_name_flag() {
-  local project_name_flag="$1"
-  local project_name="$2"
-
-  if [ "$project_name_flag" == "true" ]; then
-    echo "Verified project name:$project_name consists of valid characters."
-  fi
-}
-
-process_local_project_port_flag() {
-  local local_project_port_flag="$1"
-  local local_project_port="$2"
-
-  if [ "$local_project_port_flag" == "true" ]; then
-    echo "Verified the port:$public_port_to_access_onion is in valid range and unused."
-  fi
-}
-
-process_public_port_to_access_onion_flag() {
-  local public_port_to_access_onion_flag="$1"
-  local public_port_to_access_onion="$2"
-
-  if [ "$public_port_to_access_onion_flag" == "true" ]; then
-    echo "Verified the port:$public_port_to_access_onion is in valid range and unused."
-  fi
-}
-
 # Delete files from previous run.
 process_delete_onion_domain_flag() {
   local delete_onion_domain_flag="$1"
@@ -59,13 +31,29 @@ process_firefox_to_apt_flag() {
 # Create onion domain(s).
 process_make_onion_domain_flag() {
   local make_onion_domain_flag="$1"
-  local project_name="$2"
-  local local_project_port="$3"
-  local public_port_to_access_onion="$4"
+  local one_domain_per_service_flag="$2"
+  local services="$3"
 
   if [ "$make_onion_domain_flag" == "true" ]; then
-    echo "Generating your onion domain for:$project_name"
-    make_onion_domain "$project_name" "$local_project_port" "$public_port_to_access_onion"
+    install_apt_prerequisites
+
+    if [ "$one_domain_per_service_flag" == "true" ]; then
+      nr_of_services=$(get_nr_of_services "$services")
+      start=0
+      for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+        local local_project_port
+        local project_name
+        local public_port_to_access_onion
+
+        local_project_port="$(get_project_property_by_index "$services" "$project_nr" "local_port")"
+        project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+        public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
+
+        echo "Generating your onion domain for:$project_name"
+        make_onion_domain "$one_domain_per_service_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
+        prepare_starting_tor "$project_name" "$local_project_port" "$public_port_to_access_onion"
+      done
+    fi
   fi
 }
 
@@ -90,22 +78,35 @@ process_check_http_flag() {
 }
 
 # Create SSL certificates.
-process_make_ssl_certs_flag() {
-  local make_ssl_certs_flag="$1"
-  local project_name="$2"
-  local ssl_password="$3"
-  local public_port_to_access_onion="$4"
+process_make_project_ssl_certs_flag() {
+  local make_project_ssl_certs_flag="$1"
+  local one_domain_per_service_flag="$2"
+  local services="$3"
+  local ssl_password="$4"
 
-  if [ "$make_ssl_certs_flag" == "true" ]; then
-    echo "Generating your self-signed SSL certificates for:$project_name"
+  if [ "$make_project_ssl_certs_flag" == "true" ]; then
 
-    assert_is_non_empty_string "${project_name}"
     assert_is_non_empty_string "${ssl_password}"
-    local onion_domain
-    onion_domain="$(get_onion_domain "$project_name")"
-    assert_is_non_empty_string "${onion_domain}"
-    make_ssl_certs "$onion_domain" "$project_name" "$ssl_password"
-    verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
+    make_root_ssl_certs "$ssl_password"
+
+    if [ "$one_domain_per_service_flag" == "true" ]; then
+      nr_of_services=$(get_nr_of_services "$services")
+      start=0
+      for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+        local project_name
+        local public_port_to_access_onion
+
+        project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+        public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
+
+        local onion_domain
+        onion_domain="$(get_onion_domain "$project_name")"
+        assert_is_non_empty_string "${onion_domain}"
+        make_project_ssl_certs "$onion_domain" "$project_name"
+        verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
+      done
+      rm "$TEMP_SSL_PWD_FILENAME"
+    fi
   fi
 }
 

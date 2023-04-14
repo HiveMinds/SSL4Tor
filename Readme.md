@@ -19,17 +19,28 @@ That way, you start your project in a clean, tested environment.
 4 sets of commands are given, pre-requisites, uninstallation, installation, and
 step-by-step commands with commented explanations.
 
+### Starting QEMU
+
+```sh
+qemu-system-x86_64 --enable-kvm -m 4096 -machine smm=off -boot order=d \
+  ubuntu22_1.img -smp 4 \
+  -chardev qemu-vdagent,id=ch1,name=vdagent,clipboard=on \
+  -device virtio-serial-pci \
+  -device virtserialport,chardev=ch1,id=ch1,name=com.redhat.spice.0
+```
+
+Then press `Ctrl+Alt+G` to capture the keyboard (and mouse).
+
 ### Prerequisites
 
 ```sh
-
 sudo apt install git -y
 sudo apt install pip -y
 pip install dash
 pip install pandas
 git clone https://github.com/HiveMinds/SSL4Tor.git
 cd SSL4Tor
-python3 src/website/mwe_dash.py --port 8050 --use-https
+python3 src/website/mwe_dash.py --port 8050 --project-name gitlab --use-https
 ```
 
 Then open a new termina.
@@ -45,12 +56,13 @@ Then open a new termina.
 ### Single command
 
 ```bash
-./src/main.sh --make-onion-domain \
-  --project-name gitlab \
-  --local-project-port 8050 \
-  --public-port-to-access-onion 443 \
-  --make-ssl-certs \
+./src/main.sh \
+  --1-domain-1-service \
+  --delete-onion-domain \
+  --services 8050:gitlab:8070/9001:dash:9002 \
+  --make-onion-domains \
   --ssl-password somepassword \
+  --make-ssl-certs \
   --firefox-to-apt \
   --add-ssl-root-cert-to-apt-firefox
 ```
@@ -59,16 +71,20 @@ Then open a new termina.
 
 ```bash
 # Remove tor and accompanying files.
-./src/main.sh -do -n gitlab
+./src/main.sh -do -1d1s
 
 # Install tor and create onion domain for the gitlab service
-# To access a local project running on port localhost:8050 via: <code>.onion:90
-./src/main.sh -mo -n gitlab -lpp 8050 -ppo 90
-# To access a local project running on localhost:8050 via: <code>.onion:443
-./src/main.sh -mo -n gitlab -lpp 8050 -ppo 443
-./src/main.sh -fta # Convert snap Firefox to apt firefox.
-./src/main.sh -asf -n gitlab # add root CA cert to APT firefox.
-./src/main.sh -ms -n gitlab -sp somepassword # Make ssl cert
+# To access a local project running on port localhost:8050 via: <code>.onion:8070
+./src/main.sh -mo -1d1s -s 8050:gitlab:8070
+# To access gitlab running on port localhost:8050 via: <code>.onion:8070 AND
+# access dash running on localhost:9001 via <onion_code>.onion:9002
+./src/main.sh -mo -1d1s -s 8050:gitlab:8070/9001:dash:9002
+./src/main.sh -fta -1d1s # Convert snap Firefox to apt firefox.
+
+./src/main.sh -ms -1d1s -s 8050:gitlab:8070 -sp somepassword # Make ssl cert
+
+./src/main.sh -asf -1d1s -s 8050:gitlab:8070 # add root CA cert to APT firefox.
+
 ```
 
 ## Testing
@@ -93,6 +109,7 @@ Install:
 
 ```sh
 sudo gem install bats
+sudo apt install bats -y
 sudo gem install bashcov
 sudo apt install shfmt -y
 pre-commit install

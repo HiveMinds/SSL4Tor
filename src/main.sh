@@ -1,14 +1,18 @@
 #!/bin/bash
 
 source src/arg_parser/arg_parser.sh
+source src/arg_parser/helper.sh
+source src/arg_parser/parsing.sh
 source src/arg_parser/process_args.sh
 source src/arg_parser/print_usage.sh
 source src/arg_parser/arg_verification.sh
 source src/firefox_version/firefox_version.sh
 source src/onion_domain/delete_onion_domain.sh
-source src/ssl_certs/make_ssl_certs.sh
+source src/ssl_certs/make_ssl_project_certs.sh
+source src/ssl_certs/make_ssl_root_certs.sh
 source src/onion_domain/make_onion_domain.sh
 source src/installation/install_apt.sh
+source src/installation/install_prerequisites.sh
 source src/uninstallation/uninstall_apt.sh
 source src/logging/cli_logging.sh
 source src/verification/assert_exists.sh
@@ -41,8 +45,3 @@ source src/helper.sh
   exit 1
 }
 parse_args "$@"
-
-say_hello() {
-  echo "Done parsing args. Hello world."
-}
-say_hello
