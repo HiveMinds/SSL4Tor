@@ -25,11 +25,11 @@ verify_apt_removed() {
   if [ "$apt_pckg_exists" == "1" ]; then
     printf "==========================\\n"
     green_msg "Verified the apt package ${apt_package_name} is removed.\\n"
-    printf "==========================\\n\\n"
+    printf "\\n==========================\\n"
   else
-    printf "======================\\n"
+    printf "==========================\\n"
     red_msg "Error, the apt package ${apt_package_name} is still installed.\\n"
-    printf "======================\\n"
+    printf "\\n==========================\\n"
     exit 3 # TODO: update exit status.
   fi
 }
