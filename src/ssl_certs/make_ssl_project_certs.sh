@@ -91,7 +91,7 @@ make_project_ssl_certs() {
 
   verify_certificates "$CA_PUBLIC_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME"
 
-  merge_ca_and_ssl_certs "$SSL_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$MERGED_CA_SSL_CERT_FILENAME"
+  merge_ca_and_ssl_certs "$project_name" "$SSL_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$MERGED_CA_SSL_CERT_FILENAME"
 
 }
 
@@ -145,11 +145,12 @@ verify_certificates() {
 }
 
 merge_ca_and_ssl_certs() {
-  local ssl_public_key_filename="$1"
-  local ca_public_key_filename="$2"
-  local merged_ca_ssl_cert_filename="$3"
+  local project_name="$1"
+  local ssl_public_key_filename="$2"
+  local ca_public_key_filename="$3"
+  local merged_ca_ssl_cert_filename="$4"
 
-  cat "$ssl_public_key_filename" >"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
+  cat "certificates/ssl_cert/$project_name/$ssl_public_key_filename" >"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
   cat "certificates/root/$ca_public_key_filename" >>"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
 }
 
