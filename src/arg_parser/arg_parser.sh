@@ -5,7 +5,7 @@ parse_args() {
   # Specify default argument values.
   local apply_certs_to_project_flag='false'
   local add_ssl_root_cert_to_apt_firefox_flag='false'
-  local check_http_flag='false'
+  local background_dash_flag='false'
   local check_https_flag='false'
   local firefox_to_apt_flag='false'
   local make_project_ssl_certs_flag='false'
@@ -28,8 +28,8 @@ parse_args() {
         add_ssl_root_cert_to_apt_firefox_flag='true'
         shift # past argument
         ;;
-      -ch | --check-http)
-        check_http_flag='true'
+      -bd | --background-dash)
+        background_dash_flag='true'
         shift # past argument
         ;;
       -cs | --check-https)
@@ -41,7 +41,7 @@ parse_args() {
         shift # past argument
         ;;
       -ds | --delete-ssl-certs)
-        delete_ssl_certs_flag='true'
+        delete_projects_ssl_certs_flag='true'
         shift # past argument
         ;;
       -dus | --dont-use-ssl)
@@ -102,7 +102,7 @@ parse_args() {
   # Run the functions that are asked for in the CLI args.
   # Delete files from previous run.
   process_delete_onion_domain_flag "$delete_onion_domain_flag"
-  process_delete_ssl_certs_flag "$delete_ssl_certs_flag"
+  process_delete_projects_ssl_certs_flag "$delete_projects_ssl_certs_flag"
 
   # Prepare Firefox version.
   process_firefox_to_apt_flag "$firefox_to_apt_flag"
@@ -110,12 +110,10 @@ parse_args() {
   # Create onion domain(s).
   process_make_onion_domain_flag "$make_onion_domain_flag" "$one_domain_per_service_flag" "$services"
   process_get_onion_domain_flag "$get_onion_domain_flag"
-  # Verify http access to onion domain.
-  process_check_http_flag "$check_http_flag"
 
   # Create SSL certificates.
   # TODO: process services instead of project_name.
-  process_make_project_ssl_certs_flag "$make_project_ssl_certs_flag" "$one_domain_per_service_flag" "$services" "$ssl_password"
+  process_make_project_ssl_certs_flag "$make_project_ssl_certs_flag" "$one_domain_per_service_flag" "$background_dash_flag" "$services" "$ssl_password"
   process_apply_certs_to_project_flag "$apply_certs_to_project_flag"
   # Verify https access to onion domain.
   process_check_https_flag "$check_https_flag"

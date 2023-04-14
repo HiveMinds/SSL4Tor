@@ -22,6 +22,7 @@ source src/file_edit_helper/file_editing.sh
 source src/tor_status/tor_status.sh
 source src/tor_status/verify_https_onion_is_available.sh
 source src/helper.sh
+source src/website/run_dash_in_background.sh
 
 # Get application name/dir from CLI.
 

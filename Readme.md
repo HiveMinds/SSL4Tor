@@ -1,25 +1,25 @@
-# Unit tested Bash project template with Pre-commit
+# Self-signed SSL for https onion urls
 
-[![Travis Build Status](https://img.shields.io/travis/a-t-0/shell_unit_testing_template.svg)](https://travis-ci.org/a-t-0/shell_unit_testing_template)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-You can use this as a starting point for your Bash/shell project with:
+Create your own <httpS://example31415926535.onion> websites, with your own
+self-signed https certificates, **in a single command**.
 
-- Unit testing
-- Code Coverage (100 %)
-- Pre-commit:
-  - shfmt (Auto-formatter)
-  - Shellcheck
-- Continuous Integration (GitLab CI)
+![hi](onion_example.png?raw=true)
 
-That way, you start your project in a clean, tested environment.
+PS. The https says "not secure" because I did not copy the self-signed root ca
+certificate into the device on which I took the screenshot. Feel free to
+[fix it](https://github.com/HiveMinds/SSL4Tor/issues/4).
 
 ## Usage
 
-4 sets of commands are given, pre-requisites, uninstallation, installation, and
-step-by-step commands with commented explanations.
+3 sets of commands are given. One for a sandbox, one for the prerequisites, and
+the single command to create your https onion websites.
 
 ### Starting QEMU
+
+Using qemu is not necessary, but it is a nice sandbox to give this code a try,
+keeping your own system nice and clean.
 
 ```sh
 qemu-system-x86_64 --enable-kvm -m 4096 -machine smm=off -boot order=d \
@@ -40,63 +40,38 @@ pip install dash
 pip install pandas
 git clone https://github.com/HiveMinds/SSL4Tor.git
 cd SSL4Tor
-python3 src/website/mwe_dash.py --port 8050 --project-name gitlab --use-https
-```
-
-Then open a new termina.
-
-### Delete Pre-existing Data
-
-```bash
-./src/main.sh --project-name gitlab \
-  --delete-onion-domain \
-  --delete-ssl-certs
 ```
 
 ### Single command
+
+You can create 3 https onion domains, for 2 services, and an ssh access into
+the device with:
 
 ```bash
 ./src/main.sh \
   --1-domain-1-service \
   --delete-onion-domain \
-  --services 8050:gitlab:8070/9001:dash:9002 \
+  --services 8050:gitlab:8070/9001:dash:9002/22:ssh:22 \
   --make-onion-domains \
   --ssl-password somepassword \
+  --background-dash \
   --make-ssl-certs \
   --firefox-to-apt \
   --add-ssl-root-cert-to-apt-firefox
 ```
 
-### Step-by-step
+This creates 2 dash plots (one at public port `8070`, and another at public
+port `9002`) that you can actually visit:
 
-```bash
-# Remove tor and accompanying files.
-./src/main.sh -do -1d1s
+- inside Qemu at: https:127.0.0.1:8050 and https:127.0.0.1:9001
+- From anywhere in the world, using Brave or the Tor browser at:
+  \<https://\<first_onion_url>.onion:8070>
+  and
+  \<https://\<second_onion_url>.onion:9002>
 
-# Install tor and create onion domain for the gitlab service
-# To access a local project running on port localhost:8050 via: <code>.onion:8070
-./src/main.sh -mo -1d1s -s 8050:gitlab:8070
-# To access gitlab running on port localhost:8050 via: <code>.onion:8070 AND
-# access dash running on localhost:9001 via <onion_code>.onion:9002
-./src/main.sh -mo -1d1s -s 8050:gitlab:8070/9001:dash:9002
-./src/main.sh -fta -1d1s # Convert snap Firefox to apt firefox.
+The third is your ssh tunnel.
 
-./src/main.sh -ms -1d1s -s 8050:gitlab:8070 -sp somepassword # Make ssl cert
-
-./src/main.sh -asf -1d1s -s 8050:gitlab:8070 # add root CA cert to APT firefox.
-
-```
-
-## Testing
-
-Put your unit test files (with extension .bats) in folder: `/test/`
-
-```bash
-pip install dash
-pip install pandas
-```
-
-### Developer Requirements
+## Developer Requirements
 
 (Re)-install the required submodules with:
 
@@ -129,14 +104,7 @@ pre-commit run --all
 Run the tests with:
 
 ```sh
-bats test
-```
-
-If you want to run particular tests, you could use the `test.sh` file:
-
-```sh
-chmod +x test.sh
-./test.sh
+bats test/*
 ```
 
 ### Code coverage
@@ -145,10 +113,18 @@ chmod +x test.sh
 bashcov bats test
 ```
 
+## Help
+
+Feel free to create an issue if you have any questions :)
+
 ## How to help
 
-- Include bash code coverage in GitLab CI.
-- Add [additional](https://pre-commit.com/hooks.html) (relevant) pre-commit hooks.
-- Develop Bash documentation checks
-  [here](https://github.com/TruCol/checkstyle-for-bash), and add them to this
-  pre-commit.
+An quick and easy way to contribute is to:
+
+- Reduce the output of the (main) script, make it more simple/silent.
+
+And if you like this project, feel free to:
+
+- Pick an issue and fix it.
+- Create support for Windows and/or Mac.
+- Improve the test-coverage by writing more (meaningful) tests.

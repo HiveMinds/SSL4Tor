@@ -62,7 +62,7 @@ firefox_via_snap() {
 #######################################
 firefox_via_apt() {
   local respons_lines
-  respons_lines="$(apt list --installed)"
+  respons_lines="$(apt list --installed)" >>/dev/null 2>&1
   local found_firefox
   found_firefox=$(command_output_contains "firefox" "${respons_lines}")
   echo "$found_firefox"
@@ -87,7 +87,7 @@ firefox_via_apt() {
 firefox_ppa_is_added() {
   # Get list of ppa packages added for apt usage.
   local respons_lines
-  respons_lines="$(apt policy)"
+  respons_lines="$(apt policy)" >>/dev/null 2>&1
   # Specify identifier for firefox ppa presence.
   local ppa_indicator="https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu"
   local found_firefox_ppa
@@ -118,6 +118,7 @@ remove_snap_install_firefox_if_existant() {
 
     # User permission is granted here, remove firefox snap installation.
     yes | sudo snap remove firefox 2>&1
+    sudo add-apt-repository --remove ppa:mozillateam/ppa --yes >>/dev/null 2>&1
     assert_firefox_is_not_installed_using_snap
     echo "2.a Firefox is removed." >/dev/tty
   fi
@@ -140,10 +141,11 @@ remove_snap_install_firefox_if_existant() {
 #######################################
 ask_user_swapping_firefox_install_is_ok() {
   echo "" >/dev/tty
-  echo "Hi, firefox is installed using snap. To automatically add your " >/dev/tty
-  echo "access tokens to GitHub, we need to control the firefox browser." >/dev/tty
-  echo "To control the firefox browser, we need to switch the installation" >/dev/tty
-  echo "method from snap to apt." >/dev/tty
+  echo "Hi, firefox is installed using snap. This code can currently only add " >/dev/tty
+  echo "a SSL root CA certificate to Firefox if it installed with apt." >/dev/tty
+  echo "Hence, we will switch the installation" >/dev/tty
+  echo "method from snap to apt. Feel free to send a pull request to support." >/dev/tty
+  echo "snap Firefox." >/dev/tty
   echo "" >/dev/tty
   echo "We will not preserve your bookmarks, history and extensions." >/dev/tty
   echo "" >/dev/tty
@@ -238,7 +240,7 @@ add_firefox_ppa_if_not_in_yet() {
   if [ "$(firefox_ppa_is_added)" == "NOTFOUND" ]; then
     echo "Now adding Firefox ppa to apt." >/dev/tty
     echo "" >/dev/tty
-    yes | sudo add-apt-repository ppa:mozillateam/ppa
+    sudo add-apt-repository ppa:mozillateam/ppa --yes >>/dev/null 2>&1
   fi
   assert_firefox_ppa_is_added_to_apt
 }
@@ -246,7 +248,7 @@ remove_firefox_ppa() {
   if [ "$(firefox_ppa_is_added)" == "FOUND" ]; then
     echo "Now removing Firefox ppa to apt." >/dev/tty
     echo "" >/dev/tty
-    yes | sudo add-apt-repository --remove ppa:mozillateam/ppa
+    sudo add-apt-repository --remove ppa:mozillateam/ppa --yes >>/dev/null 2>&1
   fi
   assert_firefox_ppa_is_removed_from_apt
 }
@@ -360,13 +362,14 @@ ensure_firefox_is_updated_automatically() {
 #######################################
 install_firefox_using_ppa() {
   if [ "$(firefox_via_apt)" == "NOTFOUND" ]; then
-    yes | sudo apt install firefox 2>&1
+    ensure_apt_pkg "firefox" 1
   fi
   assert_firefox_is_installed_using_ppa
   echo "Firefox is installed successfully using ppa and apt." >/dev/tty
 }
 
 swap_snap_firefox_with_ppa_apt_firefox_installation() {
+  printf 'Ensuring Firefox is installed with apt instead of snap.\n'
   # Swap Firefox installation from snap to ppa/apt using functions above.
   # 0. Detect how firefox is installed.
   # 1. If firefox installed with snap:
@@ -393,4 +396,5 @@ swap_snap_firefox_with_ppa_apt_firefox_installation() {
   # 5.a Install Firefox using apt.
   # 5.v Verify firefox is installed successfully, and only once, using apt/PPA.
   install_firefox_using_ppa
+  printf 'Firefox is now installed with apt instead of snap.\n\n'
 }

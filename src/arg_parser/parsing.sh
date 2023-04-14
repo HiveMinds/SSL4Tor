@@ -3,7 +3,6 @@
 get_nr_of_services() {
   local services="$1"
   IFS='/' read -r -a project_descriptions <<<"$services"
-  # echo "${!project_descriptions[@]}"
   echo "${#project_descriptions[@]}"
 }
 

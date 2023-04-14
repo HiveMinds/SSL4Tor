@@ -5,17 +5,17 @@ process_delete_onion_domain_flag() {
   local delete_onion_domain_flag="$1"
 
   if [ "$delete_onion_domain_flag" == "true" ]; then
-    echo "Deleting your onion domain for:$project_name"
     delete_onion_domain "$project_name"
   fi
 }
 
-process_delete_ssl_certs_flag() {
-  local delete_ssl_certs_flag="$1"
+process_delete_projects_ssl_certs_flag() {
+  local delete_projects_ssl_certs_flag="$1"
   local project_name="$2"
 
-  if [ "$delete_ssl_certs_flag" == "true" ]; then
-    echo "Deleting your self-signed SSL certificates for:$project_name"
+  if [ "$delete_projects_ssl_certs_flag" == "true" ]; then
+    echo "Deleting your self-signed project SSL certificates. Root CA is preserved."
+    delete_projects_ssl_certs
   fi
 }
 
@@ -69,20 +69,13 @@ process_get_onion_domain_flag() {
   fi
 }
 
-process_check_http_flag() {
-  local check_http_flag="$1"
-
-  if [ "$check_http_flag" == "true" ]; then
-    echo "Checking your tor domain is available over http."
-  fi
-}
-
 # Create SSL certificates.
 process_make_project_ssl_certs_flag() {
   local make_project_ssl_certs_flag="$1"
   local one_domain_per_service_flag="$2"
-  local services="$3"
-  local ssl_password="$4"
+  local background_dash_flag="$3"
+  local services="$4"
+  local ssl_password="$5"
 
   if [ "$make_project_ssl_certs_flag" == "true" ]; then
 
@@ -93,9 +86,11 @@ process_make_project_ssl_certs_flag() {
       nr_of_services=$(get_nr_of_services "$services")
       start=0
       for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+        local local_project_port
         local project_name
         local public_port_to_access_onion
 
+        local_project_port="$(get_project_property_by_index "$services" "$project_nr" "local_port")"
         project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
         public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
 
@@ -103,7 +98,18 @@ process_make_project_ssl_certs_flag() {
         onion_domain="$(get_onion_domain "$project_name")"
         assert_is_non_empty_string "${onion_domain}"
         make_project_ssl_certs "$onion_domain" "$project_name"
-        verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
+
+        # Don't kill the ssh service at port 22 that may already be running.
+        if [ "$project_name" != "ssh" ]; then
+          if [ "$background_dash_flag" == "true" ]; then
+
+            echo "Running dash in the background now."
+            run_dash_in_background "$local_project_port" "$project_name" &
+            echo "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
+          fi
+          kill_tor_if_already_running
+          verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
+        fi
       done
       rm "$TEMP_SSL_PWD_FILENAME"
     fi
@@ -114,7 +120,7 @@ process_apply_certs_to_project_flag() {
   local apply_certs_to_project_flag="$1"
 
   if [ "$apply_certs_to_project_flag" == "true" ]; then
-    echo "applying certs"
+    echo "TODO: applying certs"
   fi
 }
 
@@ -123,7 +129,7 @@ process_check_https_flag() {
   local check_https_flag="$1"
 
   if [ "$check_https_flag" == "true" ]; then
-    echo "Checking your tor domain is available over https."
+    echo "TODO: (allow direct) Checking your tor domain is available over https."
   fi
 }
 
