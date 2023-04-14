@@ -52,6 +52,7 @@ terminate_processes_on_port() {
       sudo kill -9 "$first_pid"
     else
       assert_port_is_free "$local_project_port"
+      return 0
     fi
   done
 
