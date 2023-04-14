@@ -87,8 +87,6 @@ process_make_project_ssl_certs_flag() {
   if [ "$make_project_ssl_certs_flag" == "true" ]; then
 
     assert_is_non_empty_string "${ssl_password}"
-
-    assert_is_non_empty_string "${onion_domain}"
     make_root_ssl_certs "$ssl_password"
 
     if [ "$one_domain_per_service_flag" == "true" ]; then
@@ -103,7 +101,7 @@ process_make_project_ssl_certs_flag() {
 
         local onion_domain
         onion_domain="$(get_onion_domain "$project_name")"
-
+        assert_is_non_empty_string "${onion_domain}"
         make_project_ssl_certs "$onion_domain" "$project_name"
         verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
       done
