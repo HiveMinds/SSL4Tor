@@ -22,6 +22,8 @@ verify_onion_address_is_reachable() {
     # Set the start time of the function
     start_time=$(date +%s)
     while true; do
+      # TODO: include check to see if $TOR_LOG_FILEPATH contains:[err]
+
       if [ "$(onion_address_is_available "$onion_address")" == "FOUND" ]; then
         printf 'Was able to connect to:%s\n\n' "$onion_address"
         return 0

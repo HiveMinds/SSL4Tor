@@ -111,8 +111,9 @@ process_make_project_ssl_certs_flag() {
         if [ "$background_dash_flag" == "true" ]; then
           echo "Running dash in the background now."
           run_dash_in_background "$local_project_port" "$project_name" &
-          echo "Dash is running in the background for: $project_name at port:$local_project_port"
+          echo "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
         fi
+        kill_tor_if_already_running
         verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
       done
       rm "$TEMP_SSL_PWD_FILENAME"
