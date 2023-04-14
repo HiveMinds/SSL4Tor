@@ -35,7 +35,7 @@ ensure_apt_pkg() {
 
   if [ "$execute_apt_update" == "1" ]; then
     printf "==========================\\n"
-    green_msg "Performing apt update\\n"
+    green_msg "Performing apt update"
     printf "\\n==========================\\n"
 
     # Since apt repositories are time stamped
@@ -60,12 +60,12 @@ verify_apt_installed() {
   # Throw error if apt package is not yet installed.
   if [ "$apt_pckg_exists" == "1" ]; then
     printf "==========================\\n"
-    red_msg "Error, the apt package ${apt_package_name} is not installed.\\n"
+    red_msg "Error, the apt package ${apt_package_name} is not installed."
     printf "\\n==========================\\n"
     exit 3 # TODO: update exit status.
   else
     printf "==========================\\n"
-    green_msg "Verified apt package ${apt_package_name} is installed.\\n"
+    green_msg "Verified apt package ${apt_package_name} is installed."
     printf "\\n==========================\\n"
   fi
 }
