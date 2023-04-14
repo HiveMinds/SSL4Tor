@@ -4,7 +4,7 @@ run_dash_in_background() {
   local local_project_port="$1"
   local project_name="$2"
 
-  terminate_process_on_port "$local_project_port"
+  terminate_processes_on_port "$local_project_port"
 
   python3 src/website/mwe_dash.py --port "$local_project_port" --project-name "$project_name" --use-https
 }
