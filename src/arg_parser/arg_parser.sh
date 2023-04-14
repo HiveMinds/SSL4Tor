@@ -30,7 +30,7 @@ parse_args() {
         shift # past argument
         ;;
       -bd | --background-dash)
-        background_dash_flag='false'
+        background_dash_flag='trash'
         shift # past argument
         ;;
       -ch | --check-http)

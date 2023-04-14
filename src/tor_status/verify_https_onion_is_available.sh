@@ -23,7 +23,7 @@ verify_onion_address_is_reachable() {
     start_time=$(date +%s)
     while true; do
       if [ "$(onion_address_is_available "$onion_address")" == "FOUND" ]; then
-        echo "Was able to connect to:$onion_address"
+        printf 'Was able to connect to:%s\n\n' "$onion_address"
         return 0
       fi
 
