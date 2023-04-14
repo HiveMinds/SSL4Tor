@@ -27,10 +27,18 @@
 # (?SSL?) certificate, which any computer then knows comes from a trusted CA.
 
 # Now this is where it gets interesting, I have some questions about this, in
-# the past I read that some root CA was compromised, and cynical comments about
-# how each root CA has probably a few three letter agency employees in it.
-# What I do not yet know is, if one root CA is compromised whether all of its
-# down-stream certificates are also automatically compromised, or not.
+# the past I read that some root CA was compromised (comodo and diginotar).
+# There are different types of compromises. The private key of the root CA can
+# be leaked, which allows malicious actors to create fake SSL certificates. It
+# is not clear to me whether just having the private key is enough to spread
+# those fake SSL certificates, or whether that requires an additional
+# privilege. No leaks of private keys of CA's are known. Another form of
+# compromise is the ability of malicious actors to get fake/bad SSL
+# certificates signed by a CA (or 1 level below the root CA), (without the
+# malicious actors having the private key of the root CA). This apparently
+# happened to diginotar and comodo. It is not clear to me how those
+# certificates got spread, nor what the impact of such a malicious SSL
+# certificate is.
 
 # Here is the list of certificates and their description:
 # First you create your own certificate authority.
@@ -73,6 +81,7 @@ make_ssl_certs() {
   echo "domains=$domains.end_without_space"
 
   delete_target_files "$project_name"
+  create_ssl_cert_storage_directories
 
   # Generate and apply certificate.
   generate_ca_cert "$CA_PRIVATE_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$ssl_password"
@@ -85,10 +94,35 @@ make_ssl_certs() {
 
   install_the_ca_cert_as_a_trusted_root_ca "$CA_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_CERT_FILENAME"
 
-  copy_file "$CA_PUBLIC_KEY_FILENAME" "$ROOT_CA_PEM_PATH" "true"
+  copy_file "certificates/root/$CA_PUBLIC_KEY_FILENAME" "$ROOT_CA_PEM_PATH" "true"
 
   make_self_signed_root_cert_trusted_on_ubuntu "$project_name"
 
+}
+
+create_ssl_cert_storage_directories() {
+  mkdir -p "certificates/root/"
+  mkdir -p "certificates/ssl_cert/sign_request/"
+  mkdir -p "certificates/merged/"
+}
+
+delete_target_files() {
+  local project_name="$1"
+  rm -f "certificates/root/$CA_PRIVATE_KEY_FILENAME"
+  rm -f "certificates/root/$CA_PUBLIC_CERT_FILENAME"
+  rm -f "certificates/root/$CA_PUBLIC_KEY_FILENAME"
+  rm -f "certificates/ssl_cert/$SSL_PRIVATE_KEY_FILENAME"
+  rm -f "certificates/ssl_cert/sign_request/$CA_SIGN_SSL_CERT_REQUEST_FILENAME"
+  rm -f "certificates/ssl_cert/sign_request/$SIGNED_DOMAINS_FILENAME"
+  rm -f "certificates/ssl_cert/$SSL_PUBLIC_KEY_FILENAME"
+  rm -f "certificates/merged/$MERGED_CA_SSL_CERT_FILENAME"
+  rm -f "$ROOT_CA_PEM_PATH"
+  # TODO: put the pwd file outside of the repo.
+  # TODO: pass pwd through commandline instead of via file.
+  rm -f "$TEMP_SSL_PWD_FILENAME"
+  sudo rm -f "/usr/local/share/ca-certificates/$CA_PUBLIC_KEY_FILENAME"
+  sudo rm -f "/usr/local/share/ca-certificates/$CA_PUBLIC_CERT_FILENAME"
+  sudo rm -r "/usr/local/share/ca-certificates/$project_name"
 }
 
 generate_ca_cert() {
@@ -99,10 +133,10 @@ generate_ca_cert() {
   echo "$ssl_password" >"$TEMP_SSL_PWD_FILENAME"
 
   # Generate RSA
-  openssl genrsa -passout file:$TEMP_SSL_PWD_FILENAME -aes256 -out "$ca_private_key_filename" 4096
+  openssl genrsa -passout file:$TEMP_SSL_PWD_FILENAME -aes256 -out "certificates/root/$ca_private_key_filename" 4096
 
   # Generate a public CA Cert
-  openssl req -passin file:$TEMP_SSL_PWD_FILENAME -subj "/C=$COUNTRY_CODE/" -new -x509 -sha256 -days 365 -key "$ca_private_key_filename" -out "$ca_public_key_filename"
+  openssl req -passin file:$TEMP_SSL_PWD_FILENAME -subj "/C=$COUNTRY_CODE/" -new -x509 -sha256 -days 365 -key "certificates/root/$ca_private_key_filename" -out "certificates/root/$ca_public_key_filename"
 
 }
 
@@ -118,16 +152,16 @@ generate_ssl_certificate() {
   # DNS:your-dns.record,IP:257.10.10.1
 
   # Create a RSA key
-  openssl genrsa -out "$ssl_private_key_filename" 4096
+  openssl genrsa -out "certificates/ssl_cert/$ssl_private_key_filename" 4096
 
   # Create a Certificate Signing Request (CSR)
-  openssl req -new -sha256 -subj "/CN=yourcn" -key "$ssl_private_key_filename" -out "$ca_sign_ssl_cert_request_filename"
+  openssl req -new -sha256 -subj "/CN=yourcn" -key "certificates/ssl_cert/$ssl_private_key_filename" -out "certificates/ssl_cert/sign_request/$ca_sign_ssl_cert_request_filename"
 
   # Create a `extfile` with all the alternative names
-  echo "subjectAltName=$domains" >>"$signed_domains_filename"
+  echo "subjectAltName=$domains" >>"certificates/ssl_cert/sign_request/$signed_domains_filename"
 
   # Create the public SSL certificate.
-  openssl x509 -passin file:$TEMP_SSL_PWD_FILENAME -req -sha256 -days 365 -in "$ca_sign_ssl_cert_request_filename" -CA "$ca_public_key_filename" -CAkey "$ca_private_key_filename" -out "$ssl_public_key_filename" -extfile "$signed_domains_filename" -CAcreateserial
+  openssl x509 -passin file:$TEMP_SSL_PWD_FILENAME -req -sha256 -days 365 -in "certificates/ssl_cert/sign_request/$ca_sign_ssl_cert_request_filename" -CA "certificates/root/$ca_public_key_filename" -CAkey "certificates/root/$ca_private_key_filename" -out "certificates/ssl_cert/$ssl_public_key_filename" -extfile "certificates/ssl_cert/sign_request/$signed_domains_filename" -CAcreateserial
 
   rm "$TEMP_SSL_PWD_FILENAME"
 
@@ -136,7 +170,7 @@ generate_ssl_certificate() {
 verify_certificates() {
   local ca_public_key_filename="$1"
   local ssl_public_key_filename="$2"
-  openssl verify -CAfile "$ca_public_key_filename" -verbose "$ssl_public_key_filename"
+  openssl verify -CAfile "/certificates/root/$ca_public_key_filename" -verbose "certificates/ssl_cert/$ssl_public_key_filename"
 }
 
 merge_ca_and_ssl_certs() {
@@ -144,8 +178,8 @@ merge_ca_and_ssl_certs() {
   local ca_public_key_filename="$2"
   local merged_ca_ssl_cert_filename="$3"
 
-  cat "$ssl_public_key_filename" >"$merged_ca_ssl_cert_filename"
-  cat "$ca_public_key_filename" >>"$merged_ca_ssl_cert_filename"
+  cat "$ssl_public_key_filename" >"certificates/merged/$merged_ca_ssl_cert_filename"
+  cat "/certificates/root/$ca_public_key_filename" >>"certificates/merged/$merged_ca_ssl_cert_filename"
 }
 
 install_the_ca_cert_as_a_trusted_root_ca() {
@@ -153,7 +187,7 @@ install_the_ca_cert_as_a_trusted_root_ca() {
   local ca_public_cert_filename="$2"
 
   # The file in the ca-certificates dir must be of extension .crt:
-  openssl x509 -outform der -in "$ca_public_key_filename" -out "$ca_public_cert_filename"
+  openssl x509 -outform der -in "certificates/root/$ca_public_key_filename" -out "certificates/root/$ca_public_cert_filename"
 
   # First remove any old cert if it existed.
   sudo rm -f "/usr/local/share/ca-certificates/$ca_public_cert_filename"
@@ -162,28 +196,11 @@ install_the_ca_cert_as_a_trusted_root_ca() {
   # On Debian & Derivatives:
   #- Move the CA certificate (`"$ca_private_key_filename"`) into `/usr/local/share/ca-certificates/ca.crt`.
   manual_assert_dir_exists "/usr/local/share/ca-certificates/"
-  sudo cp "$ca_public_cert_filename" "/usr/local/share/ca-certificates/$ca_public_cert_filename"
+  sudo cp "certificates/root/$ca_public_cert_filename" "/usr/local/share/ca-certificates/$ca_public_cert_filename"
   manual_assert_file_exists "/usr/local/share/ca-certificates/$ca_public_cert_filename"
 
   # Update the Cert Store with:
   sudo update-ca-certificates
-}
-
-delete_target_files() {
-  local project_name
-  project_name="$1"
-  rm -f "$CA_PRIVATE_KEY_FILENAME"
-  rm -f "$CA_PUBLIC_CERT_FILENAME"
-  rm -f "$CA_PUBLIC_KEY_FILENAME"
-  rm -f "$SSL_PRIVATE_KEY_FILENAME"
-  rm -f "$CA_SIGN_SSL_CERT_REQUEST_FILENAME"
-  rm -f "$SIGNED_DOMAINS_FILENAME"
-  rm -f "$SSL_PUBLIC_KEY_FILENAME"
-  rm -f "$MERGED_CA_SSL_CERT_FILENAME"
-  rm -f "$ROOT_CA_PEM_PATH"
-  sudo rm -f "/usr/local/share/ca-certificates/$CA_PUBLIC_KEY_FILENAME"
-  sudo rm -f "/usr/local/share/ca-certificates/$CA_PUBLIC_CERT_FILENAME"
-  sudo rm -r "/usr/local/share/ca-certificates/$project_name"
 }
 
 # On Android (This has been automated)
@@ -206,7 +223,7 @@ make_self_signed_root_cert_trusted_on_ubuntu() {
 
   sudo mkdir -p /usr/local/share/ca-certificates/"$project_name"
 
-  sudo cp "$CA_PUBLIC_CERT_FILENAME" "/usr/local/share/ca-certificates/$project_name/$CA_PUBLIC_CERT_FILENAME"
+  sudo cp "certificates/root/$CA_PUBLIC_CERT_FILENAME" "/usr/local/share/ca-certificates/$project_name/$CA_PUBLIC_CERT_FILENAME"
   manual_assert_file_exists "/usr/local/share/ca-certificates/$project_name/$CA_PUBLIC_CERT_FILENAME"
 
   # TODO: determine whether these comments are relevant.
