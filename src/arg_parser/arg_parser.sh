@@ -8,7 +8,7 @@ parse_args() {
   local check_http_flag='false'
   local check_https_flag='false'
   local firefox_to_apt_flag='false'
-  local make_ssl_certs_flag='false'
+  local make_project_ssl_certs_flag='false'
   local one_domain_per_service_flag='false'
   local dont_use_ssl='false'
 
@@ -57,7 +57,7 @@ parse_args() {
         shift # past argument
         ;;
       -ms | --make-ssl-certs)
-        make_ssl_certs_flag='true'
+        make_project_ssl_certs_flag='true'
         shift # past argument
         ;;
       -mo | --make-onion-domain)
@@ -114,7 +114,7 @@ parse_args() {
 
   # Create SSL certificates.
   # TODO: process services instead of project_name.
-  process_make_ssl_certs_flag "$make_ssl_certs_flag" "$one_domain_per_service_flag" "$services" "$ssl_password"
+  process_make_project_ssl_certs_flag "$make_project_ssl_certs_flag" "$one_domain_per_service_flag" "$services" "$ssl_password"
   process_apply_certs_to_project_flag "$apply_certs_to_project_flag"
   # Verify https access to onion domain.
   process_check_https_flag "$check_https_flag"

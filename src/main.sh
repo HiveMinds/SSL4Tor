@@ -8,7 +8,8 @@ source src/arg_parser/print_usage.sh
 source src/arg_parser/arg_verification.sh
 source src/firefox_version/firefox_version.sh
 source src/onion_domain/delete_onion_domain.sh
-source src/ssl_certs/make_ssl_certs.sh
+source src/ssl_certs/make_ssl_project_certs.sh
+source src/ssl_certs/make_ssl_root_certs.sh
 source src/onion_domain/make_onion_domain.sh
 source src/installation/install_apt.sh
 source src/installation/install_prerequisites.sh

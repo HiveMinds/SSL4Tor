@@ -61,13 +61,14 @@ SSL_PUBLIC_KEY_FILENAME="cert.pem"
 MERGED_CA_SSL_CERT_FILENAME="fullchain.pem"
 
 TEMP_SSL_PWD_FILENAME="ssl_password.txt"
+# shellcheck disable=SC2034 # (used in make_ssl_root_certs.sh)
 COUNTRY_CODE="FR"
 
 USERNAME=$(whoami)
 ROOT_CA_DIR="/home/$USERNAME"
 ROOT_CA_PEM_PATH="$ROOT_CA_DIR/$CA_PUBLIC_KEY_FILENAME"
 
-make_ssl_certs() {
+make_project_ssl_certs() {
   local onion_domain="$1"
   local project_name="$2"
   local ssl_password="$3"
@@ -80,13 +81,15 @@ make_ssl_certs() {
   domains="DNS:localhost,DNS:$onion_domain"
   echo "domains=$domains.end_without_space"
 
-  delete_target_files "$project_name"
-  create_ssl_cert_storage_directories
+  delete_project_ssl_cert_files "$project_name"
+  create_ssl_cert_storage_directories "$project_name"
+
+  # Assert root CA files exist.
 
   # Generate and apply certificate.
-  generate_ca_cert "$CA_PRIVATE_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$ssl_password"
+  generate_root_ca_cert "$CA_PRIVATE_KEY_FILENAME" "$CA_PUBLIC_KEY_FILENAME" "$ssl_password"
 
-  generate_ssl_certificate "$CA_PUBLIC_KEY_FILENAME" "$CA_PRIVATE_KEY_FILENAME" "$CA_SIGN_SSL_CERT_REQUEST_FILENAME" "$SIGNED_DOMAINS_FILENAME" "$SSL_PUBLIC_KEY_FILENAME" "$SSL_PRIVATE_KEY_FILENAME" "$domains"
+  generate_project_ssl_certificate "$CA_PUBLIC_KEY_FILENAME" "$CA_PRIVATE_KEY_FILENAME" "$CA_SIGN_SSL_CERT_REQUEST_FILENAME" "$SIGNED_DOMAINS_FILENAME" "$SSL_PUBLIC_KEY_FILENAME" "$SSL_PRIVATE_KEY_FILENAME" "$domains"
 
   verify_certificates "$CA_PUBLIC_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME"
 
@@ -100,47 +103,28 @@ make_ssl_certs() {
 
 }
 
-create_ssl_cert_storage_directories() {
-  mkdir -p "certificates/root/"
-  mkdir -p "certificates/ssl_cert/sign_request/"
-  mkdir -p "certificates/merged/"
-}
-
-delete_target_files() {
+delete_project_ssl_cert_files() {
   local project_name="$1"
-  rm -f "certificates/root/$CA_PRIVATE_KEY_FILENAME"
-  rm -f "certificates/root/$CA_PUBLIC_CERT_FILENAME"
-  rm -f "certificates/root/$CA_PUBLIC_KEY_FILENAME"
-  rm -f "certificates/ssl_cert/$SSL_PRIVATE_KEY_FILENAME"
-  rm -f "certificates/ssl_cert/sign_request/$CA_SIGN_SSL_CERT_REQUEST_FILENAME"
-  rm -f "certificates/ssl_cert/sign_request/$SIGNED_DOMAINS_FILENAME"
-  rm -f "certificates/ssl_cert/$SSL_PUBLIC_KEY_FILENAME"
-  rm -f "certificates/merged/$MERGED_CA_SSL_CERT_FILENAME"
+
+  rm -f "certificates/ssl_cert/$project_name/$SSL_PRIVATE_KEY_FILENAME"
+  rm -f "certificates/ssl_cert/$project_name/sign_request/$CA_SIGN_SSL_CERT_REQUEST_FILENAME"
+  rm -f "certificates/ssl_cert/$project_name/sign_request/$SIGNED_DOMAINS_FILENAME"
+  rm -f "certificates/ssl_cert/$project_name/$SSL_PUBLIC_KEY_FILENAME"
+  rm -f "certificates/merged/$project_name/$MERGED_CA_SSL_CERT_FILENAME"
   rm -f "$ROOT_CA_PEM_PATH"
+
   # TODO: put the pwd file outside of the repo.
   # TODO: pass pwd through commandline instead of via file.
   rm -f "$TEMP_SSL_PWD_FILENAME"
-  sudo rm -f "/usr/local/share/ca-certificates/$CA_PUBLIC_KEY_FILENAME"
-  sudo rm -f "/usr/local/share/ca-certificates/$CA_PUBLIC_CERT_FILENAME"
-  sudo rm -r "/usr/local/share/ca-certificates/$project_name"
 }
 
-generate_ca_cert() {
-  local ca_private_key_filename="$1"
-  local ca_public_key_filename="$2"
-  local ssl_password="$3"
-
-  echo "$ssl_password" >"$TEMP_SSL_PWD_FILENAME"
-
-  # Generate RSA
-  openssl genrsa -passout file:$TEMP_SSL_PWD_FILENAME -aes256 -out "certificates/root/$ca_private_key_filename" 4096
-
-  # Generate a public CA Cert
-  openssl req -passin file:$TEMP_SSL_PWD_FILENAME -subj "/C=$COUNTRY_CODE/" -new -x509 -sha256 -days 365 -key "certificates/root/$ca_private_key_filename" -out "certificates/root/$ca_public_key_filename"
-
+create_ssl_cert_storage_directories() {
+  local project_name="$1"
+  mkdir -p "certificates/ssl_cert/$project_name/sign_request/"
+  mkdir -p "certificates/merged/$project_name/"
 }
 
-generate_ssl_certificate() {
+generate_project_ssl_certificate() {
   local ca_public_key_filename="$1"
   local ca_private_key_filename="$2"
   local ca_sign_ssl_cert_request_filename="$3"
@@ -152,16 +136,16 @@ generate_ssl_certificate() {
   # DNS:your-dns.record,IP:257.10.10.1
 
   # Create a RSA key
-  openssl genrsa -out "certificates/ssl_cert/$ssl_private_key_filename" 4096
+  openssl genrsa -out "certificates/ssl_cert/$project_name/$ssl_private_key_filename" 4096
 
   # Create a Certificate Signing Request (CSR)
-  openssl req -new -sha256 -subj "/CN=yourcn" -key "certificates/ssl_cert/$ssl_private_key_filename" -out "certificates/ssl_cert/sign_request/$ca_sign_ssl_cert_request_filename"
+  openssl req -new -sha256 -subj "/CN=yourcn" -key "certificates/ssl_cert/$project_name/$ssl_private_key_filename" -out "certificates/ssl_cert/$project_name/sign_request/$ca_sign_ssl_cert_request_filename"
 
   # Create a `extfile` with all the alternative names
-  echo "subjectAltName=$domains" >>"certificates/ssl_cert/sign_request/$signed_domains_filename"
+  echo "subjectAltName=$domains" >>"certificates/ssl_cert/$project_name/sign_request/$signed_domains_filename"
 
   # Create the public SSL certificate.
-  openssl x509 -passin file:$TEMP_SSL_PWD_FILENAME -req -sha256 -days 365 -in "certificates/ssl_cert/sign_request/$ca_sign_ssl_cert_request_filename" -CA "certificates/root/$ca_public_key_filename" -CAkey "certificates/root/$ca_private_key_filename" -out "certificates/ssl_cert/$ssl_public_key_filename" -extfile "certificates/ssl_cert/sign_request/$signed_domains_filename" -CAcreateserial
+  openssl x509 -passin file:$TEMP_SSL_PWD_FILENAME -req -sha256 -days 365 -in "certificates/ssl_cert/$project_name/sign_request/$ca_sign_ssl_cert_request_filename" -CA "certificates/root/$ca_public_key_filename" -CAkey "certificates/root/$ca_private_key_filename" -out "certificates/ssl_cert/$project_name/$ssl_public_key_filename" -extfile "certificates/ssl_cert/$project_name/sign_request/$signed_domains_filename" -CAcreateserial
 
   rm "$TEMP_SSL_PWD_FILENAME"
 
@@ -170,7 +154,7 @@ generate_ssl_certificate() {
 verify_certificates() {
   local ca_public_key_filename="$1"
   local ssl_public_key_filename="$2"
-  openssl verify -CAfile "/certificates/root/$ca_public_key_filename" -verbose "certificates/ssl_cert/$ssl_public_key_filename"
+  openssl verify -CAfile "/certificates/root/$ca_public_key_filename" -verbose "certificates/ssl_cert/$project_name/$ssl_public_key_filename"
 }
 
 merge_ca_and_ssl_certs() {
@@ -178,18 +162,18 @@ merge_ca_and_ssl_certs() {
   local ca_public_key_filename="$2"
   local merged_ca_ssl_cert_filename="$3"
 
-  cat "$ssl_public_key_filename" >"certificates/merged/$merged_ca_ssl_cert_filename"
-  cat "/certificates/root/$ca_public_key_filename" >>"certificates/merged/$merged_ca_ssl_cert_filename"
+  cat "$ssl_public_key_filename" >"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
+  cat "/certificates/root/$ca_public_key_filename" >>"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
 }
 
 install_the_ca_cert_as_a_trusted_root_ca() {
   local ca_public_key_filename="$1"
   local ca_public_cert_filename="$2"
 
-  # The file in the ca-certificates dir must be of extension .crt:
+  # The file in the ca-certificates dir must be of extension .crt, so convert it into that (as a copy):
   openssl x509 -outform der -in "certificates/root/$ca_public_key_filename" -out "certificates/root/$ca_public_cert_filename"
 
-  # First remove any old cert if it existed.
+  # First remove any old cert if it pre-existed.
   sudo rm -f "/usr/local/share/ca-certificates/$ca_public_cert_filename"
   sudo update-ca-certificates
 
@@ -212,70 +196,3 @@ install_the_ca_cert_as_a_trusted_root_ca() {
 # 5. Locate the certificate file `"$ca_private_key_filename"` on your SD Card/Internal Storage using the file manager.
 # 6. Select to load it.
 # 7. Done!
-
-make_self_signed_root_cert_trusted_on_ubuntu() {
-  # source: https://ubuntu.com/server/docs/security-trust-store
-  # source: https://askubuntu.com/questions/73287/how-do-i-install-a-root-certificate
-  local project_name
-  project_name="$1"
-
-  ensure_apt_pkg "ca-certificates"
-
-  sudo mkdir -p /usr/local/share/ca-certificates/"$project_name"
-
-  sudo cp "certificates/root/$CA_PUBLIC_CERT_FILENAME" "/usr/local/share/ca-certificates/$project_name/$CA_PUBLIC_CERT_FILENAME"
-  manual_assert_file_exists "/usr/local/share/ca-certificates/$project_name/$CA_PUBLIC_CERT_FILENAME"
-
-  # TODO: determine whether these comments are relevant.
-  # Add the .crt file's path relative to /usr/local/share/ca-certificates to:
-  # /etc/ca-certificates.conf:
-  #sudo dpkg-reconfigure ca-certificatesCA_PUBLIC_CERT_FILENAME
-
-  sudo update-ca-certificates
-  # Verify the ca is in the trusted ca-certificates dir with ca
-  # certificates: /etc/ssl/certs(/ca.pem)
-  manual_assert_file_exists "/etc/ssl/certs/$CA_PUBLIC_KEY_FILENAME"
-
-  # TODO: make argument optional.
-  # TODO: include apt Firefox instead of snap.
-  # add_self_signed_root_cert_to_firefox "$project_name"
-}
-
-add_self_signed_root_cert_to_firefox() {
-  local project_name="$1"
-
-  local policies_filepath="/etc/firefox/policies/policies.json"
-
-  local policies_line="/usr/local/share/ca-certificates/$project_name/$CA_PUBLIC_CERT_FILENAME"
-
-  if [ "$(file_exists $policies_filepath)" == "FOUND" ]; then
-
-    if [ "$(file_contains_string "$policies_line" "$policies_filepath")" == "NOTFOUND" ]; then
-
-      # Generate content to put in policies.json.
-      local new_json_content
-      # shellcheck disable=SC2086
-      new_json_content=$(jq '.policies.Certificates += [{
-                    "Install": ["'$policies_line'"]
-               }]' $policies_filepath)
-
-      # Append the content
-      echo "$new_json_content" | sudo tee $policies_filepath
-
-    else
-      echo "Your certificate is already added to Firefox."
-    fi
-    # Assert the policy is in the file.
-    if [ "$(file_contains_string "$policies_line" "$policies_filepath")" == "NOTFOUND" ]; then
-      echo "Error, policy was not found in file:$policies_filepath"
-      exit 5
-    fi
-
-    # Restart firefox.
-    pkill firefox
-    firefox &
-  else
-    echo "You have to add the self-signed root certificate authority to your"
-    echo "browser yourself."
-  fi
-}
