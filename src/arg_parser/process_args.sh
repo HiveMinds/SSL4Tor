@@ -66,7 +66,6 @@ process_get_onion_domain_flag() {
   local services="$2"
 
   if [ "$process_get_onion_domain" == "true" ]; then
-
     nr_of_services=$(get_nr_of_services "$services")
     start=0
     for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
@@ -76,16 +75,16 @@ process_get_onion_domain_flag() {
       local onion_domain
       onion_domain=$(get_onion_domain "$project_name")
 
+      printf "==========================\\n"
       if [[ "$project_name" == "ssh" ]]; then
-        echo "torsocks ssh $(whoami)@$onion_domain"
+        green_msg "torsocks ssh $(whoami)@$onion_domain"
       else
         echo "Your onion domain for:$project_name, is:"
-        echo "$onion_domain"
+        green_msg "$onion_domain"
       fi
+      printf "==========================\\n\\n"
     done
-
   fi
-
 }
 
 # Create SSL certificates.
