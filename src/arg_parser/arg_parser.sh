@@ -52,7 +52,7 @@ parse_args() {
         firefox_to_apt_flag='true'
         shift # past argument
         ;;
-      -go | --get-onion-domain-for-project)
+      -go | --get-onion-domain)
         get_onion_domain_flag='true'
         shift # past argument
         ;;
@@ -87,6 +87,7 @@ parse_args() {
 
   if [ "$one_domain_per_service_flag" != "true" ]; then
     # TODO: do not run this check if only -fta | --firefox-to-apt is ran.
+    # TODO: do not run this check if only -go | --get-onion-domain is ran.
     echo "Error, multiple services per onion domain is not yet supported."
     exit 5
   fi

@@ -52,6 +52,10 @@ process_make_onion_domain_flag() {
         echo "Generating your onion domain for:$project_name"
         make_onion_domain "$one_domain_per_service_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
         prepare_starting_tor "$project_name" "$local_project_port" "$public_port_to_access_onion"
+
+        if [[ "$project_name" == "ssh" ]]; then
+          ssh_server_prerequisites
+        fi
       done
     fi
   fi
