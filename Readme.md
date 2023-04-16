@@ -71,11 +71,39 @@ port `9002`) that you can actually visit:
 
 The third is your ssh tunnel.
 
-## SSH into your device
+## SSH into your onion server
+
+To get your root CA (to set it as trusted on your phone etc.), you can ssh
+into your server.
+
+### On your onion server
+
+After running the main/single command to setup your onion domains
+(Including `22:ssh:22` as services), in your server, also run:
+
+```bash
+./src/main.sh --1-domain-1-service --services 22:ssh:22 --get-onion-domain
+```
+
+to get the onion domain at which your ssh onion is reachable. It should output
+something like:
+
+```txt
+torsocks ssh ubuntu_username@31415926535abc...onion
+```
+
+### On your client/normal device
+
+Prepare your device to access ssh over tor:
 
 ```bash
 ./src/main.sh --1-domain-1-service --setup-ssh
-./src/main.sh --1-domain-1-service --services 22:ssh:22 --get-onion-domain
+```
+
+Then ssh into your server with the command you got. E.g.:
+
+```bash
+torsocks ssh ubuntu_username@31415926535abc...onion
 ```
 
 ## Developer Requirements

@@ -75,8 +75,13 @@ process_get_onion_domain_flag() {
 
       local onion_domain
       onion_domain=$(get_onion_domain "$project_name")
-      echo "Your onion domain for:$project_name, is:"
-      echo "$onion_domain"
+
+      if [[ "$project_name" == "ssh" ]]; then
+        echo "torsocks ssh $(whoami)@$onion_domain"
+      else
+        echo "Your onion domain for:$project_name, is:"
+        echo "$onion_domain"
+      fi
     done
 
   fi
@@ -160,10 +165,18 @@ process_add_ssl_root_cert_to_apt_firefox_flag() {
   fi
 }
 
-process_setup_ssh_flag() {
-  local setup_ssh_flag="$1"
+process_setup_ssh_server_flag() {
+  local setup_ssh_server_flag="$1"
 
-  if [ "$setup_ssh_flag" == "true" ]; then
+  if [ "$setup_ssh_server_flag" == "true" ]; then
     ssh_server_prerequisites
+  fi
+}
+
+process_setup_ssh_client_flag() {
+  local setup_ssh_client_flag="$1"
+
+  if [ "$setup_ssh_client_flag" == "true" ]; then
+    ssh_client_prerequisites
   fi
 }

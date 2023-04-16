@@ -11,8 +11,6 @@ ssh_server_prerequisites() {
 
   # Check ssh is allowed through firewall.
   #sudo ufw status
-
-  # TODO: Then switch to client?
 }
 
 safely_activate_ssh_service() {
