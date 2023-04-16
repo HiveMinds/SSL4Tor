@@ -3,7 +3,7 @@
 ssh_server_prerequisites() {
   # Install ssh
   ensure_apt_pkg "openssh-server" 1
-
+  sleep 5
   safely_activate_ssh_service
 
   # TODO: Allow ssh through firewall.
