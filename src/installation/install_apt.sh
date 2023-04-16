@@ -21,7 +21,7 @@ ensure_apt_pkg() {
   # Install apt package if apt package is not yet installed.
   if [ "$apt_pckg_exists" == "1" ]; then
     printf "==========================\\n"
-    yellow " ${apt_package_name} is not installed. Installing now."
+    yellow_msg " ${apt_package_name} is not installed. Installing now."
     printf "\\n==========================\\n"
     sudo apt --assume-yes install "${apt_package_name}" >>/dev/null 2>&1
     printf "\\n==========================\\n"
