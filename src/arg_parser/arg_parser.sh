@@ -52,7 +52,7 @@ parse_args() {
         firefox_to_apt_flag='true'
         shift # past argument
         ;;
-      -go | --get-onion-domain)
+      -go | --get-onion-domain-for-project)
         get_onion_domain_flag='true'
         shift # past argument
         ;;

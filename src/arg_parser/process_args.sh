@@ -62,6 +62,7 @@ process_get_onion_domain_flag() {
   local project_name="$2"
 
   if [ "$process_get_onion_domain" == "true" ]; then
+    assert_is_non_empty_string "${project_name}"
     local onion_domain
     onion_domain=$(get_onion_domain "$project_name")
     echo "Your onion domain for:$project_name, is:$onion_domain"
