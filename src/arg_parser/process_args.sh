@@ -66,6 +66,7 @@ process_get_onion_domain_flag() {
   local services="$2"
 
   if [ "$process_get_onion_domain" == "true" ]; then
+    echo "" # Create newline
     nr_of_services=$(get_nr_of_services "$services")
     start=0
     for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
@@ -174,8 +175,11 @@ process_setup_ssh_server_flag() {
 
 process_setup_ssh_client_flag() {
   local setup_ssh_client_flag="$1"
+  local server_username="$2"
+  local server_onion_domain="$3"
 
   if [ "$setup_ssh_client_flag" == "true" ]; then
     ssh_client_prerequisites
+    setup_passwordless_ssh_access_to_server "$server_username" "$server_onion_domain"
   fi
 }

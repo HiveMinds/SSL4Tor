@@ -5,6 +5,7 @@ ssh_client_prerequisites() {
   ensure_apt_pkg "openssh-client" 1
   ensure_apt_pkg "torsocks" 1
   ensure_apt_pkg "tor" 1
+  ensure_apt_pkg "ssh-copy-id" 1
 
   # THIS IS ESSENTIAL IF YOU GET:
   # [syscall] Unsupported syscall number 39.

@@ -72,18 +72,32 @@ parse_args() {
         shift # past argument
         shift
         ;;
-      -sss | --setup-ssh-server)
-        setup_ssh_server_flag='true'
+      -sp | --ssl-password)
+        local ssl_password
+        ssl_password="$2"
+        assert_is_non_empty_string "${ssl_password}"
+        shift # past argument
         shift
         ;;
       -ssc | --setup-ssh-client)
         setup_ssh_client_flag='true'
         shift
         ;;
-      -sp | --ssl-password)
-        local ssl_password
-        ssl_password="$2"
-        assert_is_non_empty_string "${ssl_password}"
+      -sss | --setup-ssh-server)
+        setup_ssh_server_flag='true'
+        shift
+        ;;
+      -ssso | --set-server-ssh-onion)
+        local server_ssh_onion
+        server_ssh_onion="$2"
+        assert_is_non_empty_string "${server_ssh_onion}"
+        shift # past argument
+        shift
+        ;;
+      -ssu | --set-server-username)
+        local server_username
+        server_username="$2"
+        assert_is_non_empty_string "${server_username}"
         shift # past argument
         shift
         ;;
@@ -138,7 +152,7 @@ parse_args() {
   process_add_ssl_root_cert_to_apt_firefox_flag "$add_ssl_root_cert_to_apt_firefox_flag" "$services"
 
   process_setup_ssh_server_flag "$setup_ssh_server_flag"
-  process_setup_ssh_client_flag "$setup_ssh_client_flag"
+  process_setup_ssh_client_flag "$setup_ssh_client_flag" "$server_username" "$server_ssh_onion"
 
   process_get_onion_domain_flag "$get_onion_domain_flag" "$services"
 }
