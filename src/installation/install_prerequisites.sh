@@ -5,4 +5,5 @@ install_apt_prerequisites() {
   ensure_apt_pkg "net-tools" 1
   ensure_apt_pkg "httping" 1
   ensure_apt_pkg "ca-certificates" 1
+  ensure_apt_pkg "openssh-server" 1
 }

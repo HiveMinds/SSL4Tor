@@ -1,0 +1,48 @@
+#!./test/libs/bats/bin/bats
+# Requires internet connection.
+
+load '../../libs/bats-support/load'
+load '../../libs/bats-assert/load'
+
+source src/setup_ssh/ssh_status.sh
+source src/setup_ssh/server/ssh_server_setup.sh
+source src/installation/install_apt.sh
+source src/uninstallation/uninstall_apt.sh
+source src/logging/cli_logging.sh
+source src/helper_parsing.sh
+
+teardown() {
+  # By default, keep ssh enabled and active.
+  apt_remove "openssh-server" 1
+  ensure_apt_pkg "openssh-server" 1
+
+  sudo systemctl enable --now ssh
+}
+
+@test "src/setup_ssh/ssh_status.sh, function can_find_ssh_service: functions if ssh service available." {
+  # Ensure openssh-server is installed.
+  apt_remove "openssh-server" 1
+  ensure_apt_pkg "openssh-server" 1
+
+  sudo systemctl enable --now ssh
+
+  # Run function that is tested.
+  run can_find_ssh_service
+
+  # Verify result is as expected.
+  assert_output "FOUND"
+}
+
+@test "src/setup_ssh/ssh_status.sh, function can_find_ssh_service: functions if ssh service is not available." {
+  # Ensure openssh-server is installed. That implies ssh should be running.
+  apt_remove "openssh-server" 1
+
+  #safely_deactivate_ssh_service
+  sudo systemctl stop ssh >>/dev/null 2>&1
+
+  # Run function that is tested.
+  run can_find_ssh_service
+
+  # Verify result is as expected.
+  assert_output "NOTFOUND"
+}
