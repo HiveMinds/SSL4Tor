@@ -109,7 +109,7 @@ parse_args() {
 
   # Create onion domain(s).
   process_make_onion_domain_flag "$make_onion_domain_flag" "$one_domain_per_service_flag" "$services"
-  process_get_onion_domain_flag "$get_onion_domain_flag"
+  process_get_onion_domain_flag "$get_onion_domain_flag" "$services"
 
   # Create SSL certificates.
   # TODO: process services instead of project_name.

@@ -59,15 +59,24 @@ process_make_onion_domain_flag() {
 
 process_get_onion_domain_flag() {
   local process_get_onion_domain="$1"
-  local project_name="$2"
+  local services="$2"
 
   if [ "$process_get_onion_domain" == "true" ]; then
-    assert_is_non_empty_string "${project_name}"
-    local onion_domain
-    onion_domain=$(get_onion_domain "$project_name")
-    echo "Your onion domain for:$project_name, is:$onion_domain"
+
+    nr_of_services=$(get_nr_of_services "$services")
+    start=0
+    for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+      local project_name
+      project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+
+      local onion_domain
+      onion_domain=$(get_onion_domain "$project_name")
+      echo "Your onion domain for:$project_name, is:"
+      echo "$onion_domain"
+    done
 
   fi
+
 }
 
 # Create SSL certificates.
