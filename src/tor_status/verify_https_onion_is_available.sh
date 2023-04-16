@@ -28,7 +28,7 @@ verify_onion_address_is_reachable() {
         #printf 'Was able to connect to:%s\n\n' "$onion_address"
         printf "==========================\\n"
         green_msg "SSL certificate for:$onion_address is valid! Verified by connecting to that onion."
-        printf "==========================\\n\\n"
+        printf "\n==========================\\n\\n"
         return 0
       fi
 
