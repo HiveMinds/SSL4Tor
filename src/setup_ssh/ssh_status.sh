@@ -25,18 +25,22 @@ can_find_ssh_service() {
   fi
 }
 
+# source src/helper_parsing.sh && source src/setup_ssh/ssh_status.sh && safely_check_ssh_service_is_enabled
 safely_check_ssh_service_is_enabled() {
   local output_that_also_captures_error
   output_that_also_captures_error=$(sudo systemctl status ssh 2>&1)
 
-  local expected_enabled="Loaded: loaded (/lib/systemd/system/ssh.service; enabled; preset: enabled)"
-  local expected_disabled="Loaded: loaded (/lib/systemd/system/ssh.service; disabled; preset: enabled)"
+  local expected_enabled="Loaded: loaded (/lib/systemd/system/ssh.service; enabled;"
+  local expected_disabled="Loaded: loaded (/lib/systemd/system/ssh.service; disabled;"
 
   if [[ "$(can_find_ssh_service)" == "FOUND" ]]; then
     if [[ "$(command_output_contains "$expected_enabled" "$output_that_also_captures_error")" == "FOUND" ]]; then
       echo "FOUND"
     elif [[ "$(command_output_contains "$expected_disabled" "$output_that_also_captures_error")" == "FOUND" ]]; then
       echo "NOTFOUND"
+    else
+      echo "Did not find expected substrings:$output_that_also_captures_error"
+      exit 6
     fi
   else
     echo "NOTFOUND"

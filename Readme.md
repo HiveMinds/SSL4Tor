@@ -74,6 +74,7 @@ The third is your ssh tunnel.
 ## SSH into your device
 
 ```bash
+./src/main.sh --1-domain-1-service --setup-ssh
 ./src/main.sh --1-domain-1-service --services 22:ssh:22 --get-onion-domain
 ```
 
