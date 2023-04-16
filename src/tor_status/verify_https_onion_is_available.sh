@@ -13,8 +13,8 @@ verify_onion_address_is_reachable() {
     local onion_address
     onion_address="$(get_onion_address "$project_name" "$use_https" "$public_port_to_access_onion")"
 
-    echo "Now starting tor, and waiting (max) $wait_time_sec seconds to determine whether your tor website is reachable at:"
-    echo "$onion_address"
+    yellow_msg "Now starting tor, and waiting (max) $wait_time_sec seconds to determine whether your tor website is reachable at:"
+    printf "\n%s\n" "$onion_address"
 
     # Start "sudo tor" in the background
     sudo tor | tee "$TOR_LOG_FILEPATH" >/dev/null &
@@ -25,7 +25,10 @@ verify_onion_address_is_reachable() {
       # TODO: include check to see if $TOR_LOG_FILEPATH contains:[err]
 
       if [ "$(onion_address_is_available "$onion_address")" == "FOUND" ]; then
-        printf 'Was able to connect to:%s\n\n' "$onion_address"
+        #printf 'Was able to connect to:%s\n\n' "$onion_address"
+
+        green_msg "SSL certificate for:$onion_address is valid! Verified by connecting to that onion."
+
         return 0
       fi
 

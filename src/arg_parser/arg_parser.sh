@@ -7,10 +7,13 @@ parse_args() {
   local add_ssl_root_cert_to_apt_firefox_flag='false'
   local background_dash_flag='false'
   local check_https_flag='false'
+  local dont_use_ssl='false'
   local firefox_to_apt_flag='false'
+  local get_root_ca_certificate_flag='false'
   local make_project_ssl_certs_flag='false'
   local one_domain_per_service_flag='false'
-  local dont_use_ssl='false'
+  local setup_ssh_client_flag='false'
+  local setup_ssh_server_flag='false'
 
   # $# gives the length/number of the incoming function arguments.
   # the shift command eats the first element of that array, making it shorter.
@@ -56,6 +59,10 @@ parse_args() {
         get_onion_domain_flag='true'
         shift # past argument
         ;;
+      -grc | --get-root-ca-certificate)
+        get_root_ca_certificate_flag='true'
+        shift # past argument
+        ;;
       -ms | --make-ssl-certs)
         make_project_ssl_certs_flag='true'
         shift # past argument
@@ -77,6 +84,33 @@ parse_args() {
         shift # past argument
         shift
         ;;
+      -ssc | --setup-ssh-client)
+        setup_ssh_client_flag='true'
+        shift
+        ;;
+      -sss | --setup-ssh-server)
+        setup_ssh_server_flag='true'
+        shift
+        ;;
+      -ssso | --set-server-ssh-onion)
+        local server_ssh_onion
+        server_ssh_onion="$2"
+        assert_is_non_empty_string "${server_ssh_onion}"
+        shift # past argument
+        shift
+        ;;
+      -ssu | --set-server-username)
+        local server_username
+        server_username="$2"
+        assert_is_non_empty_string "${server_username}"
+        shift # past argument
+        shift
+        ;;
+      -v | --verbose)
+        # shellcheck disable=SC2034
+        VERBOSE='true'
+        shift
+        ;;
       -*)
         echo "Unknown option $1"
         print_usage
@@ -87,6 +121,7 @@ parse_args() {
 
   if [ "$one_domain_per_service_flag" != "true" ]; then
     # TODO: do not run this check if only -fta | --firefox-to-apt is ran.
+    # TODO: do not run this check if only -go | --get-onion-domain is ran.
     echo "Error, multiple services per onion domain is not yet supported."
     exit 5
   fi
@@ -109,7 +144,6 @@ parse_args() {
 
   # Create onion domain(s).
   process_make_onion_domain_flag "$make_onion_domain_flag" "$one_domain_per_service_flag" "$services"
-  process_get_onion_domain_flag "$get_onion_domain_flag"
 
   # Create SSL certificates.
   # TODO: process services instead of project_name.
@@ -122,4 +156,9 @@ parse_args() {
   # TODO: process services instead of project_name.
   process_add_ssl_root_cert_to_apt_firefox_flag "$add_ssl_root_cert_to_apt_firefox_flag" "$services"
 
+  process_setup_ssh_server_flag "$setup_ssh_server_flag"
+  process_setup_ssh_client_flag "$setup_ssh_client_flag" "$server_username" "$server_ssh_onion"
+  process_get_root_ca_certificate_flag "$get_root_ca_certificate_flag" "$server_username" "$server_ssh_onion"
+
+  process_get_onion_domain_flag "$get_onion_domain_flag" "$services"
 }

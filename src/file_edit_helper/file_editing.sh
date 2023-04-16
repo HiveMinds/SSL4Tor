@@ -53,13 +53,12 @@ verify_has_two_consecutive_lines() {
   local found_lines
   found_lines="$(has_two_consecutive_lines "$torrc_line_1" "$torrc_line_2" "$torrc_filepath")"
   if [ "$found_lines" != "FOUND" ]; then
-    printf "==========================\\n"
+
     red_msg "Error, did not found expected two lines:"
     red_msg "$torrc_line_1"
     red_msg "$torrc_line_2"
     red_msg "in:"
     red_msg "$torrc_filepath"
-    printf "==========================\\n\\n"
     exit 3 # TODO: update exit status.
   fi
 }

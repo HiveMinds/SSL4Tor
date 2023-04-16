@@ -86,7 +86,7 @@ start_onion_domain_creation() {
   local onion_domain
   #local max_tor_wait_time="$2"
   # TODO: include max_tor_wait_time as parameter
-  echo "Now starting tor, and waiting (max) $wait_time_sec seconds to generate onion url locally."
+  yellow_msg "Now starting tor, and waiting (max) $wait_time_sec seconds to generate onion url locally."
 
   # Start "sudo tor" in the background
   sudo tor | tee "$TOR_LOG_FILEPATH" >/dev/null &
@@ -108,7 +108,8 @@ start_onion_domain_creation() {
 
         # If the onion URL exists, terminate the "sudo tor" process and return 0
         kill_tor_if_already_running
-        echo "Successfully created your onion domain locally. Proceeding.."
+        green_msg "Successfully created your onion domain locally. Proceeding.."
+        echo ""
         sleep 5
 
         # TODO: verify the private key is valid for the onion domain.

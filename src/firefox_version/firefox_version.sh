@@ -39,6 +39,7 @@ command_output_contains() {
 #######################################
 firefox_via_snap() {
   local respons_lines
+  # TODO: include check to see if snap is installed, if not install it.
   respons_lines="$(snap list)"
   local found_firefox
   found_firefox=$(command_output_contains "firefox" "${respons_lines}")
@@ -370,6 +371,8 @@ install_firefox_using_ppa() {
 
 swap_snap_firefox_with_ppa_apt_firefox_installation() {
   printf 'Ensuring Firefox is installed with apt instead of snap.\n'
+  ensure_apt_pkg "snap" 1 # Used to see if snap Firefox is installed.
+
   # Swap Firefox installation from snap to ppa/apt using functions above.
   # 0. Detect how firefox is installed.
   # 1. If firefox installed with snap:

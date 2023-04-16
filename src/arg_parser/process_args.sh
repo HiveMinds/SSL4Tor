@@ -52,6 +52,10 @@ process_make_onion_domain_flag() {
         echo "Generating your onion domain for:$project_name"
         make_onion_domain "$one_domain_per_service_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
         prepare_starting_tor "$project_name" "$local_project_port" "$public_port_to_access_onion"
+
+        if [[ "$project_name" == "ssh" ]]; then
+          ssh_server_prerequisites
+        fi
       done
     fi
   fi
@@ -59,13 +63,28 @@ process_make_onion_domain_flag() {
 
 process_get_onion_domain_flag() {
   local process_get_onion_domain="$1"
-  local project_name="$2"
+  local services="$2"
 
   if [ "$process_get_onion_domain" == "true" ]; then
-    local onion_domain
-    onion_domain=$(get_onion_domain "$project_name")
-    echo "Your onion domain for:$project_name, is:$onion_domain"
+    echo "" # Create newline
+    nr_of_services=$(get_nr_of_services "$services")
+    start=0
+    for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+      local project_name
+      project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
 
+      local onion_domain
+      onion_domain=$(get_onion_domain "$project_name")
+
+      # Override global verbosity setting to show onion domains.
+      if [[ "$project_name" == "ssh" ]]; then
+        echo "You can ssh into this server with command:"
+        green_msg "torsocks ssh $(whoami)@$onion_domain" "true"
+      else
+        echo "Your onion domain for:$project_name, is:"
+        green_msg "$onion_domain" "true"
+      fi
+    done
   fi
 }
 
@@ -143,5 +162,41 @@ process_add_ssl_root_cert_to_apt_firefox_flag() {
 
     assert_is_non_empty_string "${project_name}"
     add_self_signed_root_cert_to_firefox "$project_name"
+  fi
+}
+
+process_setup_ssh_server_flag() {
+  local setup_ssh_server_flag="$1"
+
+  if [ "$setup_ssh_server_flag" == "true" ]; then
+    ssh_server_prerequisites
+  fi
+}
+
+process_setup_ssh_client_flag() {
+  local setup_ssh_client_flag="$1"
+  local server_username="$2"
+  local server_onion_domain="$3"
+
+  if [ "$setup_ssh_client_flag" == "true" ]; then
+    ssh_client_prerequisites
+    setup_passwordless_ssh_access_to_server "$server_username" "$server_onion_domain"
+  fi
+}
+
+process_get_root_ca_certificate_flag() {
+  local get_root_ca_certificate_flag="$1"
+  local server_username="$2"
+  local server_onion_domain="$3"
+
+  if [ "$get_root_ca_certificate_flag" == "true" ]; then
+    assert_is_non_empty_string "${server_username}"
+    assert_is_non_empty_string "${server_onion_domain}"
+    ssh_client_prerequisites
+
+    # TODO: check has passwordless ssh access to server. If not, set it up.
+
+    # TODO: assert has passwordless ssh access to server.
+    copy_public_root_ca_certificate_into_this_device "$server_username" "$server_onion_domain"
   fi
 }
