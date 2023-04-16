@@ -19,7 +19,7 @@ function colored_msg() {
   local color=${2}
 
   change_color "$color"
-  printf '..%s..' "$msg"
+  printf '%s' "$msg"
   reset_color
 }
 

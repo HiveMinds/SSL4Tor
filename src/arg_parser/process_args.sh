@@ -82,7 +82,7 @@ process_get_onion_domain_flag() {
         echo "Your onion domain for:$project_name, is:"
         green_msg "$onion_domain"
       fi
-      printf "==========================\\n\\n"
+      printf "\n==========================\\n\\n"
     done
   fi
 }
