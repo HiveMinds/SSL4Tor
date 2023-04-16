@@ -75,14 +75,14 @@ process_get_onion_domain_flag() {
       local onion_domain
       onion_domain=$(get_onion_domain "$project_name")
 
+      # Override global verbosity setting to show onion domains.
       if [[ "$project_name" == "ssh" ]]; then
         echo "You can ssh into this server with command:"
-        green_msg "torsocks ssh $(whoami)@$onion_domain"
+        green_msg "torsocks ssh $(whoami)@$onion_domain" "true"
       else
         echo "Your onion domain for:$project_name, is:"
-        green_msg "$onion_domain"
+        green_msg "$onion_domain" "true"
       fi
-
     done
   fi
 }

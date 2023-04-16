@@ -87,6 +87,11 @@ parse_args() {
         shift # past argument
         shift
         ;;
+      -v | --verbose)
+        # shellcheck disable=SC2034
+        VERBOSE='true'
+        shift
+        ;;
       -*)
         echo "Unknown option $1"
         print_usage

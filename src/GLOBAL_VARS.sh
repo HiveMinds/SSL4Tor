@@ -10,3 +10,4 @@ TOR_LOG_FILEPATH="starting_tor_log.txt"
 #DEFAULT_LOCAL_PROJECT_PORT=8050
 TORRC_FILEPATH=/etc/tor/torrc
 TOR_LOG_FILEPATH="tor_log.txt"
+VERBOSE="false"

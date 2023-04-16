@@ -17,22 +17,28 @@ function reset_color() {
 function colored_msg() {
   local msg=${1}
   local color=${2}
+  local force_verbose="$3"
 
-  printf "==========================\\n"
-  change_color "$color"
-  printf '%s' "$msg"
-  reset_color
-  printf "\n==========================\\n\\n"
+  if [[ "$VERBOSE" == "true" ]] || [[ "$force_verbose" == "true" ]]; then
+    printf "==========================\\n"
+    change_color "$color"
+    printf '%s' "$msg"
+    reset_color
+    printf "\n==========================\\n\\n"
+  fi
 }
 
 function green_msg() {
-  colored_msg "${1}" 2
+  local force_verbose="$2"
+  colored_msg "${1}" 2 "$force_verbose"
 }
 
 function red_msg() {
-  colored_msg "${1}" 1
+  local force_verbose="$2"
+  colored_msg "${1}" 1 "$force_verbose"
 }
 
 function yellow_msg() {
-  colored_msg "${1}" 3
+  local force_verbose="$2"
+  colored_msg "${1}" 3 "$force_verbose"
 }
