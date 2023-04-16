@@ -18,9 +18,11 @@ function colored_msg() {
   local msg=${1}
   local color=${2}
 
+  printf "==========================\\n"
   change_color "$color"
   printf '%s' "$msg"
   reset_color
+  printf "\n==========================\\n\\n"
 }
 
 function green_msg() {

@@ -75,7 +75,6 @@ process_get_onion_domain_flag() {
       local onion_domain
       onion_domain=$(get_onion_domain "$project_name")
 
-      printf "==========================\\n"
       if [[ "$project_name" == "ssh" ]]; then
         echo "You can ssh into this server with command:"
         green_msg "torsocks ssh $(whoami)@$onion_domain"
@@ -83,7 +82,7 @@ process_get_onion_domain_flag() {
         echo "Your onion domain for:$project_name, is:"
         green_msg "$onion_domain"
       fi
-      printf "\n==========================\\n\\n"
+
     done
   fi
 }

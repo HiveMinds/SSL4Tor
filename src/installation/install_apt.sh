@@ -20,23 +20,21 @@ ensure_apt_pkg() {
 
   # Install apt package if apt package is not yet installed.
   if [ "$apt_pckg_exists" == "1" ]; then
-    printf "==========================\\n"
+
     yellow_msg " ${apt_package_name} is not installed. Installing now."
-    printf "\\n==========================\\n"
     sudo apt --assume-yes install "${apt_package_name}" >>/dev/null 2>&1
-    printf "\\n==========================\\n"
+
   else
-    printf "==========================\\n"
+
     green_msg " ${apt_package_name} is installed"
-    printf "\\n==========================\\n"
+
   fi
 
   verify_apt_installed "${apt_package_name}"
 
   if [ "$execute_apt_update" == "1" ]; then
-    printf "==========================\\n"
+
     green_msg "Performing apt update"
-    printf "\\n==========================\\n"
 
     # Since apt repositories are time stamped
     # we need to enforce the time is set correctly before doing
@@ -59,13 +57,13 @@ verify_apt_installed() {
 
   # Throw error if apt package is not yet installed.
   if [ "$apt_pckg_exists" == "1" ]; then
-    printf "==========================\\n"
+
     red_msg "Error, the apt package ${apt_package_name} is not installed."
-    printf "\\n==========================\\n"
+
     exit 3 # TODO: update exit status.
   else
-    printf "==========================\\n"
+
     green_msg "Verified apt package ${apt_package_name} is installed."
-    printf "\\n==========================\\n"
+
   fi
 }

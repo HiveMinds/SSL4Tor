@@ -147,18 +147,18 @@ add_self_signed_root_cert_to_firefox() {
     fi
     # Assert the policy is in the file.
     if [ "$(file_contains_string "$policies_line" "$policies_filepath")" == "NOTFOUND" ]; then
-      printf "==========================\\n"
+
       red_msg "Error, policy was not found in file:$policies_filepath"
-      printf "==========================\\n\\n"
+
     fi
 
     # Restart firefox.
     pkill firefox
     firefox &
   else
-    printf "==========================\\n"
+
     yellow_msg "You have to add the self-signed root certificate authority to your"
     yellow_msg "browser yourself. Because I did not find a policies path at:$policies_filepath."
-    printf "\n==========================\\n\\n"
+
   fi
 }
