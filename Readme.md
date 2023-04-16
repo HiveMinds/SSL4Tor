@@ -13,10 +13,10 @@ certificate into the device on which I took the screenshot. Feel free to
 
 ## Usage
 
-3 sets of commands are given. One for a sandbox, one for the prerequisites, and
-the single command to create your https onion websites.
+3 sets of commands are given. One for a (qemu) sandbox, one for the
+prerequisites, and the single command to create your https onion websites.
 
-### Starting QEMU
+### Starting QEMU (Optional)
 
 Using qemu is not necessary, but it is a nice sandbox to give this code a try,
 keeping your own system nice and clean.
@@ -58,6 +58,7 @@ the device with:
   --make-ssl-certs \
   --firefox-to-apt \
   --add-ssl-root-cert-to-apt-firefox \
+  --setup-ssh-server \
   --get-onion-domain
 ```
 
@@ -75,31 +76,32 @@ The third is your ssh tunnel.
 ## SSH into your onion server
 
 To get your root CA (to set it as trusted on your phone etc.), you can ssh
-into your server.
+into your server. For this you need the:
 
-### On your onion server
-
-After running the main/single command to setup your onion domains
-(Including `22:ssh:22` as services), in your server, also run:
-
-```bash
-./src/main.sh --1-domain-1-service --services 22:ssh:22 --get-onion-domain
-```
-
-to get the onion domain at which your ssh onion is reachable. It should output
-something like:
+- Ubuntu username of your server
+- ssh onion of your server.
+  The onion is shown in the main/single command you ran above, in the form:
 
 ```txt
 torsocks ssh ubuntu_username@31415926535abc...onion
 ```
 
-### On your client/normal device
+### Run once
 
-Prepare your device to access ssh over tor:
+To setup ssh from your device(client) into your server (one with the onion
+domains), (and get the root ca certificate from your server, run this on your
+client:
 
 ```bash
-./src/main.sh --1-domain-1-service --setup-ssh
+./src/main.sh \
+ --1-domain-1-service \
+ --setup-ssh-client \
+ --get-root-ca-certificate \
+ --set-server-username <Ubuntu username of your server> \
+ --set-server-ssh-onion <server ssh onion>.onion
 ```
+
+### When you SSH
 
 Then ssh into your server with the command you got. E.g.:
 

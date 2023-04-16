@@ -183,3 +183,20 @@ process_setup_ssh_client_flag() {
     setup_passwordless_ssh_access_to_server "$server_username" "$server_onion_domain"
   fi
 }
+
+process_get_root_ca_certificate_flag() {
+  local get_root_ca_certificate_flag="$1"
+  local server_username="$2"
+  local server_onion_domain="$3"
+
+  if [ "$get_root_ca_certificate_flag" == "true" ]; then
+    assert_is_non_empty_string "${server_username}"
+    assert_is_non_empty_string "${server_onion_domain}"
+    ssh_client_prerequisites
+
+    # TODO: check has passwordless ssh access to server. If not, set it up.
+
+    # TODO: assert has passwordless ssh access to server.
+    copy_public_root_ca_certificate_into_this_device "$server_username" "$server_onion_domain"
+  fi
+}
