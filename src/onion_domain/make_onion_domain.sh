@@ -86,7 +86,7 @@ start_onion_domain_creation() {
   local onion_domain
   #local max_tor_wait_time="$2"
   # TODO: include max_tor_wait_time as parameter
-  echo "Now starting tor, and waiting (max) $wait_time_sec seconds to generate onion url locally."
+  yellow_msg "Now starting tor, and waiting (max) $wait_time_sec seconds to generate onion url locally."
 
   # Start "sudo tor" in the background
   sudo tor | tee "$TOR_LOG_FILEPATH" >/dev/null &

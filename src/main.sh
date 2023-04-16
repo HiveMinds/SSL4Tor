@@ -16,8 +16,11 @@ source src/installation/install_prerequisites.sh
 source src/logging/cli_logging.sh
 source src/onion_domain/delete_onion_domain.sh
 source src/onion_domain/make_onion_domain.sh
+source src/setup_ssh/client/ssh_client_setup.sh
 source src/setup_ssh/server/ssh_server_setup.sh
 source src/setup_ssh/ssh_status.sh
+source src/setup_ssh/get_root_ca.sh
+source src/setup_ssh/setup_ssh_public_private_key_access.sh
 source src/ssl_certs/make_ssl_project_certs.sh
 source src/ssl_certs/make_ssl_root_certs.sh
 source src/tor_status/tor_status.sh
