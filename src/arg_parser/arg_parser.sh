@@ -7,10 +7,11 @@ parse_args() {
   local add_ssl_root_cert_to_apt_firefox_flag='false'
   local background_dash_flag='false'
   local check_https_flag='false'
+  local dont_use_ssl='false'
   local firefox_to_apt_flag='false'
   local make_project_ssl_certs_flag='false'
   local one_domain_per_service_flag='false'
-  local dont_use_ssl='false'
+  local setup_ssh_flag='false'
 
   # $# gives the length/number of the incoming function arguments.
   # the shift command eats the first element of that array, making it shorter.
@@ -70,6 +71,10 @@ parse_args() {
         shift # past argument
         shift
         ;;
+      -ss | --setup-ssh)
+        setup_ssh_flag='true'
+        shift
+        ;;
       -sp | --ssl-password)
         local ssl_password
         ssl_password="$2"
@@ -122,5 +127,7 @@ parse_args() {
   # Add self-signed ssl certificate to (apt) Firefox.
   # TODO: process services instead of project_name.
   process_add_ssl_root_cert_to_apt_firefox_flag "$add_ssl_root_cert_to_apt_firefox_flag" "$services"
+
+  process_setup_ssh_flag "$setup_ssh_flag"
 
 }

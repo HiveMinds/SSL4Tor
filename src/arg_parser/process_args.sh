@@ -159,3 +159,11 @@ process_add_ssl_root_cert_to_apt_firefox_flag() {
     add_self_signed_root_cert_to_firefox "$project_name"
   fi
 }
+
+process_setup_ssh_flag() {
+  local setup_ssh_flag="$1"
+
+  if [ "$setup_ssh_flag" == "true" ]; then
+    ssh_server_prerequisites
+  fi
+}

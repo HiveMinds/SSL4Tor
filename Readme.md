@@ -71,6 +71,12 @@ port `9002`) that you can actually visit:
 
 The third is your ssh tunnel.
 
+## SSH into your device
+
+```bash
+./src/main.sh --1-domain-1-service --services 22:ssh:22 --get-onion-domain
+```
+
 ## Developer Requirements
 
 (Re)-install the required submodules with:
