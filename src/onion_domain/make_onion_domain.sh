@@ -108,7 +108,8 @@ start_onion_domain_creation() {
 
         # If the onion URL exists, terminate the "sudo tor" process and return 0
         kill_tor_if_already_running
-        green_msg "Successfully created your onion domain locally. Proceeding..\n"
+        green_msg "Successfully created your onion domain locally. Proceeding.."
+        echo ""
         sleep 5
 
         # TODO: verify the private key is valid for the onion domain.
