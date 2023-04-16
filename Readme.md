@@ -57,7 +57,8 @@ the device with:
   --background-dash \
   --make-ssl-certs \
   --firefox-to-apt \
-  --add-ssl-root-cert-to-apt-firefox
+  --add-ssl-root-cert-to-apt-firefox \
+  --get-onion-domain
 ```
 
 This creates 2 dash plots (one at public port `8070`, and another at public
