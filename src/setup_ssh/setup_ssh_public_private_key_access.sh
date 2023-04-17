@@ -45,7 +45,7 @@ add_public_client_key_to_ssh_agent_of_client() {
   eval "$(ssh-agent -s)"
 
   # Add your client's ssh private key to the client ssh-agent.
-  ssh-add "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME"
+  ssh-add "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME" >>/dev/null 2>&1
 
 }
 
