@@ -343,11 +343,10 @@ install_firefox_using_ppa() {
     ensure_apt_pkg "firefox" 1
   fi
   assert_firefox_is_installed_using_ppa
-  echo "Firefox is installed successfully using ppa and apt." >/dev/tty
 }
 
 swap_snap_firefox_with_ppa_apt_firefox_installation() {
-  printf 'Ensuring Firefox is installed with apt instead of snap.\n'
+  yellow_msg 'Ensuring Firefox is installed with apt instead of snap.'
   ensure_apt_pkg "snap" 1 # Used to see if snap Firefox is installed.
 
   # Swap Firefox installation from snap to ppa/apt using functions above.
@@ -376,5 +375,5 @@ swap_snap_firefox_with_ppa_apt_firefox_installation() {
   # 5.a Install Firefox using apt.
   # 5.v Verify firefox is installed successfully, and only once, using apt/PPA.
   install_firefox_using_ppa
-  printf 'Firefox is now installed with apt instead of snap.\n\n'
+  green_msg 'Firefox is now installed with apt instead of snap.'
 }
