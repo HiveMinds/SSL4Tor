@@ -61,7 +61,7 @@ record_cli() {
   install_agg_if_not_installed
 
   # Condense all pauses/static frames into a 0.1 second timeframe.
-  asciinema rec "$cli_record_filename".cast -i 0.1
+  asciinema rec "$cli_record_filename".cast -i 1 --overwrite
 
   # To terminate the recording type:`exit` <enter>.
   agg "$cli_record_filename".cast "$cli_record_filename".gif
