@@ -19,7 +19,7 @@ ensure_pip_pkg() {
   if [ "$pip_pckg_exists" == "1" ]; then
     yellow_msg " ${pip_package_name} is not installed. Installing now."
     #pip -y install "${pip_package_name}"
-    pip install "${pip_package_name}"
+    pip install "${pip_package_name}" >>/dev/null 2>&1
   else
     green_msg " ${pip_package_name} is installed"
   fi
