@@ -131,14 +131,15 @@ generate_project_ssl_certificate() {
   echo "subjectAltName=$domains" >>"certificates/ssl_cert/$project_name/sign_request/$signed_domains_filename"
 
   # Create the public SSL certificate.
-  openssl x509 -passin file:$TEMP_SSL_PWD_FILENAME -req -sha256 -days 365 -in "certificates/ssl_cert/$project_name/sign_request/$ca_sign_ssl_cert_request_filename" -CA "certificates/root/$ca_public_key_filename" -CAkey "certificates/root/$ca_private_key_filename" -out "certificates/ssl_cert/$project_name/$ssl_public_key_filename" -extfile "certificates/ssl_cert/$project_name/sign_request/$signed_domains_filename" -CAcreateserial
+  openssl x509 -passin file:$TEMP_SSL_PWD_FILENAME -req -sha256 -days 365 -in "certificates/ssl_cert/$project_name/sign_request/$ca_sign_ssl_cert_request_filename" -CA "certificates/root/$ca_public_key_filename" -CAkey "certificates/root/$ca_private_key_filename" -out "certificates/ssl_cert/$project_name/$ssl_public_key_filename" -extfile "certificates/ssl_cert/$project_name/sign_request/$signed_domains_filename" -CAcreateserial >>/dev/null 2>&1
 
 }
 
 verify_certificates() {
   local ca_public_key_filename="$1"
   local ssl_public_key_filename="$2"
-  openssl verify -CAfile "certificates/root/$ca_public_key_filename" -verbose "certificates/ssl_cert/$project_name/$ssl_public_key_filename"
+  # TODO: raise error if verification is not successful.
+  openssl verify -CAfile "certificates/root/$ca_public_key_filename" -verbose "certificates/ssl_cert/$project_name/$ssl_public_key_filename" >>/dev/null 2>&1
 }
 
 merge_ca_and_ssl_certs() {
