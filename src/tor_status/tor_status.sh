@@ -22,7 +22,7 @@ onion_address_is_available() {
   local onion_address="$1"
 
   local ping_output
-  ping_output=$(torsocks httping --count 1 "$onion_address")
+  ping_output=$(torsocks httping --count 1 "$onion_address" 2>/dev/null)
   if [[ "$ping_output" == *"100,00% failed"* ]]; then
     echo "NOTFOUND"
   elif [[ "$ping_output" == *"1 connects, 1 ok, 0,00% failed, time"* ]]; then
