@@ -71,18 +71,23 @@ process_get_onion_domain_flag() {
     start=0
     for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
       local project_name
-      project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+      local public_port_to_access_onion
 
-      local onion_domain
-      onion_domain=$(get_onion_domain "$project_name")
+      project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+      public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
 
       # Override global verbosity setting to show onion domains.
       if [[ "$project_name" == "ssh" ]]; then
+        local onion_domain
+        onion_domain=$(get_onion_domain "$project_name")
+
         echo "You can ssh into this server with command:"
         green_msg "torsocks ssh $(whoami)@$onion_domain" "true"
       else
+        local onion_address
+        onion_address="$(get_onion_address "$project_name" "true" "$public_port_to_access_onion")"
         echo "Your onion domain for:$project_name, is:"
-        green_msg "$onion_domain" "true"
+        green_msg "$onion_address" "true"
       fi
     done
   fi
@@ -182,12 +187,13 @@ process_setup_ssh_client_flag() {
   fi
 }
 
-process_get_root_ca_certificate_flag() {
-  local get_root_ca_certificate_flag="$1"
-  local server_username="$2"
-  local server_onion_domain="$3"
+process_get_file_from_server_into_client_flags() {
+  local get_root_ca_certificate_into_client_flag="$1"
+  process_get_server_gif_into_client_flag="$2"
+  local server_username="$3"
+  local server_onion_domain="$4"
 
-  if [ "$get_root_ca_certificate_flag" == "true" ]; then
+  if [[ "$get_root_ca_certificate_into_client_flag" == "true" ]] || [[ "$process_get_server_gif_into_client_flag" == "true" ]]; then
     assert_is_non_empty_string "${server_username}"
     assert_is_non_empty_string "${server_onion_domain}"
     ssh_client_prerequisites
@@ -195,7 +201,11 @@ process_get_root_ca_certificate_flag() {
     # TODO: check has passwordless ssh access to server. If not, set it up.
 
     # TODO: assert has passwordless ssh access to server.
-    copy_public_root_ca_certificate_into_this_device "$server_username" "$server_onion_domain"
+    if [ "$get_root_ca_certificate_into_client_flag" == "true" ]; then
+      copy_files_from_server_into_client "$server_username" "$server_onion_domain" "/usr/local/share/ca-certificates/$CA_PUBLIC_CERT_FILENAME" "$PWD/$ROOT_CA_PEM_PATH"
+    elif [ "$process_get_server_gif_into_client_flag" == "true" ]; then
+      copy_files_from_server_into_client "$server_username" "$server_onion_domain" "/home/$server_username/server.gif" "$PWD/server.gif"
+    fi
   fi
 }
 

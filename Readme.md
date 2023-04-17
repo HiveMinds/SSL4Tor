@@ -141,8 +141,21 @@ bashcov bats test
 To update the two gifs in the above Readme, use:
 
 ```bash
-./src/main.sh -1d1s --record-cli server
-./src/main.sh -1d1s --record-cli client
+./src/main.sh -1d1s --record-cli ~/server
+./src/main.sh -1d1s --record-cli ~/client
+```
+
+To get the `server.gif` into your *client*, set up the server in qemu and
+ssh-copy it from your client with:
+
+```bash
+./src/main.sh \
+ --1-domain-1-service \
+ --setup-ssh-client \
+ --get-root-ca-certificate \
+ --set-server-username <Ubuntu username of your server> \
+ --set-server-ssh-onion <server ssh onion>.onion
+ --get-server-gif
 ```
 
 ### Starting QEMU (Optional)

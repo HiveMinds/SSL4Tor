@@ -9,7 +9,8 @@ parse_args() {
   local check_https_flag='false'
   local dont_use_ssl='false'
   local firefox_to_apt_flag='false'
-  local get_root_ca_certificate_flag='false'
+  local get_root_ca_certificate_into_client_flag='false'
+  local get_server_gif_into_client_flag='false'
   local make_project_ssl_certs_flag='false'
   local one_domain_per_service_flag='false'
   local record_cli_flag='false'
@@ -61,9 +62,14 @@ parse_args() {
         shift # past argument
         ;;
       -grc | --get-root-ca-certificate)
-        get_root_ca_certificate_flag='true'
+        get_root_ca_certificate_into_client_flag='true'
         shift # past argument
         ;;
+      -gsg | --get-server-gif)
+        get_server_gif_into_client_flag='true'
+        shift # past argument
+        ;;
+
       -ms | --make-ssl-certs)
         make_project_ssl_certs_flag='true'
         shift # past argument
@@ -166,7 +172,7 @@ parse_args() {
 
   process_setup_ssh_server_flag "$setup_ssh_server_flag"
   process_setup_ssh_client_flag "$setup_ssh_client_flag" "$server_username" "$server_ssh_onion"
-  process_get_root_ca_certificate_flag "$get_root_ca_certificate_flag" "$server_username" "$server_ssh_onion"
+  process_get_file_from_server_into_client_flags "$get_root_ca_certificate_into_client_flag" "$get_server_gif_into_client_flag" "$server_username" "$server_ssh_onion"
 
   process_get_onion_domain_flag "$get_onion_domain_flag" "$services"
 
