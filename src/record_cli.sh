@@ -11,13 +11,15 @@ install_cli_recording_to_gif_agg() {
   rm rustup.rs
 
   # Get the `agg` (asciinema .cast to .gif converter)
-  git clone https://github.com/asciinema/agg.git
+  folder="agg"
+  url="https://github.com/asciinema/agg.git"
+  git clone "${url}" "${folder}" 2>/dev/null
 
   # Build the converter software
-  cargo build -r --manifest-path agg/Cargo.toml | 1
+  cargo build -r --manifest-path "$folder"/Cargo.toml
 
   # Copy the executable to path such that you can call it from anywhere.
-  cp agg/target/release/agg ~/.local/bin/
+  cp "$folder"/target/release/agg ~/.local/bin/
 
 }
 
