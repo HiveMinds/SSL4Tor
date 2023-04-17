@@ -12,26 +12,26 @@ apt_remove() {
   verify_apt_removed "$apt_package_name"
 }
 
+apt_is_installed() { 
+  local apt_package_name="$1"
+    dpkg -l $1 &> /dev/null
+    if [ $? -eq 0 ]; then
+        echo "FOUND"
+    else
+        echo "NOTFOUND"
+    fi
+}
+
+
 # Verifies apt package is removed
 verify_apt_removed() {
   local apt_package_name="$1"
 
-  # Determine if apt package is installed or not.
-  local apt_pckg_exists
-  apt_pckg_exists=$(
-    dpkg-query -W --showformat='${status}\n' "${apt_package_name}" | grep "ok installed"
-    echo $?
-  ) >>/dev/null 2>&1
-
   # Throw error if package still is installed.
-  if [[ "$apt_pckg_exists" == "1" ]]; then
-
+  if [[ "($apt_is_installed "$apt_package_name")" == "NOTFOUND" ]]; then
     green_msg "Verified the apt package ${apt_package_name} is removed."
-
   else
-
     red_msg "Error, the apt package ${apt_package_name} is still installed."
-
     exit 3 # TODO: update exit status.
   fi
 }
