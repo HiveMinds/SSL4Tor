@@ -5,6 +5,16 @@
 Create your own <httpS://example31415926535.onion> websites, with your own
 self-signed https certificates, **in a single command**.
 
+## Set up 2 onion domains and SSH on server
+
+![alt-text-1](server.gif "Server")
+
+## Get the root CA and set up passwordless ssh into server
+
+![alt-text-2](client.gif "Client")
+
+## Example website
+
 ![hi](onion_example.png?raw=true)
 
 PS. The https says "not secure" because I did not copy the self-signed root ca

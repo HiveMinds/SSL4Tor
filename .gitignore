@@ -16,4 +16,6 @@ fullchain.pem
 
 # CLI recordings
 server.cast
-server.gif
+#server.gif
+client.cast
+#client.gif

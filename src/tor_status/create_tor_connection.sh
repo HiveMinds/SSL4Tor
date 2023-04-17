@@ -6,7 +6,7 @@ start_tor_in_background() {
   start_time=$(date +%s)
 
   while true; do
-    error_substring="[err]"
+    error_substring='\[err\]'
     if [ "$(file_contains_string "$error_substring" "$TOR_LOG_FILEPATH")" == "FOUND" ]; then
       kill_tor_if_already_running
       sleep 5
