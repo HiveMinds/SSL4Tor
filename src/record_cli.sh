@@ -51,8 +51,6 @@ install_agg_if_not_installed() {
 }
 
 install_cli_recorder_asciinema() {
-  # sudo apt --assume-yes install pip >>/dev/null 2>&1
-  # ensure_pip_pkg "asciinema" 1
   ensure_apt_pkg "asciinema" 1
 }
 
@@ -62,7 +60,8 @@ record_cli() {
   install_cli_recorder_asciinema
   install_agg_if_not_installed
 
-  asciinema rec "$cli_record_filename".cast
+  # Condense all pauses/static frames into a 0.1 second timeframe.
+  asciinema rec "$cli_record_filename".cast -i 0.1
 
   # To terminate the recording type:`exit` <enter>.
   agg "$cli_record_filename".cast "$cli_record_filename".gif
