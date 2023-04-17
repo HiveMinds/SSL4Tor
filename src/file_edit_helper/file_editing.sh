@@ -8,8 +8,8 @@ append_lines_if_not_found() {
   has_block=$(has_two_consecutive_lines "$first_line" "$second_line" "$rel_filepath")
 
   if [ "$has_block" == "NOTFOUND" ]; then
-    echo "$first_line" | sudo tee -a "$rel_filepath"
-    echo "$second_line" | sudo tee -a "$rel_filepath"
+    echo "$first_line" | sudo tee -a "$rel_filepath" >/dev/null
+    echo "$second_line" | sudo tee -a "$rel_filepath" >/dev/null
   fi
 }
 

@@ -316,7 +316,7 @@ change_firefox_package_priority() {
   # Set the installation package preference in firefox.
   echo 'Package: *
 Pin: release o=LP-PPA-mozillateam
-Pin-Priority: 1001' | sudo tee "$preferences_path"
+Pin-Priority: 1001' | sudo tee "$preferences_path" >/dev/null
 
   # Verify the installation package preference is set correctly in firefox.
   assert_firefox_installation_package_preference_file_content "$preferences_path"
@@ -341,7 +341,7 @@ ensure_firefox_is_updated_automatically() {
   # Set the installation package preference in firefox.
   # shellcheck disable=SC2154
   # shellcheck disable=SC2016
-  echo 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codename}";' | sudo tee "$update_filepath"
+  echo 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codename}";' | sudo tee "$update_filepath" >/dev/null
 
   # Verify the installation package preference is set correctly in firefox.
   assert_firefox_auto_update_file_content "$update_filepath"
