@@ -3,6 +3,7 @@
 ssh_client_prerequisites() {
   # apt_remove "openssh-server" 1
   ensure_apt_pkg "openssh-server" 1
+  ensure_apt_pkg "curl" 1
   ensure_apt_pkg "net-tools" 1
   ensure_apt_pkg "openssh-client" 1
   ensure_apt_pkg "torsocks" 1
