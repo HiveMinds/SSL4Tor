@@ -15,8 +15,10 @@ install_cli_recording_to_gif_agg() {
   url="https://github.com/asciinema/agg.git"
   git clone "${url}" "${folder}" 2>/dev/null
 
-  # Build the converter software
-  cargo build -r --manifest-path "$folder"/Cargo.toml
+  # Build the converter software (if it was not already built).
+  if test ! -d "$folder/target"; then
+    cargo build -r --manifest-path "$folder"/Cargo.toml
+  fi
 
   # Copy the executable to path such that you can call it from anywhere.
   cp "$folder"/target/release/agg ~/.local/bin/
