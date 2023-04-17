@@ -15,7 +15,7 @@ ssh_client_prerequisites() {
   # [syscall] Unsupported syscall number 39.
   # Source: Comment in: https://askubuntu.com/q/1264335
   # NO SUDO REQUIRED.
-  chmod g-w ~/.ssh/config
+  chmod g-w ~/.ssh/config >>/dev/null 2>&1
 
   # TODO: Ensure tor is started in the background.
   start_tor_in_background

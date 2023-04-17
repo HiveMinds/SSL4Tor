@@ -25,7 +25,11 @@ setup_passwordless_ssh_access_to_server() {
 }
 
 create_private_public_ssh_key_on_client() {
-  ssh-keygen -b 4096 -t rsa -f "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME" -q -N ""
+  # Delete ssh keys if they already exist.
+  rm -f "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME"
+  rm -f "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME.pub"
+
+  ssh-keygen -b 4096 -t rsa -f "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME" -q -N "" >>/dev/null 2>&1
 
   manual_assert_file_exists "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME"
 }
