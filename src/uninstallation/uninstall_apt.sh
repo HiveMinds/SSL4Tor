@@ -25,6 +25,26 @@ apt_is_installed() {
   fi
 }
 
+# source src/uninstallation/uninstall_apt.sh && check_dependency "firefox"
+check_dependency() {
+  local apt_package_name="$1"
+  # Get the number of packages installed that match $1
+  #num=$(dpkg -l "$apt_package_name" 2>/dev/null | egrep '^ii' | wc -l)
+  # num=$(dpkg -l "$apt_package_name" 2>/dev/null | grep -E '^ii' | wc -l)
+  num=$(dpkg -l "$apt_package_name" 2>/dev/null | grep -c -E '^ii')
+
+  if [ "$num" -eq 1 ]; then
+    # print something saying it is installed
+    echo "FOUND"
+  elif [ "$num" -gt 1 ]; then
+    # print something saying there is more than one package matching $1
+    echo "More than one match"
+  else
+    # print something saying it was not found
+    echo "NOTFOUND"
+  fi
+}
+
 # Verifies apt package is removed
 verify_apt_removed() {
   local apt_package_name="$1"
