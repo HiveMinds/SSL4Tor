@@ -200,3 +200,11 @@ process_get_root_ca_certificate_flag() {
     copy_public_root_ca_certificate_into_this_device "$server_username" "$server_onion_domain"
   fi
 }
+
+process_record_cli_flag() {
+  local record_cli_flag="$1"
+  local cli_record_filename="$2"
+  if [ "$record_cli_flag" == "true" ]; then
+    record_cli "$cli_record_filename"
+  fi
+}

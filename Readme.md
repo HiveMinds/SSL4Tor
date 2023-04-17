@@ -5,6 +5,16 @@
 Create your own <httpS://example31415926535.onion> websites, with your own
 self-signed https certificates, **in a single command**.
 
+## Set up 2 onion domains and SSH on server
+
+![alt-text-1](server.gif "Server")
+
+## Get the root CA and set up passwordless ssh into server
+
+![alt-text-2](client.gif "Client")
+
+## Example website
+
 ![hi](onion_example.png?raw=true)
 
 PS. The https says "not secure" because I did not copy the self-signed root ca
@@ -23,7 +33,7 @@ keeping your own system nice and clean.
 
 ```sh
 qemu-system-x86_64 --enable-kvm -m 4096 -machine smm=off -boot order=d \
-  ubuntu22_1.img -smp 4 \
+  ubuntu22_server.img -smp 4 \
   -chardev qemu-vdagent,id=ch1,name=vdagent,clipboard=on \
   -device virtio-serial-pci \
   -device virtserialport,chardev=ch1,id=ch1,name=com.redhat.spice.0
@@ -33,11 +43,11 @@ Then press `Ctrl+Alt+G` to capture the keyboard (and mouse).
 
 ### Prerequisites
 
+Get this repository both on your server(=device with the onion websites) and
+client(=device that visits the onion websites).
+
 ```sh
 sudo apt install git -y
-sudo apt install pip -y
-pip install dash
-pip install pandas
 git clone https://github.com/HiveMinds/SSL4Tor.git
 cd SSL4Tor
 ```
@@ -150,6 +160,17 @@ bats test/*
 ```sh
 bashcov bats test
 ```
+
+### CLI recorder
+
+To update the two gifs in the above Readme, use:
+
+```bash
+./src/main.sh -1d1s --record-cli server
+./src/main.sh -1d1s --record-cli client
+```
+
+respectively.
 
 ## Help
 

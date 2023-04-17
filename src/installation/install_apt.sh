@@ -5,8 +5,6 @@
 # and optionally a 1 if apt update should be run after installation
 # has finished.
 ensure_apt_pkg() {
-  local apt_package_name
-  local execute_apt_update
   local apt_package_name="${1}"
   local execute_apt_update="${2}"
 
@@ -20,14 +18,10 @@ ensure_apt_pkg() {
 
   # Install apt package if apt package is not yet installed.
   if [ "$apt_pckg_exists" == "1" ]; then
-
     yellow_msg " ${apt_package_name} is not installed. Installing now."
     sudo apt --assume-yes install "${apt_package_name}" >>/dev/null 2>&1
-
   else
-
     green_msg " ${apt_package_name} is installed"
-
   fi
 
   verify_apt_installed "${apt_package_name}"
@@ -57,13 +51,9 @@ verify_apt_installed() {
 
   # Throw error if apt package is not yet installed.
   if [ "$apt_pckg_exists" == "1" ]; then
-
     red_msg "Error, the apt package ${apt_package_name} is not installed."
-
     exit 3 # TODO: update exit status.
   else
-
     green_msg "Verified apt package ${apt_package_name} is installed."
-
   fi
 }
