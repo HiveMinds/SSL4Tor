@@ -21,7 +21,7 @@ install_cli_recording_to_gif_agg() {
   fi
 
   # Copy the executable to path such that you can call it from anywhere.
-  cp "$folder"/target/release/agg ~/.local/bin/
+  sudo cp "$folder"/target/release/agg /usr/local/bin/
 
 }
 
