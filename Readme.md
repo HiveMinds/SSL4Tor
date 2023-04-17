@@ -5,6 +5,11 @@
 Create your own <httpS://example31415926535.onion> websites, with your own
 self-signed https certificates, **in a single command**.
 
+- A bit like Let's Encrypt, except for onion domains.
+- A bit like [Harica, except free](https://news.harica.gr/article/onion_announcement/).
+- A bit like [Digicert for Facebook](https://www.digicert.com/blog/anonymous-facebook-via-tor)
+  except for everyone.
+
 ## Set up 2 onion domains and SSH on server
 
 ![alt-text-1](server.gif "Server")
@@ -13,49 +18,17 @@ self-signed https certificates, **in a single command**.
 
 ![alt-text-2](client.gif "Client")
 
-## Example website
-
-![hi](onion_example.png?raw=true)
-
-PS. The https says "not secure" because I did not copy the self-signed root ca
-certificate into the device on which I took the screenshot. Feel free to
-[fix it](https://github.com/HiveMinds/SSL4Tor/issues/4).
-
 ## Usage
 
-3 sets of commands are given. One for a (qemu) sandbox, one for the
-prerequisites, and the single command to create your https onion websites.
+Clone this repo on 2 devices;
 
-### Starting QEMU (Optional)
+- **server** - a regular computer with Ubuntu, will host your onion websites
+- **client** - access the onion websites from this device
 
-Using qemu is not necessary, but it is a nice sandbox to give this code a try,
-keeping your own system nice and clean.
-
-```sh
-qemu-system-x86_64 --enable-kvm -m 4096 -machine smm=off -boot order=d \
-  ubuntu22_server.img -smp 4 \
-  -chardev qemu-vdagent,id=ch1,name=vdagent,clipboard=on \
-  -device virtio-serial-pci \
-  -device virtserialport,chardev=ch1,id=ch1,name=com.redhat.spice.0
-```
-
-Then press `Ctrl+Alt+G` to capture the keyboard (and mouse).
-
-### Prerequisites
-
-Get this repository both on your server(=device with the onion websites) and
-client(=device that visits the onion websites).
-
-```sh
-sudo apt install git -y
-git clone https://github.com/HiveMinds/SSL4Tor.git
-cd SSL4Tor
-```
-
-### Single command
+### Setup Server
 
 You can create 3 https onion domains, for 2 services, and an ssh access into
-the device with:
+the server, with:
 
 ```bash
 ./src/main.sh \
@@ -72,35 +45,36 @@ the device with:
   --get-onion-domain
 ```
 
-This creates 2 dash plots (one at public port `8070`, and another at public
-port `9002`) that you can actually visit:
+This creates an ssh tunnel, and 2 dash plots that you can visit:
 
-- inside Qemu at: https:127.0.0.1:8050 and https:127.0.0.1:9001
+- Inside the (Qemu) server at:
+  - [https:127.0.0.1:8050](https:127.0.0.1:8050)
+  - [https:127.0.0.1:9001](https:127.0.0.1:9001)
 - From anywhere in the world, using Brave or the Tor browser at:
-  \<https://\<first_onion_url>.onion:8070>
-  and
-  \<https://\<second_onion_url>.onion:9002>
+  - [https://\<first_onion_url>.onion:8070](https://%3Cfirst_onion_url%3E.onion:8070)
+  - [https://\<second_onion_url>.onion:9002](https://%3Csecond_onion_url%3E.onion:9002)
 
-The third is your ssh tunnel.
+This is the default service that is created on your onion domain:
 
-## SSH into your onion server
+<img src="onion_example.png" width="700">
 
-To get your root CA (to set it as trusted on your phone etc.), you can ssh
-into your server. For this you need the:
+## Get your public root ca certificate
+
+You now have self-signed your SSL certificates for your onion domain(s) on your server.
+
+Since it is not standard that you as a user have the authority to be an
+authority, you have to tell your devices to respect your new authority. This is
+done by adding your self-signed root ca (`ca.crt`) to your browser, or even
+computer. This is automated for you. You need the:
 
 - Ubuntu username of your server
-- ssh onion of your server.
-  The onion is shown in the main/single command you ran above, in the form:
+- ssh onion of your server. (it is printed in green by the server in form:)
 
 ```txt
 torsocks ssh ubuntu_username@31415926535abc...onion
 ```
 
-### Run once
-
-To setup ssh from your device(client) into your server (one with the onion
-domains), (and get the root ca certificate from your server, run this on your
-client:
+Then run this on your client:
 
 ```bash
 ./src/main.sh \
@@ -111,13 +85,16 @@ client:
  --set-server-ssh-onion <server ssh onion>.onion
 ```
 
-### When you SSH
+## Passwordless SSH into server
 
-Then ssh into your server with the command you got. E.g.:
+As a side affect, you can now ssh into your server, from anywhere in the world,
+safely and passwordless:
 
 ```bash
 torsocks ssh ubuntu_username@31415926535abc...onion
 ```
+
+(It uses your unique, private & public ssh-key pair for authentication.)
 
 ## Developer Requirements
 
@@ -170,7 +147,20 @@ To update the two gifs in the above Readme, use:
 ./src/main.sh -1d1s --record-cli client
 ```
 
-respectively.
+### Starting QEMU (Optional)
+
+Using qemu is not necessary, but it is a nice sandbox to give this code a try,
+keeping your own system nice and clean.
+
+```sh
+qemu-system-x86_64 --enable-kvm -m 4096 -machine smm=off -boot order=d \
+  ubuntu22_server.img -smp 4 \
+  -chardev qemu-vdagent,id=ch1,name=vdagent,clipboard=on \
+  -device virtio-serial-pci \
+  -device virtserialport,chardev=ch1,id=ch1,name=com.redhat.spice.0
+```
+
+Then press `Ctrl+Alt+G` to capture the keyboard (and mouse).
 
 ## Help
 
