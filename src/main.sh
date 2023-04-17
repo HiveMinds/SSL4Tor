@@ -12,6 +12,7 @@ source src/firefox_version/firefox_version.sh
 source src/helper.sh
 source src/helper_parsing.sh
 source src/installation/install_apt.sh
+source src/installation/install_pip.sh
 source src/installation/install_prerequisites.sh
 source src/logging/cli_logging.sh
 source src/onion_domain/delete_onion_domain.sh
@@ -23,6 +24,7 @@ source src/setup_ssh/get_root_ca.sh
 source src/setup_ssh/setup_ssh_public_private_key_access.sh
 source src/ssl_certs/make_ssl_project_certs.sh
 source src/ssl_certs/make_ssl_root_certs.sh
+source src/tor_status/create_tor_connection.sh
 source src/tor_status/tor_status.sh
 source src/tor_status/verify_https_onion_is_available.sh
 source src/uninstallation/uninstall_apt.sh

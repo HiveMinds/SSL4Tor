@@ -15,4 +15,5 @@ ssh_client_prerequisites() {
   chmod g-w ~/.ssh/config
 
   # TODO: Ensure tor is started in the background.
+  start_tor_in_background
 }

@@ -33,11 +33,11 @@ Then press `Ctrl+Alt+G` to capture the keyboard (and mouse).
 
 ### Prerequisites
 
+Get this repository both on your server(=device with the onion websites) and
+client(=device that visits the onion websites).
+
 ```sh
 sudo apt install git -y
-sudo apt install pip -y
-pip install dash
-pip install pandas
 git clone https://github.com/HiveMinds/SSL4Tor.git
 cd SSL4Tor
 ```

@@ -17,8 +17,6 @@ setup_passwordless_ssh_access_to_server() {
   local server_username="$1"
   local server_onion_domain="$2"
 
-  # TODO: delete
-  source src/verification/assert_exists.sh
   create_private_public_ssh_key_on_client
 
   add_public_client_key_to_ssh_agent_of_client
