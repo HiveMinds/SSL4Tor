@@ -13,3 +13,7 @@ ca.srl
 cert.csr
 cert.pem
 fullchain.pem
+
+# CLI recordings
+server.cast
+server.gif

@@ -1,0 +1,60 @@
+#!/bin/bash
+
+install_cli_recording_to_gif_agg() {
+
+  # Install build requirements for agg cargo.
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+  # Get the `agg` (asciinema .cast to .gif converter)
+  git clone https://github.com/asciinema/agg.git
+
+  # Build the converter software
+  cargo build -r --manifest-path agg/Cargo.toml
+
+  # Copy the executable to path such that you can call it from anywhere.
+  cp agg/target/release/agg ~/.local/bin/
+
+}
+
+agg_is_installed() {
+  local output
+  output="$(agg --version)"
+
+  if [[ "$output" == "agg 1."* ]]; then
+    echo "FOUND"
+  else
+    echo "NOTFOUND"
+  fi
+}
+
+assert_agg_is_installed() {
+  if [[ "$(agg_is_installed)" != "FOUND" ]]; then
+    echo "Error, agg was not installed."
+    exit 6
+  fi
+}
+
+install_agg_if_not_installed() {
+  if [[ "$(agg_is_installed)" != "FOUND" ]]; then
+    install_cli_recording_to_gif_agg
+  fi
+  assert_agg_is_installed
+}
+
+install_cli_recorder_asciinema() {
+  ensure_pip_pkg "asciinema" 1
+}
+
+record_cli() {
+  local cli_record_filename="$1"
+
+  install_cli_recorder_asciinema
+  install_agg_if_not_installed
+
+  asciinema rec "$cli_record_filename".cast
+
+  # To terminate the recording type:`exit` <enter>.
+  agg "$cli_record_filename".cast "$cli_record_filename".gif
+
+  manual_assert_file_exists "$cli_record_filename".gif
+}

@@ -17,6 +17,7 @@ source src/installation/install_prerequisites.sh
 source src/logging/cli_logging.sh
 source src/onion_domain/delete_onion_domain.sh
 source src/onion_domain/make_onion_domain.sh
+source src/record_cli.sh
 source src/setup_ssh/client/ssh_client_setup.sh
 source src/setup_ssh/server/ssh_server_setup.sh
 source src/setup_ssh/ssh_status.sh

@@ -12,6 +12,7 @@ parse_args() {
   local get_root_ca_certificate_flag='false'
   local make_project_ssl_certs_flag='false'
   local one_domain_per_service_flag='false'
+  local record_cli_flag='false'
   local setup_ssh_client_flag='false'
   local setup_ssh_server_flag='false'
 
@@ -70,6 +71,13 @@ parse_args() {
       -mo | --make-onion-domains)
         make_onion_domain_flag='true'
         shift # past argument
+        ;;
+      -rcli | --record-cli)
+        local record_cli_flag='true'
+        cli_record_filename="$2"
+        assert_is_non_empty_string "${cli_record_filename}"
+        shift # past argument
+        shift
         ;;
       -s | --services)
         services="$2"
@@ -161,4 +169,6 @@ parse_args() {
   process_get_root_ca_certificate_flag "$get_root_ca_certificate_flag" "$server_username" "$server_ssh_onion"
 
   process_get_onion_domain_flag "$get_onion_domain_flag" "$services"
+
+  process_record_cli_flag "$record_cli_flag" "$cli_record_filename"
 }
