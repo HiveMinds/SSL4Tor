@@ -50,10 +50,6 @@ create_root_certificate_directories() {
 
 }
 
-assert_root_ca_files_exist() {
-  echo "TODO: assert_root_ca_files_exist"
-}
-
 generate_root_ca_cert() {
   local ca_private_key_filename="$1"
   local ca_public_key_filename="$2"
@@ -67,7 +63,7 @@ generate_root_ca_cert() {
   # Generate a public CA Cert
   openssl req -passin file:"$TEMP_SSL_PWD_FILENAME" -subj "/C=$COUNTRY_CODE/" -new -x509 -sha256 -days 365 -key "certificates/root/$ca_private_key_filename" -out "certificates/root/$ca_public_key_filename"
 
-  assert_root_ca_files_exist
+  manual_assert_file_exists "certificates/root/$ca_public_key_filename"
 }
 
 install_the_ca_cert_as_a_trusted_root_ca() {
