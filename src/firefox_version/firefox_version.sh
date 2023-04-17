@@ -47,29 +47,6 @@ firefox_via_snap() {
 }
 
 #######################################
-# Checks if firefox is installed using ppa and apt or not.
-# Locals:
-#  respones_lines
-#  found_firefox
-# Globals:
-#  None
-# Arguments:
-#  None
-# Returns:
-#  0 If command was evaluated successfully.
-# Outputs:
-#  FOUND if firefox is installed using ppa and apt.
-#  NOTFOUND if firefox is not installed using ppa and apt.
-#######################################
-firefox_via_apt() {
-  local respons_lines
-  respons_lines="$(apt list --installed)" >>/dev/null 2>&1
-  local found_firefox
-  found_firefox=$(command_output_contains "firefox" "${respons_lines}")
-  echo "$found_firefox"
-}
-
-#######################################
 # Checks if firefox is added as ppa or not.
 # Locals:
 #  respones_lines
@@ -88,7 +65,7 @@ firefox_via_apt() {
 firefox_ppa_is_added() {
   # Get list of ppa packages added for apt usage.
   local respons_lines
-  respons_lines="$(apt policy)" >>/dev/null 2>&1
+  respons_lines="$(apt-cache policy)" >>/dev/null 2>&1
   # Specify identifier for firefox ppa presence.
   local ppa_indicator="https://ppa.launchpadcontent.net/mozillateam/ppa/ubuntu"
   local found_firefox_ppa
@@ -189,7 +166,7 @@ assert_firefox_is_not_installed_using_snap() {
   fi
 }
 assert_firefox_is_installed_using_ppa() {
-  if [ "$(firefox_via_apt)" != "FOUND" ]; then
+  if [[ "$(apt_package_is_installed firefox)" != "FOUND" ]]; then
     echo "Error, Firefox installation was not performed using ppa and apt." >/dev/tty
     exit 2
   fi
@@ -362,7 +339,7 @@ ensure_firefox_is_updated_automatically() {
 #  Nothing
 #######################################
 install_firefox_using_ppa() {
-  if [ "$(firefox_via_apt)" == "NOTFOUND" ]; then
+  if [[ "$(apt_package_is_installed "firefox")" != "FOUND" ]]; then
     ensure_apt_pkg "firefox" 1
   fi
   assert_firefox_is_installed_using_ppa
