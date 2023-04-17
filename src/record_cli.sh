@@ -1,6 +1,7 @@
 #!/bin/bash
 
 install_cli_recording_to_gif_agg() {
+  ensure_apt_pkg "curl" 1
 
   # Install build requirements for agg cargo.
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -42,6 +43,7 @@ install_agg_if_not_installed() {
 }
 
 install_cli_recorder_asciinema() {
+  ensure_apt_pkg "pip" 1
   ensure_pip_pkg "asciinema" 1
 }
 
