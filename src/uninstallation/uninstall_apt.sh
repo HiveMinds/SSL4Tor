@@ -12,35 +12,19 @@ apt_remove() {
   verify_apt_removed "$apt_package_name"
 }
 
-# source src/uninstallation/uninstall_apt.sh && apt_is_installed "firefox"
-apt_is_installed() {
+apt_package_is_installed() {
   local apt_package_name="$1"
 
-  dpkg -l "$apt_package_name" &>/dev/null
-  local status="$?"
-  if [ "$status" -eq 0 ]; then
-    echo "FOUND"
-  else
-    echo "NOTFOUND"
-  fi
-}
-
-# source src/uninstallation/uninstall_apt.sh && check_dependency "firefox"
-check_dependency() {
-  local apt_package_name="$1"
   # Get the number of packages installed that match $1
-  #num=$(dpkg -l "$apt_package_name" 2>/dev/null | egrep '^ii' | wc -l)
-  # num=$(dpkg -l "$apt_package_name" 2>/dev/null | grep -E '^ii' | wc -l)
+  local num
   num=$(dpkg -l "$apt_package_name" 2>/dev/null | grep -c -E '^ii')
 
   if [ "$num" -eq 1 ]; then
-    # print something saying it is installed
     echo "FOUND"
   elif [ "$num" -gt 1 ]; then
-    # print something saying there is more than one package matching $1
     echo "More than one match"
+    exit 1
   else
-    # print something saying it was not found
     echo "NOTFOUND"
   fi
 }
@@ -50,7 +34,7 @@ verify_apt_removed() {
   local apt_package_name="$1"
 
   # Throw error if package still is installed.
-  if [[ "$(apt_is_installed "$apt_package_name")" == "NOTFOUND" ]]; then
+  if [[ "$(apt_package_is_installed "$apt_package_name")" == "NOTFOUND" ]]; then
     green_msg "Verified the apt package ${apt_package_name} is removed."
   else
     red_msg "Error, the apt package ${apt_package_name} is still installed."
