@@ -65,12 +65,8 @@ authority, you have to tell your devices to respect your new authority. This is
 done by adding your self-signed root ca (`ca.crt`) to your browser, or even
 computer. This is automated for you. You need the:
 
-- Ubuntu username of your server
-- ssh onion of your server. (it is printed in green by the server in form:)
-
-```txt
-torsocks ssh ubuntu_username@31415926535abc...onion
-```
+- Ubuntu username of your server.
+- ssh onion of your server (shown in that last green line of the server setup gif).
 
 Then run this on your client:
 
@@ -187,3 +183,8 @@ And if you like this project, feel free to:
 - Pick an issue and fix it.
 - Create support for Windows and/or Mac.
 - Improve the test-coverage by writing more (meaningful) tests.
+- Move the developer instructions into a separate documentation, similar
+  to: <https://bats-core.readthedocs.io/en/stable/>
+- Help make this repository Readme more simple. (To me this makes sense, but
+  perhaps to a new person coming into this some context is missing. And I
+  believe less is more in this case.)
