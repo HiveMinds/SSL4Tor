@@ -18,7 +18,7 @@ safely_activate_ssh_service() {
   # TODO: verify openssh-server is installed.
 
   if [[ "$(can_find_ssh_service)" == "FOUND" ]]; then
-    sudo systemctl enable --now ssh
+    sudo systemctl enable --now ssh --quiet
 
     # Assert ssh is activated.
     assert_ssh_service_is_available_enabled_and_active
