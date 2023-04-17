@@ -153,7 +153,7 @@ ssh-copy it from your client with:
  --1-domain-1-service \
  --setup-ssh-client \
  --set-server-username <Ubuntu username of your server> \
- --set-server-ssh-onion <server ssh onion>.onion
+ --set-server-ssh-onion <server ssh onion>.onion \
  --get-server-gif
 ```
 
