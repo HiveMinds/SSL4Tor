@@ -160,7 +160,7 @@ install_the_ca_cert_as_a_trusted_root_ca() {
 
   # First remove any old cert if it pre-existed.
   sudo rm -f "/usr/local/share/ca-certificates/$ca_public_cert_filename"
-  sudo update-ca-certificates
+  sudo update-ca-certificates >>/dev/null 2>&1 
 
   # On Debian & Derivatives:
   #- Move the CA certificate (`"$ca_private_key_filename"`) into `/usr/local/share/ca-certificates/ca.crt`.
@@ -169,7 +169,7 @@ install_the_ca_cert_as_a_trusted_root_ca() {
   manual_assert_file_exists "/usr/local/share/ca-certificates/$ca_public_cert_filename"
 
   # Update the Cert Store with:
-  sudo update-ca-certificates
+  sudo update-ca-certificates >>/dev/null 2>&1
 }
 
 # On Android (This has been automated)

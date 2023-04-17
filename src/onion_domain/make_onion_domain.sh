@@ -22,7 +22,7 @@ prepare_onion_domain_creation() {
   local project_name="$1"
   local local_project_port="$2"
   local public_port_to_access_onion="$3"
-
+  read -p "A"
   # Verify tor configuration file exists (Should be created at installation of
   # sudo apt tor).
   manual_assert_file_exists "$TORRC_FILEPATH" "true"
@@ -38,6 +38,7 @@ prepare_onion_domain_creation() {
   # Make root owner of tor directory.
   sudo chown -R root "$TOR_SERVICE_DIR"
   sudo chmod 700 "$TOR_SERVICE_DIR/$project_name"
+  read -p "B"
 }
 
 create_torrc_lines_one_onion_per_service() {
