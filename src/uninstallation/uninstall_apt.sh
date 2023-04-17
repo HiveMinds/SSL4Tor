@@ -12,23 +12,25 @@ apt_remove() {
   verify_apt_removed "$apt_package_name"
 }
 
-apt_is_installed() { 
+# source src/uninstallation/uninstall_apt.sh && apt_is_installed "firefox"
+apt_is_installed() {
   local apt_package_name="$1"
-    dpkg -l $1 &> /dev/null
-    if [ $? -eq 0 ]; then
-        echo "FOUND"
-    else
-        echo "NOTFOUND"
-    fi
-}
 
+  dpkg -l "$apt_package_name" &>/dev/null
+  local status="$?"
+  if [ "$status" -eq 0 ]; then
+    echo "FOUND"
+  else
+    echo "NOTFOUND"
+  fi
+}
 
 # Verifies apt package is removed
 verify_apt_removed() {
   local apt_package_name="$1"
 
   # Throw error if package still is installed.
-  if [[ "($apt_is_installed "$apt_package_name")" == "NOTFOUND" ]]; then
+  if [[ "$(apt_is_installed "$apt_package_name")" == "NOTFOUND" ]]; then
     green_msg "Verified the apt package ${apt_package_name} is removed."
   else
     red_msg "Error, the apt package ${apt_package_name} is still installed."
