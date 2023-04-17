@@ -4,7 +4,10 @@ install_cli_recording_to_gif_agg() {
   ensure_apt_pkg "curl" 1
 
   # Install build requirements for agg cargo.
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs >rustup.rs
+  chmod +x rustup.rs
+  ./rustup.rs -y >>/dev/null 2>&1
+  rm rustup.rs
 
   # Get the `agg` (asciinema .cast to .gif converter)
   git clone https://github.com/asciinema/agg.git
