@@ -25,7 +25,7 @@ setup_passwordless_ssh_access_to_server() {
 }
 
 create_private_public_ssh_key_on_client() {
-  ssh-keygen -b 4096 -t rsa -f "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME" -q -N "" -y
+  ssh-keygen -b 4096 -t rsa -f "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME" -q -N ""
 
   manual_assert_file_exists "$CLIENT_SSH_DIR$CLIENT_SSH_KEY_NAME"
 }
