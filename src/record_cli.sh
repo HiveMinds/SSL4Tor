@@ -43,7 +43,7 @@ install_agg_if_not_installed() {
 }
 
 install_cli_recorder_asciinema() {
-  ensure_apt_pkg "pip" 1
+  sudo apt --assume-yes install pip >>/dev/null 2>&1
   ensure_pip_pkg "asciinema" 1
 }
 

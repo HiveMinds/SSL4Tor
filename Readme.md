@@ -157,7 +157,7 @@ To update the two gifs in the above Readme, use:
 
 ```bash
 ./src/main.sh -1d1s --record-cli server
-./src/main.sh --record-cli client
+./src/main.sh -1d1s --record-cli client
 ```
 
 respectively.
