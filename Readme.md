@@ -39,8 +39,6 @@ the server, with:
   --ssl-password somepassword \
   --background-dash \
   --make-ssl-certs \
-  #--firefox-to-apt \
-  #--add-ssl-root-cert-to-apt-firefox \
   --setup-ssh-server \
   --get-onion-domain
 ```

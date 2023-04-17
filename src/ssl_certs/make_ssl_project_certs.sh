@@ -122,17 +122,17 @@ generate_project_ssl_certificate() {
   # DNS:your-dns.record,IP:257.10.10.1
 
   # Create a RSA key
-  openssl genrsa -out "certificates/ssl_cert/$project_name/$ssl_private_key_filename" 4096
+  openssl genrsa -out "certificates/ssl_cert/$project_name/$ssl_private_key_filename" 4096 >>/dev/null 2>&1
 
   # Create a Certificate Signing Request (CSR)
-  openssl req -new -sha256 -subj "/CN=yourcn" -key "certificates/ssl_cert/$project_name/$ssl_private_key_filename" -out "certificates/ssl_cert/$project_name/sign_request/$ca_sign_ssl_cert_request_filename"
+  openssl req -new -sha256 -subj "/CN=yourcn" -key "certificates/ssl_cert/$project_name/$ssl_private_key_filename" -out "certificates/ssl_cert/$project_name/sign_request/$ca_sign_ssl_cert_request_filename" >>/dev/null 2>&1
 
   # Create a `extfile` with all the alternative names
+  # TODO: silence.
   echo "subjectAltName=$domains" >>"certificates/ssl_cert/$project_name/sign_request/$signed_domains_filename"
 
   # Create the public SSL certificate.
   openssl x509 -passin file:$TEMP_SSL_PWD_FILENAME -req -sha256 -days 365 -in "certificates/ssl_cert/$project_name/sign_request/$ca_sign_ssl_cert_request_filename" -CA "certificates/root/$ca_public_key_filename" -CAkey "certificates/root/$ca_private_key_filename" -out "certificates/ssl_cert/$project_name/$ssl_public_key_filename" -extfile "certificates/ssl_cert/$project_name/sign_request/$signed_domains_filename" -CAcreateserial >>/dev/null 2>&1
-
 }
 
 verify_certificates() {
@@ -157,7 +157,7 @@ install_the_ca_cert_as_a_trusted_root_ca() {
   local ca_public_cert_filename="$2"
 
   # The file in the ca-certificates dir must be of extension .crt, so convert it into that (as a copy):
-  openssl x509 -outform der -in "certificates/root/$ca_public_key_filename" -out "certificates/root/$ca_public_cert_filename"
+  openssl x509 -outform der -in "certificates/root/$ca_public_key_filename" -out "certificates/root/$ca_public_cert_filename" >>/dev/null 2>&1
 
   # First remove any old cert if it pre-existed.
   sudo rm -f "/usr/local/share/ca-certificates/$ca_public_cert_filename"

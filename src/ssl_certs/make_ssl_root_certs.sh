@@ -58,10 +58,10 @@ generate_root_ca_cert() {
   echo "$ssl_password" >"$TEMP_SSL_PWD_FILENAME"
 
   # Generate RSA
-  openssl genrsa -passout file:"$TEMP_SSL_PWD_FILENAME" -aes256 -out "certificates/root/$ca_private_key_filename" 4096
+  openssl genrsa -passout file:"$TEMP_SSL_PWD_FILENAME" -aes256 -out "certificates/root/$ca_private_key_filename" 4096 >>/dev/null 2>&1
 
   # Generate a public CA Cert
-  openssl req -passin file:"$TEMP_SSL_PWD_FILENAME" -subj "/C=$COUNTRY_CODE/" -new -x509 -sha256 -days 365 -key "certificates/root/$ca_private_key_filename" -out "certificates/root/$ca_public_key_filename"
+  openssl req -passin file:"$TEMP_SSL_PWD_FILENAME" -subj "/C=$COUNTRY_CODE/" -new -x509 -sha256 -days 365 -key "certificates/root/$ca_private_key_filename" -out "certificates/root/$ca_public_key_filename" >>/dev/null 2>&1
 
   manual_assert_file_exists "certificates/root/$ca_public_key_filename"
 }
@@ -71,7 +71,7 @@ install_the_ca_cert_as_a_trusted_root_ca() {
   local ca_public_cert_filename="$2"
 
   # The file in the ca-certificates dir must be of extension .crt, so convert it into that (as a copy):
-  openssl x509 -outform der -in "certificates/root/$ca_public_key_filename" -out "certificates/root/$ca_public_cert_filename"
+  openssl x509 -outform der -in "certificates/root/$ca_public_key_filename" -out "certificates/root/$ca_public_cert_filename" >>/dev/null 2>&1
 
   # First remove any old cert if it pre-existed.
   sudo rm -f "/usr/local/share/ca-certificates/$ca_public_cert_filename"
