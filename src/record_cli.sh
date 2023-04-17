@@ -4,13 +4,13 @@ install_cli_recording_to_gif_agg() {
   ensure_apt_pkg "curl" 1
 
   # Install build requirements for agg cargo.
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh >>/dev/null 2>&1
 
   # Get the `agg` (asciinema .cast to .gif converter)
   git clone https://github.com/asciinema/agg.git
 
   # Build the converter software
-  cargo build -r --manifest-path agg/Cargo.toml
+  cargo build -r --manifest-path agg/Cargo.toml | 1
 
   # Copy the executable to path such that you can call it from anywhere.
   cp agg/target/release/agg ~/.local/bin/
@@ -18,10 +18,10 @@ install_cli_recording_to_gif_agg() {
 }
 
 agg_is_installed() {
-  local output
-  output="$(agg --version)"
+  local output_that_also_captures_error
+  output_that_also_captures_error="$(agg --version 2>&1)"
 
-  if [[ "$output" == "agg 1."* ]]; then
+  if [[ "$output_that_also_captures_error" == "agg 1."* ]]; then
     echo "FOUND"
   else
     echo "NOTFOUND"
