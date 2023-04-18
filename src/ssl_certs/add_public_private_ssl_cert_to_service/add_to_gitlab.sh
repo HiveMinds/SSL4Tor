@@ -7,7 +7,7 @@ source src/verification/assert_exists.sh # TODO: remove
 #SSL_PRIVATE_KEY_FILENAME="cert-key.pem"
 #SSL_PUBLIC_KEY_FILENAME="cert.pem"
 # source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "localhost" "cert-key.pem" "cert.pem" "ca.crt"
-# source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "vwp4pobrfjwz3bsgkritleu43ptxyxybeh5hm3td7u3kzatlzq247hqd.onion" "cert-key.pem" "cert.pem" "ca.crt"
+# source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "onion_has_been_closed.onion" "cert-key.pem" "cert.pem" "ca.crt"
 add_private_and_public_ssl_certs_to_gitlab() {
   local project_name="$1"
   local domain_name="$2"
@@ -39,8 +39,10 @@ add_private_and_public_ssl_certs_to_gitlab() {
 
   # Copy your new certificates into the folder where GitLab looks by default
   # for new SSL certificates.
-  sudo cp "certificates/ssl_cert/$project_name/$domain_name.crt" "/etc/gitlab/ssl/$domain_name.crt"
-  sudo cp "certificates/ssl_cert/$project_name/$domain_name.key" "/etc/gitlab/ssl/$domain_name.key"
+  # sudo cp "certificates/ssl_cert/$project_name/$domain_name.crt" "/etc/gitlab/ssl/$domain_name.crt"
+  sudo cp "certificates/ssl_cert/$project_name/$domain_name.pem" "/etc/gitlab/ssl/$domain_name.pem"
+  # sudo cp "certificates/ssl_cert/$project_name/$domain_name.key" "/etc/gitlab/ssl/$domain_name.key"
+  sudo cp "certificates/ssl_cert/$project_name/$domain_name.pem" "/etc/gitlab/ssl/$domain_name.pem"
 
   manual_assert_file_exists "/etc/gitlab/ssl/$domain_name.crt"
   manual_assert_file_exists "/etc/gitlab/ssl/$domain_name.key"
@@ -66,9 +68,8 @@ add_private_and_public_ssl_certs_to_gitlab() {
   # sudo cat ~/gitlab/config/gitlab.rb | grep external_url
 
   # sudo docker ps -a
-  # e0bdc6ec75b7
-  # sudo docker exec -i e0bdc6ec75b7 bash -c "gitlab-ctl reconfigure"
-  # sudo docker exec -i e0bdc6ec75b7 bash -c "gitlab-ctl reconfigure"
+  # 21005d0b629d
+  # sudo docker exec -i 21005d0b629d bash -c "gitlab-ctl reconfigure"
 
   #sudo gitlab-ctl reconfigure
 }
