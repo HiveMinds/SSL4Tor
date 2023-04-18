@@ -42,10 +42,10 @@ add_private_and_public_ssl_certs_to_gitlab() {
   # sudo cp "certificates/ssl_cert/$project_name/$domain_name.crt" "/etc/gitlab/ssl/$domain_name.crt"
   # manual_assert_file_exists "/etc/gitlab/ssl/$domain_name.crt"
   sudo mkdir -p "/etc/gitlab/ssl/$domain_name/"
-  sudo cp "certificates/ssl_cert/$project_name/$domain_name.pem" "/etc/gitlab/ssl/$domain_name/public_key.pem"
+  sudo cp "$ssl_public_key_filepath" "/etc/gitlab/ssl/$domain_name/public_key.pem"
   # sudo cp "certificates/ssl_cert/$project_name/$domain_name.key" "/etc/gitlab/ssl/$domain_name.key"
   # manual_assert_file_exists "/etc/gitlab/ssl/$domain_name.key"
-  sudo cp "certificates/ssl_cert/$project_name/$ssl_private_key_filepath" "/etc/gitlab/ssl/$domain_name/private_key.pem"
+  sudo cp "$ssl_private_key_filepath" "/etc/gitlab/ssl/$domain_name/private_key.pem"
 
   # The ~/gitlab/config/gitlab.rb file says:
   ##! Most root CA's are included by default
