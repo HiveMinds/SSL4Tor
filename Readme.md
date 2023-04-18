@@ -163,6 +163,22 @@ ssh-copy it from your client with:
 Using qemu is not necessary, but it is a nice sandbox to give this code a try,
 keeping your own system nice and clean.
 
+One can create an Ubuntu 22.10 virtual machine in qemu with:
+
+```sh
+# TODO: first curl the ubuntu-22.04.1-desktop-amd64.iso into this directory.
+qemu-img create ubuntu22.img 30G
+
+qemu-system-x86_64 \
+ --enable-kvm \
+ -m 1024 \
+ -machine smm=off \
+ -cdrom $PWD/ubuntu-22.04.1-desktop-amd64.iso \
+ -boot order=d ubuntu22.img
+```
+
+And then run it with:
+
 ```sh
 qemu-system-x86_64 --enable-kvm -m 4096 -machine smm=off -boot order=d \
   ubuntu22_server.img -smp 4 \
