@@ -40,6 +40,9 @@ add_private_and_public_ssl_certs_to_gitlab() {
   sudo cp "certificates/ssl_cert/$project_name/$domain_name.crt" "/etc/gitlab/ssl/$domain_name.crt"
   sudo cp "certificates/ssl_cert/$project_name/$domain_name.key" "/etc/gitlab/ssl/$domain_name.key"
 
+  manual_assert_file_exists "/etc/gitlab/ssl/$domain_name.crt"
+  manual_assert_file_exists "/etc/gitlab/ssl/$domain_name.key"
+
   #sudo gitlab-ctl reconfigure
 }
 
