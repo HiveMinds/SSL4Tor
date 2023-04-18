@@ -180,7 +180,7 @@ qemu-system-x86_64 \
  -cdrom $PWD/ubuntu-22.04.2-desktop-amd64.iso \
  -boot order=d ubuntu22.img
 
- # Now manually install Ubuntu (TODO: automate, perhaps using OEM).
+# Now manually install Ubuntu (TODO: automate, perhaps using OEM).
 ```
 
 And then run Ubuntu 22.04 in a sandbox on your device with:
