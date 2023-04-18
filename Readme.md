@@ -166,18 +166,24 @@ keeping your own system nice and clean.
 One can create an Ubuntu 22.10 virtual machine in qemu with:
 
 ```sh
-# TODO: first curl the ubuntu-22.04.1-desktop-amd64.iso into this directory.
+# Download the ubuntu-22.04.2-desktop-amd64.iso into this directory.
+wget https://releases.ubuntu.com/jammy/ubuntu-22.04.2-desktop-amd64.iso
+
+# Create the image in which the Ubuntu 22.04 VM will be created.
 qemu-img create ubuntu22.img 30G
 
+# Create the Ubuntu 22.10 Ubuntu image.
 qemu-system-x86_64 \
  --enable-kvm \
  -m 1024 \
  -machine smm=off \
- -cdrom $PWD/ubuntu-22.04.1-desktop-amd64.iso \
+ -cdrom $PWD/ubuntu-22.04.2-desktop-amd64.iso \
  -boot order=d ubuntu22.img
+
+ # Now manually install Ubuntu (TODO: automate, perhaps using OEM).
 ```
 
-And then run it with:
+And then run Ubuntu 22.04 in a sandbox on your device with:
 
 ```sh
 qemu-system-x86_64 --enable-kvm -m 4096 -machine smm=off -boot order=d \
