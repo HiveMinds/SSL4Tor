@@ -68,7 +68,10 @@ COUNTRY_CODE="FR"
 USERNAME=$(whoami)
 ROOT_CA_DIR="/home/$USERNAME"
 # shellcheck disable=SC2034
-ROOT_CA_PEM_PATH="$ROOT_CA_DIR/$CA_PUBLIC_KEY_FILENAME"
+OUTPUT_PUBLIC_ROOT_CERT_FILEPATH="$ROOT_CA_DIR/$CA_PUBLIC_CERT_FILENAME"
+
+# shellcheck disable=SC2034
+UBUNTU_CERTIFICATE_DIR="/usr/local/share/ca-certificates/"
 
 make_project_ssl_certs() {
   local onion_domain="$1"
@@ -150,27 +153,6 @@ merge_ca_and_ssl_certs() {
 
   cat "certificates/ssl_cert/$project_name/$ssl_public_key_filename" >"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
   cat "certificates/root/$ca_public_key_filename" >>"certificates/merged/$project_name/$merged_ca_ssl_cert_filename"
-}
-
-install_the_ca_cert_as_a_trusted_root_ca() {
-  local ca_public_key_filename="$1"
-  local ca_public_cert_filename="$2"
-
-  # The file in the ca-certificates dir must be of extension .crt, so convert it into that (as a copy):
-  openssl x509 -outform der -in "certificates/root/$ca_public_key_filename" -out "certificates/root/$ca_public_cert_filename" >>/dev/null 2>&1
-
-  # First remove any old cert if it pre-existed.
-  sudo rm -f "/usr/local/share/ca-certificates/$ca_public_cert_filename"
-  sudo update-ca-certificates >>/dev/null 2>&1
-
-  # On Debian & Derivatives:
-  #- Move the CA certificate (`"$ca_private_key_filename"`) into `/usr/local/share/ca-certificates/ca.crt`.
-  manual_assert_dir_exists "/usr/local/share/ca-certificates/"
-  sudo cp "certificates/root/$ca_public_cert_filename" "/usr/local/share/ca-certificates/$ca_public_cert_filename"
-  manual_assert_file_exists "/usr/local/share/ca-certificates/$ca_public_cert_filename"
-
-  # Update the Cert Store with:
-  sudo update-ca-certificates >>/dev/null 2>&1
 }
 
 # On Android (This has been automated)

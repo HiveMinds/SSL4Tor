@@ -202,7 +202,8 @@ process_get_file_from_server_into_client_flags() {
 
     # TODO: assert has passwordless ssh access to server.
     if [ "$get_root_ca_certificate_into_client_flag" == "true" ]; then
-      copy_files_from_server_into_client "$server_username" "$server_onion_domain" "/usr/local/share/ca-certificates/$CA_PUBLIC_CERT_FILENAME" "$ROOT_CA_PEM_PATH"
+      "$server_username" "$server_onion_domain"
+
     elif [ "$process_get_server_gif_into_client_flag" == "true" ]; then
       copy_files_from_server_into_client "$server_username" "$server_onion_domain" "/home/$server_username/server.gif" "$PWD/server.gif"
     fi
