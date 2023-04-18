@@ -2,9 +2,11 @@
 # Adds the private and public SSL certificates to the selfhosted GitLab.
 # Does not add root ca to anything.
 
+# shellcheck disable=SC1091
+source src/verification/assert_exists # TODO: remove
 #SSL_PRIVATE_KEY_FILENAME="cert-key.pem"
 #SSL_PUBLIC_KEY_FILENAME="cert.pem"
-# source src/ssl_certs/add_public_private_ssl_certs_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "localhost" "cert-key.pem" "cert.pem"
+# source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "localhost" "cert-key.pem" "cert.pem"
 add_private_and_public_ssl_certs_to_gitlab() {
   local project_name="$1"
   local domain_name="$2"
