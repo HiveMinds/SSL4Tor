@@ -50,8 +50,8 @@ add_private_and_public_ssl_certs_to_gitlab() {
   # nginx['ssl_client_certificate'] = "/etc/gitlab/ssl/ca.crt"
   # So perhaps also include the self-signed root ca into that dir.
   manual_assert_file_exists "certificates/root/$ca_public_cert_filename"
-  sudo cp "certificates/root/$ca_public_cert_filename" "/etc/gitlab/ssl/ca.cert"
-  manual_assert_file_exists "/etc/gitlab/ssl/ca.cert"
+  sudo cp "certificates/root/$ca_public_cert_filename" "/etc/gitlab/ssl/ca.crt"
+  manual_assert_file_exists "/etc/gitlab/ssl/ca.crt"
 
   # TODO: include: in ~/gitlab/config/gitlab.rb with sudo.
   # if [[ "$domain_name" == "localhost" ]]; then
