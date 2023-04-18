@@ -5,10 +5,15 @@
 Create your own <httpS://example31415926535.onion> websites, with your own
 self-signed https certificates, **in a single command**.
 
-- A bit like Let's Encrypt, except for onion domains.
-- A bit like [Harica, except free](https://news.harica.gr/article/onion_announcement/).
-- A bit like [Digicert for Facebook](https://www.digicert.com/blog/anonymous-facebook-via-tor)
+- A bit\* like Let's Encrypt, except for onion domains.
+- A bit\* like [Harica, except free](https://news.harica.gr/article/onion_announcement/).
+- A bit\* like [Digicert for Facebook](https://www.digicert.com/blog/anonymous-facebook-via-tor),
   except for everyone.
+
+\*The difference being that all those services are in the "trusted" list
+of all of your computers, phones and browsers, whereas your own certificate is
+not. That is why this project also adds your own root CA to those trusted
+lists.
 
 ## Set up 2 onion domains and SSH on server
 
