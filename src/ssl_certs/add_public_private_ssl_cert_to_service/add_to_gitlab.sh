@@ -6,13 +6,14 @@
 source src/verification/assert_exists.sh # TODO: remove
 #SSL_PRIVATE_KEY_FILENAME="cert-key.pem"
 #SSL_PUBLIC_KEY_FILENAME="cert.pem"
-# source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "localhost" "cert-key.pem" "cert.pem"
-# source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "vwp4pobrfjwz3bsgkritleu43ptxyxybeh5hm3td7u3kzatlzq247hqd.onion" "cert-key.pem" "cert.pem"
+# source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "localhost" "cert-key.pem" "cert.pem" "ca.crt"
+# source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "vwp4pobrfjwz3bsgkritleu43ptxyxybeh5hm3td7u3kzatlzq247hqd.onion" "cert-key.pem" "cert.pem" "ca.crt"
 add_private_and_public_ssl_certs_to_gitlab() {
   local project_name="$1"
   local domain_name="$2"
   local ssl_private_key_filename="$3"
   local ssl_public_key_filename="$4"
+  local ca_public_cert_filename="$5"
 
   local ssl_private_key_filepath="certificates/ssl_cert/$project_name/$ssl_private_key_filename"
   local ssl_public_key_filepath="certificates/ssl_cert/$project_name/$ssl_public_key_filename"
@@ -48,8 +49,8 @@ add_private_and_public_ssl_certs_to_gitlab() {
   ##! Most root CA's are included by default
   # nginx['ssl_client_certificate'] = "/etc/gitlab/ssl/ca.crt"
   # So perhaps also include the self-signed root ca into that dir.
-  manual_assert_file_exists "certificates/root/$CA_PUBLIC_CERT_FILENAME"
-  sudo cp "certificates/root/$CA_PUBLIC_CERT_FILENAME" "/etc/gitlab/ssl/ca.cert"
+  manual_assert_file_exists "certificates/root/$ca_public_cert_filename"
+  sudo cp "certificates/root/$ca_public_cert_filename" "/etc/gitlab/ssl/ca.cert"
   manual_assert_file_exists "/etc/gitlab/ssl/ca.cert"
 
   # TODO: include: in ~/gitlab/config/gitlab.rb with sudo.
@@ -62,7 +63,7 @@ add_private_and_public_ssl_certs_to_gitlab() {
   # letsencrypt['enable'] = false
 
   # TODO: verify the external url is found correctly:
-  #sudo cat ~/gitlab/config/gitlab.rb | grep external_url
+  # sudo cat ~/gitlab/config/gitlab.rb | grep external_url
 
   # sudo docker ps -a
   # e0bdc6ec75b7
