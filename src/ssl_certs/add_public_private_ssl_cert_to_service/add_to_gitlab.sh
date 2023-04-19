@@ -148,7 +148,7 @@ add_lines_to_gitlab_rb() {
 # Structure:gitlab_docker
 get_docker_container_id_of_gitlab_server() {
   local docker_container_id
-  docker_container_id=$(sudo docker ps -aqf "name=containername")
+  docker_container_id=$(sudo docker ps -aqf "name=gitlab")
   assert_is_non_empty_string "$docker_container_id"
 
   echo "$docker_container_id"
