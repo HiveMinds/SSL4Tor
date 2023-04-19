@@ -146,10 +146,9 @@ process_apply_certs_to_project_flag() {
     nr_of_services=$(get_nr_of_services "$services")
     start=0
     for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+      local project_name
+      project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
       if [[ "$project_name" == "gitlab" ]]; then
-        local project_name
-        project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
-
         local onion_domain
         onion_domain="$(get_onion_domain "$project_name")"
         assert_is_non_empty_string "${onion_domain}"
