@@ -119,8 +119,6 @@ add_lines_to_gitlab_rb() {
   # sudo cat ~/gitlab/config/gitlab.rb | grep external_url
 
   tail -15 "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
-  # shellcheck disable=SC2162
-  read -p "Is that as expected?"
 
   sudo cp "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb" ~/gitlab/config/gitlab.rb
 }
