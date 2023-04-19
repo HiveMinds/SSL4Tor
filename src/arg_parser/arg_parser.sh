@@ -162,7 +162,7 @@ parse_args() {
   # Create SSL certificates.
   # TODO: process services instead of project_name.
   process_make_project_ssl_certs_flag "$make_project_ssl_certs_flag" "$one_domain_per_service_flag" "$background_dash_flag" "$services" "$ssl_password"
-  process_apply_certs_to_project_flag "$apply_certs_to_project_flag"
+  process_apply_certs_to_project_flag "$apply_certs_to_project_flag" "$services"
   # Verify https access to onion domain.
   process_check_https_flag "$check_https_flag"
 

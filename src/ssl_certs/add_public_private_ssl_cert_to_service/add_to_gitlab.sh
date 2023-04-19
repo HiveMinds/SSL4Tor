@@ -6,8 +6,8 @@
 source src/verification/assert_exists.sh # TODO: remove
 #SSL_PRIVATE_KEY_FILENAME="cert-key.pem"
 #SSL_PUBLIC_KEY_FILENAME="cert.pem"
-# source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "localhost" "cert-key.pem" "cert.pem" "ca.crt"
-# source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "onion_has_been_closed.onion" "cert-key.pem" "cert.pem" "ca.crt"
+# source src/GLOBAL_VARS.sh src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "localhost" "cert-key.pem" "cert.pem" "ca.crt"
+# source src/GLOBAL_VARS.sh src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "onion_has_been_closed.onion" "cert-key.pem" "cert.pem" "ca.crt"
 add_private_and_public_ssl_certs_to_gitlab() {
   local project_name="$1"
   local domain_name="$2"
@@ -96,37 +96,37 @@ add_lines_to_gitlab_rb() {
   local ssl_private_key_in_gitlab_filepath="$3"
 
   # Create a copy of the basic gitlab.rb file.
-  rm "$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
-  cp "$GITLAB_RB_TEMPLATE_FILEPATH" "$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
+  rm "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  cp "$GITLAB_RB_TEMPLATE_FILEPATH" "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   # Verified you only have to add lines (instead of modify) into that basic gitlab.rb.
 
   if [[ "$domain_name" == "localhost" ]]; then
-    echo """external_url 'https://localhost'""" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
+    echo """external_url 'https://localhost'""" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   else
-    echo "external_url '$domain_name'" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
+    echo "external_url '$domain_name'" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   fi
   # shellcheck disable=SC2129
-  echo """letsencrypt['enable'] = false""" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
+  echo """letsencrypt['enable'] = false""" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
 
-  echo "nginx['enable'] = true" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
-  echo "nginx['redirect_http_to_https'] = true" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
-  echo "nginx['ssl_certificate'] = \"$ssl_public_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
-  echo "nginx['ssl_certificate_key'] = \"$ssl_public_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
-  #echo "nginx['ssl_dhparam'] = \"/etc/gitlab/ssl/dhparams.pem\""  >> "$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
-  echo "nginx['listen_port'] = 80" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
-  echo "nginx['listen_https'] = false" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
+  echo "nginx['enable'] = true" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  echo "nginx['redirect_http_to_https'] = true" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  echo "nginx['ssl_certificate'] = \"$ssl_public_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  echo "nginx['ssl_certificate_key'] = \"$ssl_public_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  #echo "nginx['ssl_dhparam'] = \"/etc/gitlab/ssl/dhparams.pem\""  >> "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  echo "nginx['listen_port'] = 80" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  echo "nginx['listen_https'] = false" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   if [[ "$include_root_ca_in_gitlab" == "true" ]]; then
-    echo "nginx['ssl_client_certificate'] = \"/etc/gitlab/ssl/ca.crt\"" >>"$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
+    echo "nginx['ssl_client_certificate'] = \"/etc/gitlab/ssl/ca.crt\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   fi
 
   # TODO: verify the external url is found correctly:
   # sudo cat ~/gitlab/config/gitlab.rb | grep external_url
 
-  tail -15 "$GITLAB_RB_TEMPLATE_DIR/gitlab.rb"
+  tail -15 "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   # shellcheck disable=SC2162
   read -p "Is that as expected?"
 
-  sudo cp "$GITLAB_RB_TEMPLATE_DIR/gitlab.rb" ~/gitlab/config/gitlab.rb
+  sudo cp "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb" ~/gitlab/config/gitlab.rb
 }
 
 #######################################

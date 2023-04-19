@@ -124,7 +124,7 @@ process_make_project_ssl_certs_flag() {
         make_project_ssl_certs "$onion_domain" "$project_name"
 
         # Don't kill the ssh service at port 22 that may already be running.
-        if [ "$project_name" != "ssh" ]; then
+        if [ "$project_name" != "ssh" ] && [ "$project_name" != "gitlab" ]; then
           if [ "$background_dash_flag" == "true" ]; then
             run_dash_in_background "$local_project_port" "$project_name" &
             green_msg "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
@@ -140,9 +140,25 @@ process_make_project_ssl_certs_flag() {
 
 process_apply_certs_to_project_flag() {
   local apply_certs_to_project_flag="$1"
+  local services="$2"
 
   if [ "$apply_certs_to_project_flag" == "true" ]; then
-    echo "TODO: applying certs"
+    nr_of_services=$(get_nr_of_services "$services")
+    start=0
+    for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+      if [[ "$project_name" == "gitlab" ]]; then
+        local project_name
+        project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+
+        local onion_domain
+        onion_domain="$(get_onion_domain "$project_name")"
+        assert_is_non_empty_string "${onion_domain}"
+
+        add_private_and_public_ssl_certs_to_gitlab "$project_name" "localhost" "cert-key.pem" "cert.pem" "ca.crt"
+
+        #add_private_and_public_ssl_certs_to_gitlab "$project_name" "$onion_domain" "cert-key.pem" "cert.pem" "ca.crt"
+      fi
+    done
   fi
 }
 
