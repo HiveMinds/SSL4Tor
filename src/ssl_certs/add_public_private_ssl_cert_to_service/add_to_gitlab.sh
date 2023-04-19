@@ -1,11 +1,7 @@
 #!/bin/bash
 # Adds the private and public SSL certificates to the selfhosted GitLab.
-# Does not add root ca to anything.
+# Optionally also adds root ca to GitLab.
 
-# shellcheck disable=SC1091
-#source src/verification/assert_exists.sh # TODO: remove
-#SSL_PRIVATE_KEY_FILENAME="cert-key.pem"
-#SSL_PUBLIC_KEY_FILENAME="cert.pem"
 # source src/GLOBAL_VARS.sh src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "localhost" "cert-key.pem" "cert.pem" "ca.crt"
 # source src/GLOBAL_VARS.sh src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "onion_has_been_closed.onion" "cert-key.pem" "cert.pem" "ca.crt"
 add_private_and_public_ssl_certs_to_gitlab() {
@@ -14,6 +10,8 @@ add_private_and_public_ssl_certs_to_gitlab() {
   local ssl_private_key_filename="$3"
   local ssl_public_key_filename="$4"
   local ca_public_cert_filename="$5"
+  local convert_to_crt_and_key_ext="$6"
+  local include_root_ca_in_gitlab="$7"
 
   local ssl_private_key_filepath="certificates/ssl_cert/$project_name/$ssl_private_key_filename"
   local ssl_public_key_filepath="certificates/ssl_cert/$project_name/$ssl_public_key_filename"
@@ -22,9 +20,6 @@ add_private_and_public_ssl_certs_to_gitlab() {
   manual_assert_file_exists "$ssl_private_key_filepath"
   manual_assert_file_exists "$ssl_public_key_filepath"
   create_gitlab_ssl_directories
-
-  local convert_to_crt_and_key_ext="true"
-  local include_root_ca_in_gitlab="true"
 
   local ssl_public_key_in_gitlab_filepath
   local ssl_private_key_in_gitlab_filepath

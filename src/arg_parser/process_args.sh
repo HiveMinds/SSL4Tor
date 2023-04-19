@@ -141,6 +141,8 @@ process_make_project_ssl_certs_flag() {
 process_apply_certs_to_project_flag() {
   local apply_certs_to_project_flag="$1"
   local services="$2"
+  local convert_to_crt_and_key_ext="$3"
+  local include_root_ca_in_gitlab="$4"
 
   if [ "$apply_certs_to_project_flag" == "true" ]; then
     nr_of_services=$(get_nr_of_services "$services")
@@ -153,7 +155,7 @@ process_apply_certs_to_project_flag() {
         onion_domain="$(get_onion_domain "$project_name")"
         assert_is_non_empty_string "${onion_domain}"
 
-        add_private_and_public_ssl_certs_to_gitlab "$project_name" "localhost" "cert-key.pem" "cert.pem" "ca.crt"
+        add_private_and_public_ssl_certs_to_gitlab "$project_name" "localhost" "cert-key.pem" "cert.pem" "ca.crt" "$convert_to_crt_and_key_ext" "$include_root_ca_in_gitlab"
 
         #add_private_and_public_ssl_certs_to_gitlab "$project_name" "$onion_domain" "cert-key.pem" "cert.pem" "ca.crt"
       fi

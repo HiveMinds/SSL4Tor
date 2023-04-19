@@ -17,6 +17,9 @@ parse_args() {
   local setup_ssh_client_flag='false'
   local setup_ssh_server_flag='false'
 
+  local convert_to_crt_and_key_ext='false'
+  local include_root_ca_in_gitlab='false'
+
   # $# gives the length/number of the incoming function arguments.
   # the shift command eats the first element of that array, making it shorter.
   while [[ $# -gt 0 ]]; do
@@ -39,6 +42,14 @@ parse_args() {
         ;;
       -cs | --check-https)
         check_https_flag='true'
+        shift # past argument
+        ;;
+      -crt2key | --convert-pem-to-crt-and-key) # TODO: delete once valid setting is found.
+        convert_to_crt_and_key_ext='true'
+        shift # past argument
+        ;;
+      -ar2g | --add-root-to-gitlab) # TODO: delete once valid setting is found.
+        include_root_ca_in_gitlab='true'
         shift # past argument
         ;;
       -do | --delete-onion-domain)
@@ -162,7 +173,7 @@ parse_args() {
   # Create SSL certificates.
   # TODO: process services instead of project_name.
   process_make_project_ssl_certs_flag "$make_project_ssl_certs_flag" "$one_domain_per_service_flag" "$background_dash_flag" "$services" "$ssl_password"
-  process_apply_certs_to_project_flag "$apply_certs_to_project_flag" "$services"
+  process_apply_certs_to_project_flag "$apply_certs_to_project_flag" "$services" "$convert_to_crt_and_key_ext" "$include_root_ca_in_gitlab"
   # Verify https access to onion domain.
   process_check_https_flag "$check_https_flag"
 
