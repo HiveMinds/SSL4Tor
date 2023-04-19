@@ -92,8 +92,9 @@ reconfigure_gitlab_with_new_certs_and_settings() {
 
 add_lines_to_gitlab_rb() {
   local domain_name="$1"
-  local ssl_public_key_in_gitlab_filepath="$2"
-  local ssl_private_key_in_gitlab_filepath="$3"
+  local include_root_ca_in_gitlab="$2"
+  local ssl_public_key_in_gitlab_filepath="$3"
+  local ssl_private_key_in_gitlab_filepath="$4"
 
   # Create a copy of the basic gitlab.rb file.
   rm "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
@@ -111,7 +112,7 @@ add_lines_to_gitlab_rb() {
   echo "nginx['enable'] = true" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   echo "nginx['redirect_http_to_https'] = true" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   echo "nginx['ssl_certificate'] = \"$ssl_public_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
-  echo "nginx['ssl_certificate_key'] = \"$ssl_public_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  echo "nginx['ssl_certificate_key'] = \"$ssl_private_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   #echo "nginx['ssl_dhparam'] = \"/etc/gitlab/ssl/dhparams.pem\""  >> "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   echo "nginx['listen_port'] = 80" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   echo "nginx['listen_https'] = false" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
