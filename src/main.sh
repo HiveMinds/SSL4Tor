@@ -23,6 +23,7 @@ source src/setup_ssh/server/ssh_server_setup.sh
 source src/setup_ssh/ssh_status.sh
 source src/setup_ssh/get_root_ca.sh
 source src/setup_ssh/setup_ssh_public_private_key_access.sh
+source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_ubuntu.sh
 source src/ssl_certs/make_ssl_project_certs.sh
 source src/ssl_certs/make_ssl_root_certs.sh
