@@ -64,10 +64,12 @@ add_private_and_public_ssl_certs_to_gitlab() {
     sudo cp "certificates/root/$ca_public_cert_filename" "/etc/gitlab/ssl/ca.crt"
     manual_assert_file_exists "/etc/gitlab/ssl/ca.crt"
 
-    copy_file_into_docker "certificates/root/$ca_public_cert_filename" "/etc/gitlab/ssl/ca.crt"  
+    copy_file_into_docker "certificates/root/$ca_public_cert_filename" "/etc/gitlab/ssl/ca.crt"
   fi
 
   add_lines_to_gitlab_rb "$domain_name" "$include_root_ca_in_gitlab" "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath"
+
+  assert_certs_are_valid
 
   reconfigure_gitlab_with_new_certs_and_settings
 
