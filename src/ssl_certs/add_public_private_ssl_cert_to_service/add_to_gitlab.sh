@@ -36,8 +36,8 @@ add_private_and_public_ssl_certs_to_gitlab() {
     # TODO: verify the generated .key is valid with the old public .pem.
     # TODO: verify the generated .key is valid with the new public .crt.
 
-    ssl_public_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name.crt"
-    ssl_private_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name.key"
+    ssl_public_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/public_key.crt"
+    ssl_private_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/private_key.key"
 
     # Copy your new certificates into the folder where GitLab looks by default
     # for new SSL certificates.
@@ -110,7 +110,7 @@ add_lines_to_gitlab_rb() {
   echo "nginx['ssl_certificate_key'] = \"$ssl_private_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   #echo "nginx['ssl_dhparam'] = \"/etc/gitlab/ssl/dhparams.pem\""  >> "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   echo "nginx['listen_port'] = 80" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
-  echo "nginx['listen_https'] = false" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  echo "nginx['listen_https'] = true" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   if [[ "$include_root_ca_in_gitlab" == "true" ]]; then
     echo "nginx['ssl_client_certificate'] = \"/etc/gitlab/ssl/ca.crt\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   fi
