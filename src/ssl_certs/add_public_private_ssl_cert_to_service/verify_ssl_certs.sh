@@ -1,13 +1,18 @@
 #!/bin/bash
 source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh # TODO: remove.
+source src/verification/assert_exists.sh
 assert_certs_are_valid() {
   local public_cert_filepath="$1"
   local private_key_filepath="$2"
+
+  manual_assert_file_exists "$public_cert_filepath"
+  manual_assert_file_exists "$private_key_filepath"
 
   local public_md5_output
   local public_md5
   local private_md5_output
   local private_md5
+
   public_md5_output=$(openssl x509 -noout -modulus -in "$public_cert_filepath" | openssl md5)
   private_md5_output=$(openssl x509 -noout -modulus -in "$private_key_filepath" | openssl md5)
 
@@ -24,7 +29,6 @@ assert_certs_are_valid() {
   fi
 }
 
-# source src/ssl_certs/add_public_private_ssl_cert_to_service/verify_ssl_certs.sh && assert_certs_are_valid_within_docker localhost.crt localhost.key
 assert_certs_are_valid_within_docker() {
   local public_cert_filepath="$1"
   local private_key_filepath="$2"
