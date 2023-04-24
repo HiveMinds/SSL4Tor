@@ -1,9 +1,8 @@
 #!/bin/bash
 # Adds the private and public SSL certificates to the selfhosted GitLab.
-# Optionally also adds root ca to GitLab.
+# TODO: do not convert the certificates.
+# TODO: do not add the root ca to GitLab.
 
-# source src/GLOBAL_VARS.sh src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "localhost" "cert-key.pem" "cert.pem" "ca.crt"
-# source src/GLOBAL_VARS.sh src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh && add_private_and_public_ssl_certs_to_gitlab "gitlab" "onion_has_been_closed.onion" "cert-key.pem" "cert.pem" "ca.crt"
 add_private_and_public_ssl_certs_to_gitlab() {
   local project_name="$1"
   local domain_name="$2"
@@ -71,7 +70,6 @@ add_private_and_public_ssl_certs_to_gitlab() {
 
   assert_certs_are_valid "$local_ssl_public_key_filepath" "$local_ssl_private_key_filepath"
   assert_certs_are_valid_within_docker "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath"
-  read -p "Asserted ssl cert validity."
   reconfigure_gitlab_with_new_certs_and_settings
 
 }
@@ -194,7 +192,7 @@ add_lines_to_gitlab_rb() {
   echo "nginx['ssl_certificate'] = \"$ssl_public_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   echo "nginx['ssl_certificate_key'] = \"$ssl_private_key_in_gitlab_filepath\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   #echo "nginx['ssl_dhparam'] = \"/etc/gitlab/ssl/dhparams.pem\""  >> "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
-  echo "nginx['listen_port'] = 80" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+  echo "nginx['listen_port'] = 443" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   echo "nginx['listen_https'] = true" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   if [[ "$include_root_ca_in_gitlab" == "true" ]]; then
     echo "nginx['ssl_client_certificate'] = \"/etc/gitlab/ssl/ca.crt\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
