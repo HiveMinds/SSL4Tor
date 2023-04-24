@@ -53,7 +53,7 @@ add_private_and_public_ssl_certs_to_gitlab() {
     local_ssl_private_key_filepath="$ssl_private_key_filepath"
   fi
 
-  copy_ssl_certs_to_gitlab
+  copy_ssl_certs_to_gitlab "$local_ssl_public_key_filepath" "$local_ssl_private_key_filepath" "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath" "$domain_name"
 
   # The ~/gitlab/config/gitlab.rb file says:
   ##! Most root CA's are included by default
@@ -69,8 +69,9 @@ add_private_and_public_ssl_certs_to_gitlab() {
 
   add_lines_to_gitlab_rb "$domain_name" "$include_root_ca_in_gitlab" "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath"
 
-  assert_certs_are_valid
-
+  assert_certs_are_valid "$local_ssl_public_key_filepath" "$local_ssl_private_key_filepath"
+  assert_certs_are_valid_within_docker "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath"
+  read -p "Asserted ssl cert validity."
   reconfigure_gitlab_with_new_certs_and_settings
 
 }
@@ -98,6 +99,12 @@ create_gitlab_ssl_directories_in_docker() {
 }
 
 copy_ssl_certs_to_gitlab() {
+  local local_ssl_public_key_filepath="$1"
+  local local_ssl_private_key_filepath="$2"
+  local ssl_public_key_in_gitlab_filepath="$3"
+  local ssl_private_key_in_gitlab_filepath="$4"
+  local domain_name="$5"
+
   # Copy your new certificates into the folder where GitLab looks by default
   # for new SSL certificates. (OUTSIDE THE DOCKER.)
   sudo cp "$local_ssl_public_key_filepath" "$ssl_public_key_in_gitlab_filepath"
@@ -108,10 +115,9 @@ copy_ssl_certs_to_gitlab() {
   assert_target_dir_exists_in_docker "/etc/gitlab/ssl/$domain_name/"
   # Assert target dir exists in docker.
   # Copy your new certificates into the folder where GitLab looks by default
-  # for new SSL certificates. (OUTSIDE THE DOCKER.)
+  # for new SSL certificates. (INSIDE THE DOCKER.)
   copy_file_into_docker "$local_ssl_public_key_filepath" "$ssl_public_key_in_gitlab_filepath"
   copy_file_into_docker "$local_ssl_private_key_filepath" "$ssl_private_key_in_gitlab_filepath"
-  read -p "copied ssl certs into docker."
 }
 
 assert_target_dir_exists_in_docker() {
@@ -126,7 +132,6 @@ assert_target_dir_exists_in_docker() {
     echo "Error, did not find target directory:$target_dir."
     exit 5
   fi
-  read -p "Verified target dir exists."
 }
 
 assert_target_file_exists_in_docker() {
@@ -141,7 +146,6 @@ assert_target_file_exists_in_docker() {
     echo "Error, did not find target directory:$target_filepath."
     exit 5
   fi
-  read -p "Verified target dir exists."
 }
 
 copy_file_into_docker() {
