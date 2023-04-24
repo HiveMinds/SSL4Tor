@@ -20,40 +20,40 @@ add_private_and_public_ssl_certs_to_gitlab() {
   manual_assert_file_exists "$ssl_private_key_filepath"
   manual_assert_file_exists "$ssl_public_key_filepath"
   create_gitlab_ssl_directories
+  create_gitlab_ssl_directories_in_docker
 
   local ssl_public_key_in_gitlab_filepath
   local ssl_private_key_in_gitlab_filepath
 
+  local local_ssl_public_key_filepath
+  local local_ssl_private_key_filepath
+
   if [[ "$convert_to_crt_and_key_ext" == "true" ]]; then
 
     # Convert public .pem into public .crt with:
-    openssl x509 -outform der -in "$ssl_public_key_filepath" -out "certificates/ssl_cert/$project_name/$domain_name.crt"
-    manual_assert_file_exists "certificates/ssl_cert/$project_name/$domain_name.crt"
+    local_ssl_public_key_filepath="certificates/ssl_cert/$project_name/$domain_name.crt"
+    local_ssl_private_key_filepath="certificates/ssl_cert/$project_name/$domain_name.key"
+    openssl x509 -outform der -in "$ssl_public_key_filepath" -out "$local_ssl_public_key_filepath"
+    manual_assert_file_exists "$local_ssl_public_key_filepath"
 
     # Convert private .pem into private .key with:
-    openssl pkey -in "$ssl_private_key_filepath" -out "certificates/ssl_cert/$project_name/$domain_name.key"
-    manual_assert_file_exists "certificates/ssl_cert/$project_name/$domain_name.key"
+    openssl pkey -in "$ssl_private_key_filepath" -out "$local_ssl_private_key_filepath"
+    manual_assert_file_exists "$local_ssl_private_key_filepath"
     # TODO: verify the generated .key is valid with the old public .pem.
     # TODO: verify the generated .key is valid with the new public .crt.
 
     ssl_public_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/public_key.crt"
     ssl_private_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/private_key.key"
 
-    # Copy your new certificates into the folder where GitLab looks by default
-    # for new SSL certificates.
-    sudo cp "certificates/ssl_cert/$project_name/$domain_name.crt" "$ssl_public_key_in_gitlab_filepath"
-    sudo cp "certificates/ssl_cert/$project_name/$domain_name.key" "$ssl_private_key_in_gitlab_filepath"
-
   else
     ssl_public_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/public_key.pem"
     ssl_private_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/private_key.pem"
 
-    sudo cp "$ssl_public_key_filepath" "$ssl_public_key_in_gitlab_filepath"
-    sudo cp "$ssl_private_key_filepath" "$ssl_private_key_in_gitlab_filepath"
+    local_ssl_public_key_filepath="$ssl_public_key_filepath"
+    local_ssl_private_key_filepath="$ssl_private_key_filepath"
   fi
 
-  manual_assert_file_exists "$ssl_public_key_in_gitlab_filepath"
-  manual_assert_file_exists "$ssl_private_key_in_gitlab_filepath"
+  copy_ssl_certs_to_gitlab
 
   # The ~/gitlab/config/gitlab.rb file says:
   ##! Most root CA's are included by default
@@ -77,6 +77,45 @@ create_gitlab_ssl_directories() {
   sudo chmod 755 "/etc/gitlab/ssl"
   sudo mkdir -p "/etc/gitlab/ssl/$domain_name/"
   sudo chmod 755 "/etc/gitlab/ssl/$domain_name/"
+}
+
+create_gitlab_ssl_directories_in_docker() {
+  local docker_container_id
+  docker_container_id=$(get_docker_container_id_of_gitlab_server)
+
+  sudo docker exec -i "$docker_container_id" bash -c "sudo rm -rf \"/etc/gitlab/ssl/*\""
+  sudo docker exec -i "$docker_container_id" bash -c "sudo mkdir -p \"/etc/gitlab/ssl\""
+  sudo docker exec -i "$docker_container_id" bash -c "sudo chmod 755 \"/etc/gitlab/ssl\""
+  sudo docker exec -i "$docker_container_id" bash -c "sudo mkdir -p \"/etc/gitlab/ssl/$domain_name/\""
+  sudo docker exec -i "$docker_container_id" bash -c "sudo chmod 755 \"/etc/gitlab/ssl/$domain_name/\""
+}
+
+copy_ssl_certs_to_gitlab() {
+  # Copy your new certificates into the folder where GitLab looks by default
+  # for new SSL certificates. (OUTSIDE THE DOCKER.)
+  sudo cp "$local_ssl_public_key_filepath" "$ssl_public_key_in_gitlab_filepath"
+  sudo cp "$local_ssl_private_key_filepath" "$ssl_private_key_in_gitlab_filepath"
+  manual_assert_file_exists "$ssl_public_key_in_gitlab_filepath"
+  manual_assert_file_exists "$ssl_private_key_in_gitlab_filepath"
+
+  # Copy your new certificates into the folder where GitLab looks by default
+  # for new SSL certificates. (OUTSIDE THE DOCKER.)
+  copy_file_into_docker "$local_ssl_public_key_filepath" "$ssl_public_key_in_gitlab_filepath"
+  copy_file_into_docker "$local_ssl_private_key_filepath" "$ssl_private_key_in_gitlab_filepath"
+}
+
+copy_file_into_docker() {
+  local local_filepath="$1"
+  local docker_out_filepath="$2"
+
+  local docker_container_id
+  docker_container_id=$(get_docker_container_id_of_gitlab_server)
+
+  # TODO: assert target directory exists.
+
+  sudo docker cp "$local_filepath" "$docker_container_id":"$docker_out_filepath"
+
+  # TODO: assert target file exists in docker.
 }
 
 reconfigure_gitlab_with_new_certs_and_settings() {
