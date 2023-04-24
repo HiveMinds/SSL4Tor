@@ -1,4 +1,5 @@
 #!/bin/bash
+source src/ssl_certs/add_public_private_ssl_cert_to_service/add_to_gitlab.sh # TODO: remove.
 assert_certs_are_valid() {
   local public_cert_filepath="$1"
   local private_key_filepath="$2"
@@ -23,7 +24,7 @@ assert_certs_are_valid() {
   fi
 }
 
-# source src/ssl_certs/add_public_private_ssl_cert_to_servce/verify_ssl_certs.sh && assert_certs_are_valid_within_docker localhost.crt localhost.key
+# source src/ssl_certs/add_public_private_ssl_cert_to_service/verify_ssl_certs.sh && assert_certs_are_valid_within_docker localhost.crt localhost.key
 assert_certs_are_valid_within_docker() {
   local public_cert_filepath="$1"
   local private_key_filepath="$2"
