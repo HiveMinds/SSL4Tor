@@ -48,7 +48,6 @@ add_private_and_public_ssl_certs_to_gitlab() {
     ssl_public_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/public_key.pem"
     ssl_private_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/private_key.pem"
 
-    sudo mkdir -p "/etc/gitlab/ssl/$domain_name/"
     sudo cp "$ssl_public_key_filepath" "$ssl_public_key_in_gitlab_filepath"
     sudo cp "$ssl_private_key_filepath" "$ssl_private_key_in_gitlab_filepath"
   fi
@@ -76,6 +75,8 @@ create_gitlab_ssl_directories() {
   sudo rm -rf "/etc/gitlab/ssl/*"
   sudo mkdir -p "/etc/gitlab/ssl"
   sudo chmod 755 "/etc/gitlab/ssl"
+  sudo mkdir -p "/etc/gitlab/ssl/$domain_name/"
+  sudo chmod 755 "/etc/gitlab/ssl/$domain_name/"
 }
 
 reconfigure_gitlab_with_new_certs_and_settings() {
