@@ -39,7 +39,7 @@ assert_certs_are_valid_within_docker() {
   if [[ "$public_md5_modulus" != "$private_md5_modulus" ]]; then
     echo "public_md5=$public_md5_modulus"
     echo "private_md5=$private_md5_modulus"
-    echo "SSL certificates were not validated."
+    echo "SSL certificates were not validated within docker."
     exit 6
   fi
 }
