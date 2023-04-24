@@ -19,8 +19,8 @@ add_private_and_public_ssl_certs_to_gitlab() {
   # Assert local private and public certificate exist for service.
   manual_assert_file_exists "$ssl_private_key_filepath"
   manual_assert_file_exists "$ssl_public_key_filepath"
-  create_gitlab_ssl_directories
-  create_gitlab_ssl_directories_in_docker
+  create_gitlab_ssl_directories "$domain_name"
+  create_gitlab_ssl_directories_in_docker "$domain_name"
 
   local ssl_public_key_in_gitlab_filepath
   local ssl_private_key_in_gitlab_filepath
@@ -72,6 +72,7 @@ add_private_and_public_ssl_certs_to_gitlab() {
 }
 
 create_gitlab_ssl_directories() {
+  local domain_name="$1"
   sudo rm -rf "/etc/gitlab/ssl/*"
   sudo mkdir -p "/etc/gitlab/ssl"
   sudo chmod 755 "/etc/gitlab/ssl"
@@ -80,6 +81,8 @@ create_gitlab_ssl_directories() {
 }
 
 create_gitlab_ssl_directories_in_docker() {
+  local domain_name="$1"
+
   local docker_container_id
   docker_container_id=$(get_docker_container_id_of_gitlab_server)
 
