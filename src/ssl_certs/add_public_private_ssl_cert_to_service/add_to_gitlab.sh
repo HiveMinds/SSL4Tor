@@ -98,10 +98,43 @@ copy_ssl_certs_to_gitlab() {
   manual_assert_file_exists "$ssl_public_key_in_gitlab_filepath"
   manual_assert_file_exists "$ssl_private_key_in_gitlab_filepath"
 
+  assert_target_dir_exists_in_docker "/etc/gitlab/ssl/$domain_name/"
+  # Assert target dir exists in docker.
   # Copy your new certificates into the folder where GitLab looks by default
   # for new SSL certificates. (OUTSIDE THE DOCKER.)
   copy_file_into_docker "$local_ssl_public_key_filepath" "$ssl_public_key_in_gitlab_filepath"
   copy_file_into_docker "$local_ssl_private_key_filepath" "$ssl_private_key_in_gitlab_filepath"
+  read -p "copied ssl certs into docker."
+}
+
+assert_target_dir_exists_in_docker() {
+  local target_dir="$1"
+
+  local docker_container_id
+  docker_container_id=$(get_docker_container_id_of_gitlab_server)
+
+  local the_output
+  the_output=$(sudo docker exec -i "$docker_container_id" bash -c "test -d $target_dir && echo 'FOUND'")
+  if [[ "$the_output" != "FOUND" ]]; then
+    echo "Error, did not find target directory:$target_dir."
+    exit 5
+  fi
+  read -p "Verified target dir exists."
+}
+
+assert_target_file_exists_in_docker() {
+  local target_filepath="$1"
+
+  local docker_container_id
+  docker_container_id=$(get_docker_container_id_of_gitlab_server)
+
+  local the_output
+  the_output=$(sudo docker exec -i "$docker_container_id" bash -c "test -d $target_filepath && echo 'FOUND'")
+  if [[ "$the_output" != "FOUND" ]]; then
+    echo "Error, did not find target directory:$target_filepath."
+    exit 5
+  fi
+  read -p "Verified target dir exists."
 }
 
 copy_file_into_docker() {
@@ -112,10 +145,12 @@ copy_file_into_docker() {
   docker_container_id=$(get_docker_container_id_of_gitlab_server)
 
   # TODO: assert target directory exists.
+  docker exec -it mysqlserver sh -c "test -d /var/some/dir && echo 'It Exists'"
 
   sudo docker cp "$local_filepath" "$docker_container_id":"$docker_out_filepath"
 
   # TODO: assert target file exists in docker.
+  assert_target_file_exists_in_docker "$docker_out_filepath"
 }
 
 reconfigure_gitlab_with_new_certs_and_settings() {
