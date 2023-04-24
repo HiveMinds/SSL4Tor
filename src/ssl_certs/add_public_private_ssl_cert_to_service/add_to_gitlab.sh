@@ -132,7 +132,7 @@ assert_target_file_exists_in_docker() {
   docker_container_id=$(get_docker_container_id_of_gitlab_server)
 
   local the_output
-  the_output=$(sudo docker exec -i "$docker_container_id" bash -c "test -d $target_filepath && echo 'FOUND'")
+  the_output=$(sudo docker exec -i "$docker_container_id" bash -c "test -f $target_filepath && echo 'FOUND'")
   if [[ "$the_output" != "FOUND" ]]; then
     echo "Error, did not find target directory:$target_filepath."
     exit 5
@@ -148,7 +148,6 @@ copy_file_into_docker() {
   docker_container_id=$(get_docker_container_id_of_gitlab_server)
 
   # TODO: assert target directory exists.
-  docker exec -it mysqlserver sh -c "test -d /var/some/dir && echo 'It Exists'"
 
   sudo docker cp "$local_filepath" "$docker_container_id":"$docker_out_filepath"
 
