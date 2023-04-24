@@ -86,11 +86,11 @@ create_gitlab_ssl_directories_in_docker() {
   local docker_container_id
   docker_container_id=$(get_docker_container_id_of_gitlab_server)
 
-  sudo docker exec -i "$docker_container_id" bash -c "sudo rm -rf \"/etc/gitlab/ssl/*\""
-  sudo docker exec -i "$docker_container_id" bash -c "sudo mkdir -p \"/etc/gitlab/ssl\""
-  sudo docker exec -i "$docker_container_id" bash -c "sudo chmod 755 \"/etc/gitlab/ssl\""
-  sudo docker exec -i "$docker_container_id" bash -c "sudo mkdir -p \"/etc/gitlab/ssl/$domain_name/\""
-  sudo docker exec -i "$docker_container_id" bash -c "sudo chmod 755 \"/etc/gitlab/ssl/$domain_name/\""
+  sudo docker exec -i "$docker_container_id" bash -c "rm -rf \"/etc/gitlab/ssl/*\""
+  sudo docker exec -i "$docker_container_id" bash -c "mkdir -p \"/etc/gitlab/ssl\""
+  sudo docker exec -i "$docker_container_id" bash -c "chmod 755 \"/etc/gitlab/ssl\""
+  sudo docker exec -i "$docker_container_id" bash -c "mkdir -p \"/etc/gitlab/ssl/$domain_name/\""
+  sudo docker exec -i "$docker_container_id" bash -c "chmod 755 \"/etc/gitlab/ssl/$domain_name/\""
 }
 
 copy_ssl_certs_to_gitlab() {
