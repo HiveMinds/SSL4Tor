@@ -70,7 +70,6 @@ parse_args() {
         get_server_gif_into_client_flag='true'
         shift # past argument
         ;;
-
       -ms | --make-ssl-certs)
         make_project_ssl_certs_flag='true'
         shift # past argument
@@ -141,6 +140,7 @@ parse_args() {
 
   # Ensure ports are populated and valid, and that project names are valid.
   assert_services_are_valid "$services"
+  assert_services_are_supported "$services"
 
   # Run the functions that are asked for in the CLI args.
   # Delete files from previous run.

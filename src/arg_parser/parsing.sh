@@ -19,6 +19,22 @@ assert_services_are_valid() {
 
 }
 
+assert_services_are_supported() {
+  local services="$1"
+
+  local nr_of_services
+  nr_of_services=$(get_nr_of_services "$services")
+  start=0
+
+  for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+    local project_name
+    project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+
+    assert_project_name_is_supported "$project_name" "$SUPPORTED_PROJECTS"
+  done
+
+}
+
 get_project_property_by_index() {
   local services="$1"
   local project_nr="$2"
