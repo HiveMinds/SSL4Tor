@@ -3,7 +3,7 @@
 load '../libs/bats-support/load'
 load '../libs/bats-assert/load'
 
-@test "/src/arg_parser/helper.sh, function check_project_name: functions with valid input:bikes." {
+@test "/src/arg_parser/helper.sh, function project_name_is_supported: functions with valid input:bikes." {
   # Specify input data for test.
   local test_input="bikes"
   local supported_projects="bikes/flowers/planes"
@@ -12,13 +12,13 @@ load '../libs/bats-assert/load'
   source src/arg_parser/helper.sh
 
   # Run function that is tested.
-  run check_project_name "$test_input" "$supported_projects"
+  run project_name_is_supported "$test_input" "$supported_projects"
 
   # Verify result is as expected.
   assert_output "FOUND"
 }
 
-@test "/src/arg_parser/helper.sh, function check_project_name: functions with valid input:flowers." {
+@test "/src/arg_parser/helper.sh, function project_name_is_supported: functions with valid input:flowers." {
   # Specify input data for test.
   local test_input="bikes"
   local supported_projects="bikes/flowers/planes"
@@ -27,13 +27,13 @@ load '../libs/bats-assert/load'
   source src/arg_parser/helper.sh
 
   # Run function that is tested.
-  run check_project_name "$test_input" "$supported_projects"
+  run project_name_is_supported "$test_input" "$supported_projects"
 
   # Verify result is as expected.
   assert_output "FOUND"
 }
 
-@test "/src/arg_parser/helper.sh, function check_project_name: functions with valid input:planes." {
+@test "/src/arg_parser/helper.sh, function project_name_is_supported: functions with valid input:planes." {
   # Specify input data for test.
   local test_input="bikes"
   local supported_projects="bikes/flowers/planes"
@@ -42,13 +42,13 @@ load '../libs/bats-assert/load'
   source src/arg_parser/helper.sh
 
   # Run function that is tested.
-  run check_project_name "$test_input" "$supported_projects"
+  run project_name_is_supported "$test_input" "$supported_projects"
 
   # Verify result is as expected.
   assert_output "FOUND"
 }
 
-@test "/src/arg_parser/helper.sh, function check_project_name: functions with invalid input:empty." {
+@test "/src/arg_parser/helper.sh, function project_name_is_supported: functions with invalid input:empty." {
   # Specify input data for test.
   local test_input=""
   local supported_projects="bikes/flowers/planes"
@@ -57,13 +57,13 @@ load '../libs/bats-assert/load'
   source src/arg_parser/helper.sh
 
   # Run function that is tested.
-  run check_project_name "$test_input" "$supported_projects"
+  run project_name_is_supported "$test_input" "$supported_projects"
 
   # Verify result is as expected.
   assert_output "NOTFOUND"
 }
 
-@test "/src/arg_parser/helper.sh, function check_project_name: functions with invalid input:something." {
+@test "/src/arg_parser/helper.sh, function project_name_is_supported: functions with invalid input:something." {
   # Specify input data for test.
   local test_input="something"
   local supported_projects="bikes/flowers/planes"
@@ -72,7 +72,7 @@ load '../libs/bats-assert/load'
   source src/arg_parser/helper.sh
 
   # Run function that is tested.
-  run check_project_name "$test_input" "$supported_projects"
+  run project_name_is_supported "$test_input" "$supported_projects"
 
   # Verify result is as expected.
   assert_output "NOTFOUND"

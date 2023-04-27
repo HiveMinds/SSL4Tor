@@ -41,7 +41,7 @@ assert_project_name_contains_only_letters_and_underscores() {
   fi
 }
 
-check_project_name() {
+project_name_is_supported() {
   local project_name="$1"
   local supported_projects="$2"
 
@@ -55,4 +55,13 @@ check_project_name() {
   done
   echo "NOTFOUND"
   return 1
+}
+
+assert_project_name_is_supported() {
+  local project_name="$1"
+  local supported_projects="$2"
+  if [[ "$(project_name_is_supported "$project_name" "$supported_projects")" != "FOUND" ]]; then
+    echo "Error, project_name:$project_name is not (yet) supported."
+    exit 5
+  fi
 }
