@@ -12,7 +12,6 @@ parse_args() {
   local get_root_ca_certificate_into_client_flag='false'
   local get_server_gif_into_client_flag='false'
   local make_project_ssl_certs_flag='false'
-  local one_domain_per_service_flag='false'
   local record_cli_flag='false'
   local setup_ssh_client_flag='false'
   local setup_ssh_server_flag='false'
@@ -24,10 +23,6 @@ parse_args() {
   # the shift command eats the first element of that array, making it shorter.
   while [[ $# -gt 0 ]]; do
     case $1 in
-      -1d1s | --1-domain-1-service)
-        one_domain_per_service_flag='true'
-        shift # past argument
-        ;;
       -a | --apply-certs)
         apply_certs_to_project_flag='true'
         shift # past argument
@@ -144,13 +139,6 @@ parse_args() {
     esac
   done
 
-  if [ "$one_domain_per_service_flag" != "true" ]; then
-    # TODO: do not run this check if only -fta | --firefox-to-apt is ran.
-    # TODO: do not run this check if only -go | --get-onion-domain is ran.
-    echo "Error, multiple services per onion domain is not yet supported."
-    exit 5
-  fi
-
   if [ "$dont_use_ssl" == "true" ]; then
     echo "Error, using http only is currently not supported."
     exit 5
@@ -168,11 +156,11 @@ parse_args() {
   process_firefox_to_apt_flag "$firefox_to_apt_flag"
 
   # Create onion domain(s).
-  process_make_onion_domain_flag "$make_onion_domain_flag" "$one_domain_per_service_flag" "$services"
+  process_make_onion_domain_flag "$make_onion_domain_flag" "$services"
 
   # Create SSL certificates.
   # TODO: process services instead of project_name.
-  process_make_project_ssl_certs_flag "$make_project_ssl_certs_flag" "$one_domain_per_service_flag" "$background_dash_flag" "$services" "$ssl_password"
+  process_make_project_ssl_certs_flag "$make_project_ssl_certs_flag" "$background_dash_flag" "$services" "$ssl_password"
   process_apply_certs_to_project_flag "$apply_certs_to_project_flag" "$services" "$convert_to_crt_and_key_ext" "$include_root_ca_in_gitlab"
   # Verify https access to onion domain.
   process_check_https_flag "$check_https_flag"

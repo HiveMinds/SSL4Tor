@@ -1,21 +1,15 @@
 #!/bin/bash
 
 make_onion_domain() {
-  local one_domain_per_service_flag="$1"
-  local project_name="$2"
-  local local_project_port="$3"
-  local public_port_to_access_onion="$4"
+  local project_name="$1"
+  local local_project_port="$2"
+  local public_port_to_access_onion="$3"
 
   assert_is_non_empty_string "$public_port_to_access_onion"
   assert_is_non_empty_string "$local_project_port"
 
-  if [ "$one_domain_per_service_flag" == "true" ]; then
-    create_torrc_lines_one_onion_per_service "$project_name" "$local_project_port" "$public_port_to_access_onion"
-    prepare_onion_domain_creation "$project_name" "$local_project_port" "$public_port_to_access_onion"
-  else
-    echo "Error multiple services on single onion domain not yet supported."
-    exit 5
-  fi
+  create_torrc_lines_one_onion_per_service "$project_name" "$local_project_port" "$public_port_to_access_onion"
+  prepare_onion_domain_creation "$project_name" "$local_project_port" "$public_port_to_access_onion"
 }
 
 prepare_onion_domain_creation() {

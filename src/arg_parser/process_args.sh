@@ -31,33 +31,33 @@ process_firefox_to_apt_flag() {
 # Create onion domain(s).
 process_make_onion_domain_flag() {
   local make_onion_domain_flag="$1"
-  local one_domain_per_service_flag="$2"
-  local services="$3"
+  local services="$2"
 
   if [ "$make_onion_domain_flag" == "true" ]; then
     install_apt_prerequisites
 
-    if [ "$one_domain_per_service_flag" == "true" ]; then
-      nr_of_services=$(get_nr_of_services "$services")
-      start=0
-      for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
-        local local_project_port
-        local project_name
-        local public_port_to_access_onion
+    # Create one onion domain per service.
+    nr_of_services=$(get_nr_of_services "$services")
+    start=0
+    for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+      local local_project_port
+      local project_name
+      local public_port_to_access_onion
 
-        local_project_port="$(get_project_property_by_index "$services" "$project_nr" "local_port")"
-        project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
-        public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
+      # Get the project ports and names.
+      local_project_port="$(get_project_property_by_index "$services" "$project_nr" "local_port")"
+      project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+      public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
 
-        echo "Generating your onion domain for:$project_name"
-        make_onion_domain "$one_domain_per_service_flag" "$project_name" "$local_project_port" "$public_port_to_access_onion"
-        prepare_starting_tor "$project_name" "$local_project_port" "$public_port_to_access_onion"
+      # Creating the onion domains, one per service.
+      echo "Generating your onion domain for:$project_name"
+      make_onion_domain "$project_name" "$local_project_port" "$public_port_to_access_onion"
+      prepare_starting_tor "$project_name" "$local_project_port" "$public_port_to_access_onion"
 
-        if [[ "$project_name" == "ssh" ]]; then
-          ssh_server_prerequisites
-        fi
-      done
-    fi
+      if [[ "$project_name" == "ssh" ]]; then
+        ssh_server_prerequisites
+      fi
+    done
   fi
 }
 
@@ -96,45 +96,43 @@ process_get_onion_domain_flag() {
 # Create SSL certificates.
 process_make_project_ssl_certs_flag() {
   local make_project_ssl_certs_flag="$1"
-  local one_domain_per_service_flag="$2"
-  local background_dash_flag="$3"
-  local services="$4"
-  local ssl_password="$5"
+  local background_dash_flag="$2"
+  local services="$3"
+  local ssl_password="$4"
 
   if [ "$make_project_ssl_certs_flag" == "true" ]; then
 
     assert_is_non_empty_string "${ssl_password}"
     make_root_ssl_certs "$ssl_password"
 
-    if [ "$one_domain_per_service_flag" == "true" ]; then
-      nr_of_services=$(get_nr_of_services "$services")
-      start=0
-      for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
-        local local_project_port
-        local project_name
-        local public_port_to_access_onion
+    nr_of_services=$(get_nr_of_services "$services")
+    start=0
+    for ((project_nr = start; project_nr < nr_of_services; project_nr++)); do
+      local local_project_port
+      local project_name
+      local public_port_to_access_onion
 
-        local_project_port="$(get_project_property_by_index "$services" "$project_nr" "local_port")"
-        project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
-        public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
+      local_project_port="$(get_project_property_by_index "$services" "$project_nr" "local_port")"
+      project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
+      public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
 
-        local onion_domain
-        onion_domain="$(get_onion_domain "$project_name")"
-        assert_is_non_empty_string "${onion_domain}"
-        make_project_ssl_certs "$onion_domain" "$project_name"
+      local onion_domain
+      onion_domain="$(get_onion_domain "$project_name")"
+      assert_is_non_empty_string "${onion_domain}"
+      make_project_ssl_certs "$onion_domain" "$project_name"
 
-        # Don't kill the ssh service at port 22 that may already be running.
-        if [ "$project_name" != "ssh" ] && [ "$project_name" != "gitlab" ]; then
-          if [ "$background_dash_flag" == "true" ]; then
-            run_dash_in_background "$local_project_port" "$project_name" &
-            green_msg "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
-          fi
-          kill_tor_if_already_running
-          verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
+      # Don't kill the ssh service at port 22 that may already be running.
+      if [ "$project_name" != "ssh" ] && [ "$project_name" != "gitlab" ]; then
+        if [ "$background_dash_flag" == "true" ]; then
+          run_dash_in_background "$local_project_port" "$project_name" &
+          green_msg "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
         fi
-      done
-      rm "$TEMP_SSL_PWD_FILENAME"
-    fi
+        kill_tor_if_already_running
+        verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
+      fi
+    done
+    rm "$TEMP_SSL_PWD_FILENAME"
+
   fi
 }
 
