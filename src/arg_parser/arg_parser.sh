@@ -5,7 +5,6 @@ parse_args() {
   # Specify default argument values.
   local apply_certs_to_project_flag='false'
   local add_ssl_root_cert_to_apt_firefox_flag='false'
-  local background_dash_flag='false'
   local check_https_flag='false'
   local dont_use_ssl='false'
   local firefox_to_apt_flag='false'
@@ -29,10 +28,6 @@ parse_args() {
         ;;
       -asf | --add-ssl-root-cert-to-apt-firefox)
         add_ssl_root_cert_to_apt_firefox_flag='true'
-        shift # past argument
-        ;;
-      -bd | --background-dash)
-        background_dash_flag='true'
         shift # past argument
         ;;
       -cs | --check-https)
@@ -160,7 +155,7 @@ parse_args() {
 
   # Create SSL certificates.
   # TODO: process services instead of project_name.
-  process_make_project_ssl_certs_flag "$make_project_ssl_certs_flag" "$background_dash_flag" "$services" "$ssl_password"
+  process_make_project_ssl_certs_flag "$make_project_ssl_certs_flag" "$services" "$ssl_password"
   process_apply_certs_to_project_flag "$apply_certs_to_project_flag" "$services" "$convert_to_crt_and_key_ext" "$include_root_ca_in_gitlab"
   # Verify https access to onion domain.
   process_check_https_flag "$check_https_flag"

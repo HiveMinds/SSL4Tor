@@ -96,9 +96,8 @@ process_get_onion_domain_flag() {
 # Create SSL certificates.
 process_make_project_ssl_certs_flag() {
   local make_project_ssl_certs_flag="$1"
-  local background_dash_flag="$2"
-  local services="$3"
-  local ssl_password="$4"
+  local services="$2"
+  local ssl_password="$3"
 
   if [ "$make_project_ssl_certs_flag" == "true" ]; then
 
@@ -122,11 +121,12 @@ process_make_project_ssl_certs_flag() {
       make_project_ssl_certs "$onion_domain" "$project_name"
 
       # Don't kill the ssh service at port 22 that may already be running.
-      if [ "$project_name" != "ssh" ] && [ "$project_name" != "gitlab" ]; then
-        if [ "$background_dash_flag" == "true" ]; then
-          run_dash_in_background "$local_project_port" "$project_name" &
-          green_msg "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
-        fi
+      if [ "$project_name" == "dash" ]; then
+        run_dash_in_background "$local_project_port" "$project_name" &
+        green_msg "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
+
+        # This is only done if the project name is dash.
+        # TODO: verify it for all supported projects.
         kill_tor_if_already_running
         verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
       fi

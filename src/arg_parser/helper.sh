@@ -40,3 +40,19 @@ assert_project_name_contains_only_letters_and_underscores() {
     exit 5
   fi
 }
+
+check_project_name() {
+  local project_name="$1"
+  local supported_projects="$2"
+
+  IFS='/' read -r -a supported_project_name_arr <<<"$supported_projects"
+
+  for proj in "${supported_project_name_arr[@]}"; do
+    if [[ "$proj" == "$project_name" ]]; then
+      echo "FOUND"
+      return 0
+    fi
+  done
+  echo "NOTFOUND"
+  return 1
+}
