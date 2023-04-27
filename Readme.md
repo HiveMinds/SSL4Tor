@@ -43,7 +43,8 @@ the server, with:
   --ssl-password somepassword \
   --make-ssl-certs \
   --setup-ssh-server \
-  --get-onion-domain
+  --get-onion-domain \
+  --apply-certs
 ```
 
 This creates an ssh tunnel, and 2 dash plots that you can visit:
