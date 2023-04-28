@@ -98,8 +98,9 @@ verify_ssh_onion_domain_is_reachable() {
     # Set the start time of the function
     start_time=$(date +%s)
     while true; do
+
       # TODO: include check to see if $TOR_LOG_FILEPATH contains:[err]
-      if [ "$(ssh_onion_is_available "$onion_domain")" == "FOUND" ]; then
+      if [ "$(ssh_onion_is_available "$onion_domain" "$public_port_to_access_onion")" == "FOUND" ]; then
         echo "Verified you can ssh into this server with command:"
         green_msg "torsocks ssh $(whoami)@$onion_domain" "true"
         return 0

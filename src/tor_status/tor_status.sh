@@ -85,20 +85,13 @@ get_onion_address() {
   echo "$onion_address"
 }
 
-# Returns "FOUND" if an onion was available on the first try.
-# TODO: allow for retries in parsing ping output.
 ssh_onion_is_available() {
   local onion_domain="$1"
+  local public_port_to_access_onion="$2"
 
-  local ssh_ping_output
-  ssh_ping_output=$(torsocks nc -zv "$onion_domain" 22)
-
-  if [[ "$ssh_ping_output" == *"failed"* ]]; then
-    echo "NOTFOUND"
-  elif [[ "$ssh_ping_output" == *"succeeded!"* ]]; then
+  if torsocks nc -zv "$onion_domain" "$public_port_to_access_onion" >/dev/null 2>&1; then
     echo "FOUND"
   else
-    echo "Error, did not find expected status."
-    exit 5
+    echo "NOTFOUND"
   fi
 }
