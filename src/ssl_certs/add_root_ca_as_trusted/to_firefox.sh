@@ -42,3 +42,21 @@ add_self_signed_root_cert_to_firefox() {
 
   fi
 }
+
+has_added_self_signed_root_ca_cert_to_apt_firefox() {
+  # TODO: include snap firefox check.
+
+  local policies_filepath="/etc/firefox/policies/policies.json"
+
+  local policies_line="$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
+
+  if [ "$(file_exists $policies_filepath)" == "FOUND" ]; then
+    if [ "$(file_contains_string "$policies_line" "$policies_filepath")" == "NOTFOUND" ]; then
+      echo "NOTFOUND"
+    elif [ "$(file_contains_string "$policies_line" "$policies_filepath")" == "FOUND" ]; then
+      echo "FOUND"
+    fi
+  else
+    echo "NOTFOUND"
+  fi
+}

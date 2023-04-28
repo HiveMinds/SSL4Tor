@@ -13,7 +13,7 @@ TOR_LOG_FILEPATH="tor_log.txt"
 VERBOSE="false"
 
 # GitLab
-GITLAB_RB_TEMPLATE_DIR="src/ssl_certs/add_public_private_ssl_cert_to_service/"
+GITLAB_RB_TEMPLATE_DIR="src/ssl_certs/add_ssl_certs_to_service/"
 GITLAB_RB_TEMPLATE_FILENAME="gitlab_template.rb"
 GITLAB_RB_TEMPLATE_FILEPATH="$GITLAB_RB_TEMPLATE_DIR$GITLAB_RB_TEMPLATE_FILENAME"
 SUPPORTED_PROJECTS="dash/gitlab/ssh"

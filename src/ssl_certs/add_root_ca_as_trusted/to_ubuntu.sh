@@ -25,3 +25,17 @@ install_the_ca_cert_as_a_trusted_root_ca() {
 
   # TODO: verify the root ca is added to the trusted list.
 }
+
+has_added_root_ca_as_trusted() {
+  manual_assert_file_exists
+  if [ "$(file_exists "$UBUNTU_CERTIFICATE_DIR$ca_public_cert_filename")" == "NOTFOUND" ]; then
+    echo "NOTFOUND"
+  elif [ "$(file_exists "$UBUNTU_CERTIFICATE_DIR$ca_public_cert_filename")" == "FOUND" ]; then
+    echo "FOUND"
+  else
+    echo "Unexpected state."
+    exit 6
+  fi
+
+  # TODO: also verify whether the root ca is actually in the Ubuntu Certificate Store.
+}
