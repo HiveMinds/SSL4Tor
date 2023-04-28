@@ -52,3 +52,10 @@ ssl_certs_for_root_ca_exist() {
     echo "NOTFOUND"
   fi
 }
+
+assert_ssl_certs_for_root_ca_exist() {
+  if [[ "$(ssl_certs_for_root_ca_exist)" != "FOUND" ]]; then
+    echo "Error root ca certificate not found."
+    exit 6
+  fi
+}

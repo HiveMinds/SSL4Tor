@@ -14,15 +14,6 @@ get_root_ca_into_client() {
   copy_files_from_server_into_client "$server_username" "$server_onion_domain" "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME" "certificates/root/$CA_PUBLIC_CERT_FILENAME"
   manual_assert_file_exists "certificates/root/$CA_PUBLIC_CERT_FILENAME"
 
-  #copy_file "certificates/root/$CA_PUBLIC_CERT_FILENAME" "$OUTPUT_PUBLIC_ROOT_CERT_FILEPATH" "true"
-
-  # TODO: identify this device, if it is ubuntu, add it to trusted list.
-  # TODO: If a phone argument is given, add it to phone.
-  # TODO: If a Firefox apt argument is given, add it to apt Firefox.
-  # TODO: If a Firefox snap argument is given, add it to snap Firefox.
-  # TODO: If a brave argument is given bravely venture out, add it to brave browser.
-  # TODO: If a tor argument is given add it to tor browser.
-
   # Add the server root ca to the trusted list on this client.
   install_the_ca_cert_as_a_trusted_root_ca "$CA_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_CERT_FILENAME"
 
