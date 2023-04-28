@@ -39,12 +39,8 @@ the server, with:
 ./src/main.sh \
   --delete-onion-domain \
   --services 8050:gitlab:8070/9001:dash:9002/22:ssh:22 \
-  --make-onion-domains \
   --ssl-password somepassword \
-  --make-ssl-certs \
-  --setup-ssh-server \
-  --get-onion-domain \
-  --apply-certs
+  --get-onion-domain
 ```
 
 This creates an ssh tunnel, and 2 dash plots that you can visit:

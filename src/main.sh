@@ -2,11 +2,14 @@
 
 source src/GLOBAL_VARS.sh
 source src/arg_parser/arg_parser.sh
+source src/arg_parser/arg_verification.sh
 source src/arg_parser/helper.sh
 source src/arg_parser/parsing.sh
+source src/arg_parser/prerequisites_check.sh
 source src/arg_parser/process_args.sh
+source src/arg_parser/process_deletion_args.sh
 source src/arg_parser/print_usage.sh
-source src/arg_parser/arg_verification.sh
+source src/arg_parser/setup_services.sh
 source src/file_edit_helper/file_editing.sh
 source src/firefox_version/firefox_version.sh
 source src/helper.sh
@@ -26,7 +29,9 @@ source src/setup_ssh/get_root_ca.sh
 source src/setup_ssh/setup_ssh_public_private_key_access.sh
 source src/ssl_certs/add_ssl_certs_to_service/add_to_gitlab/add_to_gitlab.sh
 source src/ssl_certs/add_ssl_certs_to_service/add_to_gitlab/verify_ssl_certs.sh
+source src/ssl_certs/add_root_ca_as_trusted/manage_add_root_ca_cert.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_ubuntu.sh
+source src/ssl_certs/add_root_ca_as_trusted/to_firefox.sh
 source src/ssl_certs/ssl_certs_exist.sh
 source src/ssl_certs/make_ssl_project_certs.sh
 source src/ssl_certs/make_ssl_root_certs.sh

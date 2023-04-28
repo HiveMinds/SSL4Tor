@@ -32,8 +32,6 @@ add_service_to_torrc_for_service() {
   local project_name="$2"
   local public_port_to_access_onion="$3"
 
-  install_apt_prerequisites
-
   # Create one onion domain per service.
   echo "Generating your onion domain for:$project_name"
   add_service_to_torrc "$project_name" "$local_project_port" "$public_port_to_access_onion"

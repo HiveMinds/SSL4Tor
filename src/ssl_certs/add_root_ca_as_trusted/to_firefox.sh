@@ -20,16 +20,17 @@ add_self_signed_root_cert_to_firefox() {
                }]' $policies_filepath)
 
       # Append the content
-      echo "$new_json_content" | sudo tee $policies_filepath
+      echo "$new_json_content" | sudo tee $policies_filepath >/dev/null
 
     else
-      echo "Your certificate is already added to Firefox."
+      red_msg "Your certificate is already added to Firefox."
+      exit 6
     fi
     # Assert the policy is in the file.
     if [ "$(file_contains_string "$policies_line" "$policies_filepath")" == "NOTFOUND" ]; then
 
       red_msg "Error, policy was not found in file:$policies_filepath"
-
+      exit 5
     fi
 
     # Restart firefox.
@@ -58,5 +59,12 @@ has_added_self_signed_root_ca_cert_to_apt_firefox() {
     fi
   else
     echo "NOTFOUND"
+  fi
+}
+
+assert_has_added_self_signed_root_ca_cert_to_apt_firefox() {
+  if [[ "$(has_added_self_signed_root_ca_cert_to_apt_firefox)" != "FOUND" ]]; then
+    echo "Error, root ca certificate was not added to apt Firefox."
+    exit 6
   fi
 }
