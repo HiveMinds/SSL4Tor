@@ -1,15 +1,43 @@
 #!/bin/bash
 
+verify_service_is_reachable_on_onion() {
+  local local_project_port="$1"
+  local project_name="$2"
+  local public_port_to_access_onion="$3"
+
+  ensure_https_services_run_locally "$local_project_port" "$project_name"
+
+  # TODO: include support for GitLab onion.
+  if [[ "$project_name" != "gitlab" ]]; then
+    kill_tor_if_already_running
+    verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion"
+  fi
+}
+
+ensure_https_services_run_locally() {
+  local local_project_port="$1"
+  local project_name="$2"
+
+  # Don't kill the ssh service at port 22 that may already be running.
+  if [ "$project_name" == "dash" ]; then
+    run_dash_in_background "$local_project_port" "$project_name" &
+    green_msg "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
+
+  elif [[ "$project_name" == "ssh" ]]; then
+    ssh_server_prerequisites
+  fi
+}
+
 verify_onion_address_is_reachable() {
   local project_name="$1"
   local public_port_to_access_onion="$2"
-  local use_https="$3"
 
   local wait_time_sec=260
 
   local onion_exists
   onion_exists=$(check_onion_url_exists_in_hostname "$project_name")
   if [[ "$onion_exists" == "FOUND" ]]; then
+    local use_https="true"
     local onion_address
     onion_address="$(get_onion_address "$project_name" "$use_https" "$public_port_to_access_onion")"
 

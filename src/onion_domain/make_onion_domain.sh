@@ -1,6 +1,6 @@
 #!/bin/bash
 
-make_onion_domain() {
+add_service_to_torrc() {
   local project_name="$1"
   local local_project_port="$2"
   local public_port_to_access_onion="$3"
@@ -10,6 +10,25 @@ make_onion_domain() {
 
   create_torrc_lines_one_onion_per_service "$project_name" "$local_project_port" "$public_port_to_access_onion"
   prepare_onion_domain_creation "$project_name" "$local_project_port" "$public_port_to_access_onion"
+}
+
+create_torrc_lines_one_onion_per_service() {
+  local project_name="$1"
+  local local_project_port="$2"
+  local public_port_to_access_onion="$3"
+
+  local torrc_line_1
+  torrc_line_1="HiddenServiceDir $TOR_SERVICE_DIR/$project_name/"
+  local torrc_line_2
+
+  assert_is_non_empty_string "$public_port_to_access_onion"
+  torrc_line_2="HiddenServicePort $public_port_to_access_onion 127.0.0.1:$local_project_port"
+
+  # E. If that content is not in the torrc file, append it at file end.
+  append_lines_if_not_found "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"
+
+  # F. Verify that content is in the file.
+  verify_has_two_consecutive_lines "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"
 }
 
 prepare_onion_domain_creation() {
@@ -35,26 +54,7 @@ prepare_onion_domain_creation() {
 
 }
 
-create_torrc_lines_one_onion_per_service() {
-  local project_name="$1"
-  local local_project_port="$2"
-  local public_port_to_access_onion="$3"
-
-  local torrc_line_1
-  torrc_line_1="HiddenServiceDir $TOR_SERVICE_DIR/$project_name/"
-  local torrc_line_2
-
-  assert_is_non_empty_string "$public_port_to_access_onion"
-  torrc_line_2="HiddenServicePort $public_port_to_access_onion 127.0.0.1:$local_project_port"
-
-  # E. If that content is not in the torrc file, append it at file end.
-  append_lines_if_not_found "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"
-
-  # F. Verify that content is in the file.
-  verify_has_two_consecutive_lines "$torrc_line_1" "$torrc_line_2" "$TORRC_FILEPATH"
-}
-
-prepare_starting_tor() {
+create_onion_domain_for_service() {
   local project_name="$1"
   local local_project_port="$2"
   local public_port_to_access_onion="$3"
@@ -65,13 +65,13 @@ prepare_starting_tor() {
   kill_tor_if_already_running
   assert_tor_is_not_running
 
-  start_onion_domain_creation "$project_name" "$local_project_port" "$public_port_to_access_onion"
+  ensure_onion_domain_is_created_by_starting_tor "$project_name" "$local_project_port" "$public_port_to_access_onion"
 
   # Assert the tor_log.txt does not contain error.
   assert_file_does_not_contains_string "\[err\]" "$TOR_LOG_FILEPATH"
 }
 
-start_onion_domain_creation() {
+ensure_onion_domain_is_created_by_starting_tor() {
   local project_name="$1"
   local local_project_port="$2"
   local public_port_to_access_onion="$3"
@@ -104,7 +104,6 @@ start_onion_domain_creation() {
         # If the onion URL exists, terminate the "sudo tor" process and return 0
         kill_tor_if_already_running
         green_msg "Successfully created your onion domain locally. Proceeding.."
-        echo ""
         sleep 5
 
         # TODO: verify the private key is valid for the onion domain.

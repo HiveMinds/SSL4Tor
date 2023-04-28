@@ -18,15 +18,16 @@ manage_ssl_for_services() {
     project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
     public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
 
-    make_onion_domain_for_service "$local_project_port" "$project_name" "$public_port_to_access_onion"
+    add_service_to_torrc_for_service "$local_project_port" "$project_name" "$public_port_to_access_onion"
     add_root_ca_certificates_to_server
-    make_ssl_certs_for_service "$local_project_port" "$project_name" "$public_port_to_access_onion" "$ssl_password"
+    make_ssl_certs_for_service "$project_name" "$ssl_password"
     apply_ssl_certs_to_service "$local_project_port"
+    verify_service_is_reachable_on_onion "$local_project_port" "$project_name" "$public_port_to_access_onion"
   done
 }
 
 # Create onion domain(s).
-make_onion_domain_for_service() {
+add_service_to_torrc_for_service() {
   local local_project_port="$1"
   local project_name="$2"
   local public_port_to_access_onion="$3"
@@ -35,20 +36,14 @@ make_onion_domain_for_service() {
 
   # Create one onion domain per service.
   echo "Generating your onion domain for:$project_name"
-  make_onion_domain "$project_name" "$local_project_port" "$public_port_to_access_onion"
-  prepare_starting_tor "$project_name" "$local_project_port" "$public_port_to_access_onion"
-
-  if [[ "$project_name" == "ssh" ]]; then
-    ssh_server_prerequisites
-  fi
+  add_service_to_torrc "$project_name" "$local_project_port" "$public_port_to_access_onion"
+  create_onion_domain_for_service "$project_name" "$local_project_port" "$public_port_to_access_onion"
 }
 
 # Create SSL certificates.
 make_ssl_certs_for_service() {
-  local local_project_port="$1"
-  local project_name="$2"
-  local public_port_to_access_onion="$3"
-  local ssl_password="$4"
+  local project_name="$1"
+  local ssl_password="$2"
 
   assert_is_non_empty_string "${ssl_password}"
   make_root_ssl_certs "$ssl_password"
@@ -57,17 +52,6 @@ make_ssl_certs_for_service() {
   onion_domain="$(get_onion_domain "$project_name")"
   assert_is_non_empty_string "${onion_domain}"
   make_project_ssl_certs "$onion_domain" "$project_name"
-
-  # Don't kill the ssh service at port 22 that may already be running.
-  if [ "$project_name" == "dash" ]; then
-    run_dash_in_background "$local_project_port" "$project_name" &
-    green_msg "Dash is running in the background for: $project_name at port:$local_project_port. Proceeding."
-
-    # This is only done if the project name is dash.
-    # TODO: verify it for all supported projects.
-    kill_tor_if_already_running
-    verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion" "true"
-  fi
   rm "$TEMP_SSL_PWD_FILENAME"
 
 }
