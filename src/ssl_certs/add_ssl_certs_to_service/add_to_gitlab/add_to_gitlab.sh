@@ -8,9 +8,6 @@ add_private_and_public_ssl_certs_to_gitlab() {
   local domain_name="$2"
   local ssl_private_key_filename="$3"
   local ssl_public_key_filename="$4"
-  local ca_public_cert_filename="$5"
-  local convert_to_crt_and_key_ext="$6"
-  local include_root_ca_in_gitlab="$7"
 
   local ssl_private_key_filepath="certificates/ssl_cert/$project_name/$ssl_private_key_filename"
   local ssl_public_key_filepath="certificates/ssl_cert/$project_name/$ssl_public_key_filename"
@@ -27,51 +24,19 @@ add_private_and_public_ssl_certs_to_gitlab() {
   local local_ssl_public_key_filepath
   local local_ssl_private_key_filepath
 
-  if [[ "$convert_to_crt_and_key_ext" == "true" ]]; then
+  ssl_public_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/public_key.pem"
+  ssl_private_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/private_key.pem"
 
-    # Convert public .pem into public .crt with:
-    local_ssl_public_key_filepath="certificates/ssl_cert/$project_name/$domain_name.crt"
-    local_ssl_private_key_filepath="certificates/ssl_cert/$project_name/$domain_name.key"
-    openssl x509 -outform der -in "$ssl_public_key_filepath" -out "$local_ssl_public_key_filepath"
-    manual_assert_file_exists "$local_ssl_public_key_filepath"
-
-    # Convert private .pem into private .key with:
-    openssl pkey -in "$ssl_private_key_filepath" -out "$local_ssl_private_key_filepath"
-    manual_assert_file_exists "$local_ssl_private_key_filepath"
-    # TODO: verify the generated .key is valid with the old public .pem.
-    # TODO: verify the generated .key is valid with the new public .crt.
-
-    ssl_public_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/public_key.crt"
-    ssl_private_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/private_key.key"
-
-  else
-    ssl_public_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/public_key.pem"
-    ssl_private_key_in_gitlab_filepath="/etc/gitlab/ssl/$domain_name/private_key.pem"
-
-    local_ssl_public_key_filepath="$ssl_public_key_filepath"
-    local_ssl_private_key_filepath="$ssl_private_key_filepath"
-  fi
+  local_ssl_public_key_filepath="$ssl_public_key_filepath"
+  local_ssl_private_key_filepath="$ssl_private_key_filepath"
 
   copy_ssl_certs_to_gitlab "$local_ssl_public_key_filepath" "$local_ssl_private_key_filepath" "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath" "$domain_name"
 
-  # The ~/gitlab/config/gitlab.rb file says:
-  ##! Most root CA's are included by default
-  # nginx['ssl_client_certificate'] = "/etc/gitlab/ssl/ca.crt"
-  # So perhaps also include the self-signed root ca into that dir.
-  if [[ "$include_root_ca_in_gitlab" == "true" ]]; then
-    manual_assert_file_exists "certificates/root/$ca_public_cert_filename"
-    sudo cp "certificates/root/$ca_public_cert_filename" "/etc/gitlab/ssl/ca.crt"
-    manual_assert_file_exists "/etc/gitlab/ssl/ca.crt"
-
-    copy_file_into_docker "certificates/root/$ca_public_cert_filename" "/etc/gitlab/ssl/ca.crt"
-  fi
-
-  add_lines_to_gitlab_rb "$domain_name" "$include_root_ca_in_gitlab" "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath"
+  add_lines_to_gitlab_rb "$domain_name" "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath"
 
   assert_certs_are_valid "$local_ssl_public_key_filepath" "$local_ssl_private_key_filepath"
   assert_certs_are_valid_within_docker "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath"
   reconfigure_gitlab_with_new_certs_and_settings
-
 }
 
 create_gitlab_ssl_directories() {
@@ -170,9 +135,8 @@ reconfigure_gitlab_with_new_certs_and_settings() {
 
 add_lines_to_gitlab_rb() {
   local domain_name="$1"
-  local include_root_ca_in_gitlab="$2"
-  local ssl_public_key_in_gitlab_filepath="$3"
-  local ssl_private_key_in_gitlab_filepath="$4"
+  local ssl_public_key_in_gitlab_filepath="$2"
+  local ssl_private_key_in_gitlab_filepath="$3"
 
   # Create a copy of the basic gitlab.rb file.
   rm "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
@@ -194,9 +158,6 @@ add_lines_to_gitlab_rb() {
   #echo "nginx['ssl_dhparam'] = \"/etc/gitlab/ssl/dhparams.pem\""  >> "$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   echo "nginx['listen_port'] = 443" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   echo "nginx['listen_https'] = true" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
-  if [[ "$include_root_ca_in_gitlab" == "true" ]]; then
-    echo "nginx['ssl_client_certificate'] = \"/etc/gitlab/ssl/ca.crt\"" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
-  fi
 
   # TODO: verify the external url is found correctly:
   # sudo cat ~/gitlab/config/gitlab.rb | grep external_url

@@ -84,3 +84,14 @@ get_onion_address() {
   fi
   echo "$onion_address"
 }
+
+ssh_onion_is_available() {
+  local onion_domain="$1"
+  local public_port_to_access_onion="$2"
+
+  if torsocks nc -zv "$onion_domain" "$public_port_to_access_onion" >/dev/null 2>&1; then
+    echo "FOUND"
+  else
+    echo "NOTFOUND"
+  fi
+}

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 install_cli_recording_to_gif_agg() {
-  ensure_apt_pkg "curl" 1
+  ensure_apt_pkg "curl" 0
   ensure_apt_pkg "cargo" 1
 
   # Install build requirements for agg cargo.

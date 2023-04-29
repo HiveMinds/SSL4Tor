@@ -40,3 +40,28 @@ assert_project_name_contains_only_letters_and_underscores() {
     exit 5
   fi
 }
+
+project_name_is_supported() {
+  local project_name="$1"
+  local supported_projects="$2"
+
+  IFS='/' read -r -a supported_project_name_arr <<<"$supported_projects"
+
+  for proj in "${supported_project_name_arr[@]}"; do
+    if [[ "$proj" == "$project_name" ]]; then
+      echo "FOUND"
+      return 0
+    fi
+  done
+  echo "NOTFOUND"
+  return 1
+}
+
+assert_project_name_is_supported() {
+  local project_name="$1"
+  local supported_projects="$2"
+  if [[ "$(project_name_is_supported "$project_name" "$supported_projects")" != "FOUND" ]]; then
+    echo "Error, project_name:$project_name is not (yet) supported."
+    exit 5
+  fi
+}

@@ -19,3 +19,6 @@ server.cast
 #server.gif
 client.cast
 #client.gif
+
+
+backups/*
