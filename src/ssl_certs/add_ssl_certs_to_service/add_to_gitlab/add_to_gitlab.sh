@@ -37,7 +37,6 @@ add_private_and_public_ssl_certs_to_gitlab() {
   assert_certs_are_valid "$local_ssl_public_key_filepath" "$local_ssl_private_key_filepath"
   assert_certs_are_valid_within_docker "$ssl_public_key_in_gitlab_filepath" "$ssl_private_key_in_gitlab_filepath"
   reconfigure_gitlab_with_new_certs_and_settings
-
 }
 
 create_gitlab_ssl_directories() {

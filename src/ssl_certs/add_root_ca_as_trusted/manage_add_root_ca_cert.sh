@@ -7,13 +7,21 @@ add_root_ca_certificates_to_server() {
   # TODO: write check to see if root ca is already added to Ubuntu. If not, add it.
   install_the_ca_cert_as_a_trusted_root_ca "$CA_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_CERT_FILENAME"
 
-  # Add root ca to apt Firefox.
-  if [[ "$(has_added_self_signed_root_ca_cert_to_apt_firefox)" == "NOTFOUND" ]]; then
-    add_self_signed_root_cert_to_firefox
-  fi
-  assert_has_added_self_signed_root_ca_cert_to_apt_firefox
+  # Assert the root ca is in the place firefox expects it to be.
+  manual_assert_file_exists "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
+  # Assert the root project for this run/these services is created.
+  manual_assert_file_exists "certificates/root/$CA_PUBLIC_CERT_FILENAME"
+  # Assert the root ca hash is as expected.
+  assert_md5sum_identical "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME" "certificates/root/$CA_PUBLIC_CERT_FILENAME"
 
-  # TODO: add root ca to snap Firefox.
+  # Add root ca to apt or snap Firefox.
+  if [[ "$(firefox_is_installed)" == "FOUND" ]]; then
+    if [[ "$(has_added_self_signed_root_ca_cert_to_firefox)" == "NOTFOUND" ]]; then
+      add_self_signed_root_cert_to_firefox
+      close_restart_close_firefox
+    fi
+    assert_has_added_self_signed_root_ca_cert_to_firefox
+  fi
 
   # TODO: add root ca to Brave.
 

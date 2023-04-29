@@ -21,7 +21,7 @@ manage_ssl_for_services() {
     add_service_to_torrc_for_service "$local_project_port" "$project_name" "$public_port_to_access_onion"
     add_root_ca_certificates_to_server
     make_ssl_certs_for_service "$project_name" "$ssl_password"
-    apply_ssl_certs_to_service "$local_project_port"
+    apply_ssl_certs_to_service "$project_name"
     verify_service_is_reachable_on_onion "$local_project_port" "$project_name" "$public_port_to_access_onion"
   done
 }
