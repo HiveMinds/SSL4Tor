@@ -19,9 +19,9 @@ add_self_signed_root_cert_to_firefox() {
       # Generate content to put in policies.json.
       local new_json_content
       # shellcheck disable=SC2086
-      new_json_content=$(jq '.policies.Certificates += [{
+      new_json_content=$(jq '.policies.Certificates += {
                     "Install": ["'$root_ca_filepath'"]
-               }]' $policies_filepath)
+               }' $policies_filepath)
 
       # Append the content
       echo "$new_json_content" | sudo tee "$policies_filepath" >/dev/null
