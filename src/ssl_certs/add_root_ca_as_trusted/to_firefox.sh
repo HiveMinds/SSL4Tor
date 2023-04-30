@@ -47,6 +47,7 @@ add_self_signed_root_cert_to_firefox() {
 has_added_self_signed_root_ca_cert_to_firefox() {
   local policies_filepath
   policies_filepath=$(get_firefox_policies_path)
+  read -p "policies_filepath=$policies_filepath"
 
   local root_ca_filepath="$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
 
@@ -113,13 +114,14 @@ firefox_is_installed_with_snap() {
 
 get_firefox_policies_path() {
   local policies_filepath
-  #if dpkg -l firefox &>/dev/null; then
-  if [[ "$(apt_package_is_installed "firefox")" != "FOUND" ]]; then
-    # policies_filepath="/usr/lib/firefox/distribution/policies.json"
-    policies_filepath="/etc/firefox/policies/policies.json"
+
   #elif snap list | grep -v firefox &>/dev/null; then
-  elif [ "$(firefox_via_snap)" == "FOUND" ]; then
+  if [ "$(firefox_via_snap)" == "FOUND" ]; then
     policies_filepath="/snap/firefox/current/distribution/policies.json"
+  # TODO: prevent False positive on apt package if snap Firefox is installed.
+  elif [[ "$(apt_package_is_installed "Firefox")" != "FOUND" ]]; then
+    #if dpkg -l firefox &>/dev/null; then
+    policies_filepath="/etc/firefox/policies/policies.json"
   else
     echo "Error, firefox installation was not found."
     exit 6

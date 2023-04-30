@@ -16,10 +16,13 @@ add_root_ca_certificates_to_server() {
 
   # Add root ca to apt or snap Firefox.
   if [[ "$(firefox_is_installed)" == "FOUND" ]]; then
+    read -p "FOUND FIREFOX"
     if [[ "$(has_added_self_signed_root_ca_cert_to_firefox)" == "NOTFOUND" ]]; then
+      read -p "ADDING"
       add_self_signed_root_cert_to_firefox
       close_restart_close_firefox
     fi
+    read -p "DONE ADDING"
     assert_has_added_self_signed_root_ca_cert_to_firefox
   fi
 
