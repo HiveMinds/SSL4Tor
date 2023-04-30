@@ -117,7 +117,9 @@ get_firefox_policies_path() {
 
   #elif snap list | grep -v firefox &>/dev/null; then
   if [ "$(firefox_via_snap)" == "FOUND" ]; then
-    policies_filepath="/snap/firefox/current/distribution/policies.json"
+    # policies_filepath="/snap/firefox/current/distribution/policies.json"
+    sudo mkdir -p "/etc/firefox/policies"
+    policies_filepath="/etc/firefox/policies/policies.json"
   # TODO: prevent False positive on apt package if snap Firefox is installed.
   elif [[ "$(apt_package_is_installed "Firefox")" != "FOUND" ]]; then
     #if dpkg -l firefox &>/dev/null; then
