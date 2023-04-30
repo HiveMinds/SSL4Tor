@@ -15,7 +15,7 @@ copy_file() {
   manual_assert_file_exists "$output_path"
 }
 
-assert_md5sum_identical() {
+md5sum_is_identical() {
   local left_filepath="$1"
   local right_filepath="$2"
 
@@ -25,7 +25,17 @@ assert_md5sum_identical() {
   md5sum2=$(md5sum "$right_filepath" | awk '{print $1}')
 
   if [ "$md5sum1" != "$md5sum2" ]; then
-    echo "Error: MD5 checksums of $left_filepath and $right_filepath are not identical"
-    exit 1
+    echo "NOTFOUND"
+  else
+    echo "FOUND"
+  fi
+}
+
+assert_md5sum_identical() {
+  local left_filepath="$1"
+  local right_filepath="$2"
+  if [[ "$(md5sum_is_identical "$left_filepath" "$right_filepath")" != "FOUND" ]]; then
+    echo "Error, root ca certificate was not added to apt Firefox."
+    exit 6
   fi
 }
