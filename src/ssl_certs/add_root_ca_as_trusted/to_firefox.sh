@@ -113,10 +113,12 @@ firefox_is_installed_with_snap() {
 
 get_firefox_policies_path() {
   local policies_filepath
-  if dpkg -l firefox &>/dev/null; then
+  #if dpkg -l firefox &>/dev/null; then
+  if [[ "$(apt_package_is_installed "firefox")" != "FOUND" ]]; then
     # policies_filepath="/usr/lib/firefox/distribution/policies.json"
     policies_filepath="/etc/firefox/policies/policies.json"
-  elif snap list | grep -v firefox &>/dev/null; then
+  #elif snap list | grep -v firefox &>/dev/null; then
+  elif [ "$(firefox_via_snap)" == "FOUND" ]; then
     policies_filepath="/snap/firefox/current/distribution/policies.json"
   else
     echo "Error, firefox installation was not found."
