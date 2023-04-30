@@ -18,7 +18,7 @@ manage_ssl_for_services() {
     project_name="$(get_project_property_by_index "$services" "$project_nr" "project_name")"
     public_port_to_access_onion="$(get_project_property_by_index "$services" "$project_nr" "external_port")"
 
-    #add_service_to_torrc_for_service "$local_project_port" "$project_name" "$public_port_to_access_onion"
+    add_service_to_torrc_for_service "$local_project_port" "$project_name" "$public_port_to_access_onion"
     add_root_ca_certificates_to_server
     make_ssl_certs_for_service "$project_name" "$ssl_password"
     apply_ssl_certs_to_service "$project_name"
