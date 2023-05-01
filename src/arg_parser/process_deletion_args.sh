@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Delete files from previous run.
-process_delete_onion_domain_flag() {
+process_delete_onion_domains_flag() {
   local delete_onion_domain_flag="$1"
 
   if [ "$delete_onion_domain_flag" == "true" ]; then
