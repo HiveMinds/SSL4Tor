@@ -85,22 +85,6 @@ assert_has_added_self_signed_root_ca_cert_to_browser() {
   fi
 }
 
-app_is_installed_with_snap() {
-  local app_name="$1"
-  respons_lines="$(snap list "$app_name")"
-  local found_app
-  found_app=$(command_output_contains "$app_name" "${respons_lines}")
-  echo "$found_app"
-}
-
-app_is_installed_with_apt() {
-  local app_name="$1"
-  respons_lines="$(apt list "$app_name")"
-  local found_app
-  found_app=$(command_output_contains "$app_name" "${respons_lines}")
-  echo "$found_app"
-}
-
 close_restart_close_browser() {
   local browser_name="$1"
   # Close firefox.

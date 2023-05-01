@@ -27,7 +27,11 @@ add_root_ca_certificates_to_server() {
   fi
 
   # Add root ca to Brave.
-  if [[ "$(app_is_installed_with_snap "brave")" == "FOUND" ]]; then
+  if [[ "$(snap_package_is_installed "brave")" == "NOTFOUND" ]]; then
+    ensure_snap_pkg "brave"
+  fi
+
+  if [[ "$(snap_package_is_installed "brave")" == "FOUND" ]]; then
     local policies_filepath
     policies_filepath=$(get_brave_policies_path)
     if [[ "$(has_added_self_signed_root_ca_cert_to_browser "$policies_filepath")" == "NOTFOUND" ]]; then

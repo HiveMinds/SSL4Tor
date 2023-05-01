@@ -2,9 +2,9 @@
 # Adds the root ca certificate named ca.crt to the apt or snap installation of Firefox.
 
 firefox_is_installed() {
-  if [[ "$(app_is_installed_with_apt "firefox")" == "FOUND" ]]; then
+  if [[ "$(apt_package_is_installed "firefox")" == "FOUND" ]]; then
     echo "FOUND"
-  elif [[ "$(app_is_installed_with_snap "firefox")" == "FOUND" ]]; then
+  elif [[ "$(snap_package_is_installed "firefox")" == "FOUND" ]]; then
     echo "FOUND"
     echo "ERROR, snap Firefox is not yet supported."
     exit 5
