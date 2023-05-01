@@ -32,6 +32,7 @@ source src/ssl_certs/add_ssl_certs_to_service/add_to_gitlab/verify_ssl_certs.sh
 source src/ssl_certs/add_root_ca_as_trusted/manage_add_root_ca_cert.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_ubuntu.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_firefox.sh
+source src/ssl_certs/delete_ssl_certs.sh
 source src/ssl_certs/ssl_certs_exist.sh
 source src/ssl_certs/make_ssl_project_certs.sh
 source src/ssl_certs/make_ssl_root_certs.sh

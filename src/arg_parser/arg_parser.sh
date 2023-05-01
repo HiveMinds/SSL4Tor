@@ -4,7 +4,11 @@ parse_args() {
 
   # Specify default argument values.
   local dont_use_ssl='false'
+  local delete_onion_domain_flag='false'
+  local delete_projects_ssl_certs_flag='false'
+  local delete_root_ca_certs_flag='false'
   local firefox_to_apt_flag='false'
+  local get_onion_domain_flag='false'
   local get_root_ca_certificate_into_client_flag='false'
   local get_server_gif_into_client_flag='false'
   local record_cli_flag='false'
@@ -18,8 +22,12 @@ parse_args() {
         delete_onion_domain_flag='true'
         shift # past argument
         ;;
-      -ds | --delete-ssl-certs)
+      -dpc | --delete-projects-ssl-certs)
         delete_projects_ssl_certs_flag='true'
+        shift # past argument
+        ;;
+      -drc | --delete-root-ca-certs)
+        delete_root_ca_certs_flag='true'
         shift # past argument
         ;;
       -dus | --dont-use-ssl)
@@ -100,11 +108,12 @@ parse_args() {
 
   check_prerequisites "$services"
 
-  # TODO: move into deletion management.
   # Run the functions that are asked for in the CLI args.
+
   # Delete files from previous run.
-  process_delete_onion_domain_flag "$delete_onion_domain_flag"
-  process_delete_projects_ssl_certs_flag "$delete_projects_ssl_certs_flag"
+  # TODO: allow running per service instead of for all services at once.
+  process_delete_onion_domains_flag "$delete_onion_domain_flag"
+  process_delete_ssl_cert_flags "$delete_projects_ssl_certs_flag" "$delete_root_ca_certs_flag"
 
   # TODO: move into: add to firefox part.
   # Prepare Firefox version.
