@@ -19,6 +19,7 @@ source src/installation/install_pip.sh
 source src/installation/install_prerequisites.sh
 source src/logging/cli_logging.sh
 source src/onion_domain/delete_onion_domain.sh
+source src/onion_domain/delete_onion_domain.sh
 source src/onion_domain/make_onion_domain.sh
 source src/onion_domain/onion_domain_exists.sh
 source src/record_cli.sh
@@ -31,6 +32,8 @@ source src/ssl_certs/add_ssl_certs_to_service/add_to_gitlab/add_to_gitlab.sh
 source src/ssl_certs/add_ssl_certs_to_service/add_to_gitlab/verify_ssl_certs.sh
 source src/ssl_certs/add_root_ca_as_trusted/manage_add_root_ca_cert.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_ubuntu.sh
+source src/ssl_certs/add_root_ca_as_trusted/to_brave.sh
+source src/ssl_certs/add_root_ca_as_trusted/to_browser.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_firefox.sh
 source src/ssl_certs/delete_ssl_certs.sh
 source src/ssl_certs/ssl_certs_exist.sh

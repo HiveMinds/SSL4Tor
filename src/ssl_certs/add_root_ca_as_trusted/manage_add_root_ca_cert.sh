@@ -15,15 +15,27 @@ add_root_ca_certificates_to_server() {
   assert_md5sum_identical "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME" "certificates/root/$CA_PUBLIC_CERT_FILENAME"
 
   # Add root ca to apt or snap Firefox.
+  # TODO: support adding root ca to snap Firefox.
   if [[ "$(firefox_is_installed)" == "FOUND" ]]; then
-    if [[ "$(has_added_self_signed_root_ca_cert_to_firefox)" == "NOTFOUND" ]]; then
-      add_self_signed_root_cert_to_firefox
-      close_restart_close_firefox
+    local policies_filepath
+    policies_filepath=$(get_firefox_policies_path)
+    if [[ "$(has_added_self_signed_root_ca_cert_to_browser "$policies_filepath")" == "NOTFOUND" ]]; then
+      add_self_signed_root_cert_to_browser "$policies_filepath" "firefox"
+      close_restart_close_browser "firefox"
     fi
-    assert_has_added_self_signed_root_ca_cert_to_firefox
+    assert_has_added_self_signed_root_ca_cert_to_browser "$policies_filepath"
   fi
 
-  # TODO: add root ca to Brave.
+  # Add root ca to Brave.
+  if [[ "$(app_is_installed_with_snap "brave")" == "FOUND" ]]; then
+    local policies_filepath
+    policies_filepath=$(get_brave_policies_path)
+    if [[ "$(has_added_self_signed_root_ca_cert_to_browser "$policies_filepath")" == "NOTFOUND" ]]; then
+      add_self_signed_root_cert_to_browser "$policies_filepath" "brave"
+      close_restart_close_browser "brave"
+    fi
+    assert_has_added_self_signed_root_ca_cert_to_browser "$policies_filepath"
+  fi
 
   # TODO: add root ca to Tor browser.
 }
