@@ -40,6 +40,7 @@ the server, with:
   --delete-onion-domain \
   --delete-projects-ssl-certs \
   --delete-root-ca-certs \
+  --firefox-to-apt \
   --services 443:gitlab:443/9001:dash:9002/22:ssh:22 \
   --ssl-password somepassword \
   --get-onion-domain

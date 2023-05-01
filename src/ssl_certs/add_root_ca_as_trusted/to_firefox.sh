@@ -49,8 +49,6 @@ has_added_self_signed_root_ca_cert_to_firefox() {
   policies_filepath=$(get_firefox_policies_path)
 
   local root_ca_filepath="$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
-  read -p "root_ca_filepath=$root_ca_filepath"
-  read -p "policies_filepath=$policies_filepath"
 
   # Assert the root project for this run/these services is created.
   if [ "$(file_exists "certificates/root/$CA_PUBLIC_CERT_FILENAME")" != "FOUND" ]; then
