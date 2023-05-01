@@ -16,6 +16,7 @@ source src/helper.sh
 source src/helper_parsing.sh
 source src/installation/install_apt.sh
 source src/installation/install_pip.sh
+source src/installation/install_snap.sh
 source src/installation/install_prerequisites.sh
 source src/logging/cli_logging.sh
 source src/onion_domain/delete_onion_domain.sh
@@ -43,6 +44,7 @@ source src/tor_status/create_tor_connection.sh
 source src/tor_status/tor_status.sh
 source src/tor_status/verify_https_onion_is_available.sh
 source src/uninstallation/uninstall_apt.sh
+source src/uninstallation/uninstall_snap.sh
 source src/verification/assert_exists.sh
 source src/verification/assert_not_exists.sh
 source src/website/run_dash_in_background.sh
