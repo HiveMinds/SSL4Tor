@@ -146,7 +146,9 @@ add_lines_to_gitlab_rb() {
   if [[ "$domain_name" == "localhost" ]]; then
     echo """external_url 'https://localhost'""" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   else
-    echo "external_url '$domain_name'" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
+    # Assume onion domain comes in without https.
+    # TODO: verify incoming domain name format.
+    echo "external_url 'https://$domain_name'" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
   fi
   # shellcheck disable=SC2129
   echo """letsencrypt['enable'] = false""" >>"$GITLAB_RB_TEMPLATE_DIR""gitlab.rb"
