@@ -38,7 +38,10 @@ the server, with:
 ```bash
 ./src/main.sh \
   --delete-onion-domain \
-  --services 8050:gitlab:8070/9001:dash:9002/22:ssh:22 \
+  --delete-projects-ssl-certs \
+  --delete-root-ca-certs \
+  --firefox-to-apt \
+  --services 443:gitlab:443/9001:dash:9002/22:ssh:22 \
   --ssl-password somepassword \
   --get-onion-domain
 ```

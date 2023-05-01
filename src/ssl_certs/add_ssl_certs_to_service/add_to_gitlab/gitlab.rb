@@ -1,3 +1,4 @@
+## GitLab configuration settings
 external_url 'https://localhost'
 letsencrypt['enable'] = false
 nginx['enable'] = true
