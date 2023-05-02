@@ -12,7 +12,12 @@ add_root_ca_certificates_to_server() {
   # Assert the root ca is in the place Ubuntu (and Firefox) expect it to be.
   manual_assert_file_exists "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
   # Assert the root ca hash is as expected.
-  assert_md5sum_identical "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME" "certificates/root/$CA_PUBLIC_CERT_FILENAME"
+  #assert_md5sum_identical "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME" "certificates/root/$CA_PUBLIC_CERT_FILENAME"
+  # This is changed because the ca.crt file did not have the right formatting.
+  # cat ca.crt yielded weird symbols, whereas ca.pem did yield the --BEGIN -- <code> -- END--
+  # lines. However, when doing update-ca-certificates, the filename needs to be: ca.crt
+  # for it to add the cert. Hence the local ca.pem is added as ca.crt to the target location.
+  assert_md5sum_identical "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME" "certificates/root/$CA_PUBLIC_KEY_FILENAME"
 
   # Add root ca to apt or snap Firefox.
   # TODO: support adding root ca to snap Firefox.
