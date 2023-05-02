@@ -17,7 +17,7 @@ add_self_signed_root_cert_to_browser() {
       sudo cp "$policies_filepath" "backups/$browser_name/policies.json"
 
       # Generate content to put in policies.json.
-      if [ "$policies_filepath" == "" ]; then
+      if [ "$(cat "$policies_filepath")" == "" ]; then
         new_json_content="$(create_policies_content_to_add_root_ca "$ubuntu_root_ca_filepath")"
       else
 
