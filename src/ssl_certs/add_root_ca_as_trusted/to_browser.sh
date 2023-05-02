@@ -6,7 +6,7 @@ add_self_signed_root_cert_to_browser() {
   local browser_name="$2"
 
   local ubuntu_root_ca_filepath="$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
-
+  local new_json_content
   if [ "$(file_exists "$policies_filepath")" == "FOUND" ]; then
 
     if [ "$(file_contains_string "$ubuntu_root_ca_filepath" "$policies_filepath")" == "NOTFOUND" ]; then
@@ -17,12 +17,15 @@ add_self_signed_root_cert_to_browser() {
       sudo cp "$policies_filepath" "backups/$browser_name/policies.json"
 
       # Generate content to put in policies.json.
-      local new_json_content
-      # shellcheck disable=SC2086
-      new_json_content=$(jq '.policies.Certificates += {
-                    "Install": ["'$ubuntu_root_ca_filepath'"]
-               }' $policies_filepath)
+      if [ "$policies_filepath" == "" ]; then
+        new_json_content="$(create_policies_content_to_add_root_ca "$ubuntu_root_ca_filepath")"
+      else
 
+        # shellcheck disable=SC2086
+        new_json_content=$(jq '.policies.Certificates += {
+                      "Install": ["'$ubuntu_root_ca_filepath'"]
+                 }' $policies_filepath)
+      fi
       # Append the content
       echo "$new_json_content" | sudo tee "$policies_filepath" >/dev/null
 
