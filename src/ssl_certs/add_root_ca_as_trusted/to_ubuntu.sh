@@ -17,7 +17,6 @@ install_the_ca_cert_as_a_trusted_root_ca() {
   # On Debian & Derivatives:
   #- Move the CA certificate (`"$ca_private_key_filename"`) into `$UBUNTU_CERTIFICATE_DIRca.crt`.
   manual_assert_dir_exists "$UBUNTU_CERTIFICATE_DIR"
-  manual_assert_file_exists "$UBUNTU_CERTIFICATE_DIR$ca_public_key_filename"
 
   #sudo cp "certificates/root/$ca_public_cert_filename" "$UBUNTU_CERTIFICATE_DIR$ca_public_cert_filename"
   # This is changed because the ca.crt file did not have the right formatting.
