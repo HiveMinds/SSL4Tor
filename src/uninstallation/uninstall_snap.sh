@@ -7,7 +7,7 @@ snap_remove() {
 
   yellow_msg "Removing ${snap_package_name} if it is installed."
 
-  sudo snap --purge "$snap_package_name" -y >>/dev/null 2>&1
+  sudo snap remove --purge "$snap_package_name" >>/dev/null 2>&1
 
   verify_snap_removed "$snap_package_name"
 }
