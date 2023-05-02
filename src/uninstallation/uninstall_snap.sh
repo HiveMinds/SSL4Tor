@@ -14,7 +14,7 @@ snap_remove() {
 
 snap_package_is_installed() {
   local app_name="$1"
-  respons_lines="$(snap list "$app_name")"
+  respons_lines="$(snap list "$app_name" 2>/dev/null)"
   local found_app
   found_app=$(command_output_contains "$app_name" "${respons_lines}")
   echo "$found_app"
