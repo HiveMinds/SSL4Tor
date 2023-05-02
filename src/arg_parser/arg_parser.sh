@@ -3,7 +3,6 @@ parse_args() {
   # The incoming function arguments are the cli arguments.
 
   # Specify default argument values.
-  local dont_use_ssl='false'
   local delete_onion_domain_flag='false'
   local delete_projects_ssl_certs_flag='false'
   local delete_root_ca_certs_flag='false'
@@ -28,10 +27,6 @@ parse_args() {
         ;;
       -drc | --delete-root-ca-certs)
         delete_root_ca_certs_flag='true'
-        shift # past argument
-        ;;
-      -dus | --dont-use-ssl)
-        dont_use_ssl='true'
         shift # past argument
         ;;
       -fta | --firefox-to-apt)
@@ -100,11 +95,6 @@ parse_args() {
         ;;
     esac
   done
-
-  if [ "$dont_use_ssl" == "true" ]; then
-    echo "Error, using http only is currently not supported."
-    exit 5
-  fi
 
   check_prerequisites "$services"
 
