@@ -57,13 +57,15 @@ make_ssl_certs_for_service() {
 apply_ssl_certs_to_service() {
   local project_name="$1"
 
-  if [[ "$project_name" == "gitlab" ]]; then
+  if [[ "$project_name" == "gitlab" ]] || [[ "$project_name" == "nextcloud" ]]; then
     local onion_domain
     onion_domain="$(get_onion_domain "$project_name")"
     assert_is_non_empty_string "${onion_domain}"
+  fi
 
-    # TODO: also support onion urls.
-    # add_private_and_public_ssl_certs_to_gitlab "$project_name" "localhost" "$SSL_PRIVATE_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME"
+  if [[ "$project_name" == "gitlab" ]]; then
     add_private_and_public_ssl_certs_to_gitlab "$project_name" "$onion_domain" "$SSL_PRIVATE_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME"
+  elif [[ "$project_name" == "nextcloud" ]]; then
+    add_private_and_public_ssl_certs_to_nextcloud "$project_name" "$onion_domain" "$SSL_PRIVATE_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME" "$MERGED_CA_SSL_CERT_FILENAME"
   fi
 }

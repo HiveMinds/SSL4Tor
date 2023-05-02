@@ -31,6 +31,7 @@ source src/setup_ssh/get_root_ca.sh
 source src/setup_ssh/setup_ssh_public_private_key_access.sh
 source src/ssl_certs/add_ssl_certs_to_service/add_to_gitlab/add_to_gitlab.sh
 source src/ssl_certs/add_ssl_certs_to_service/add_to_gitlab/verify_ssl_certs.sh
+source src/ssl_certs/add_ssl_certs_to_service/add_to_nextcloud/add_to_nextcloud.sh
 source src/ssl_certs/add_root_ca_as_trusted/manage_add_root_ca_cert.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_ubuntu.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_brave.sh
