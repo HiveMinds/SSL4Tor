@@ -19,13 +19,6 @@ make_root_ssl_certs() {
   manual_assert_file_exists "certificates/root/$CA_PUBLIC_CERT_FILENAME"
 
   copy_file "certificates/root/$CA_PUBLIC_CERT_FILENAME" "$OUTPUT_PUBLIC_ROOT_CERT_FILEPATH" "true"
-
-  # TODO: identify this device, if it is ubuntu, add it to trusted list.
-  # TODO: If a phone argument is given, add it to phone.
-  # TODO: If a Firefox apt argument is given, add it to apt Firefox.
-  # TODO: If a Firefox snap argument is given, add it to snap Firefox.
-  # TODO: If a brave argument is given bravely venture out, add it to brave browser.
-  # TODO: If a tor argument is given add it to tor browser.
 }
 
 delete_root_certificate() {
