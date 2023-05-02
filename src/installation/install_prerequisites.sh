@@ -5,6 +5,7 @@ install_apt_prerequisites() {
   # ensure_apt_pkg "pip" 0
   sudo apt --assume-yes install pip >>/dev/null 2>&1
   ensure_apt_pkg "tor" 0
+  ensure_apt_pkg "jq" 0
   ensure_apt_pkg "net-tools" 0
   ensure_apt_pkg "httping" 0
   ensure_apt_pkg "ca-certificates" 0
