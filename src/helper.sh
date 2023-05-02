@@ -35,6 +35,10 @@ assert_md5sum_identical() {
   local left_filepath="$1"
   local right_filepath="$2"
   if [[ "$(md5sum_is_identical "$left_filepath" "$right_filepath")" != "FOUND" ]]; then
+    echo "left=$left_filepath"
+    md5sum "$left_filepath"
+    echo "right=$right_filepath"
+    md5sum "$right_filepath"
     echo "Error, root ca certificate was not added to apt Firefox."
     exit 6
   fi
