@@ -16,8 +16,10 @@ source src/helper.sh
 source src/helper_parsing.sh
 source src/installation/install_apt.sh
 source src/installation/install_pip.sh
+source src/installation/install_snap.sh
 source src/installation/install_prerequisites.sh
 source src/logging/cli_logging.sh
+source src/onion_domain/delete_onion_domain.sh
 source src/onion_domain/delete_onion_domain.sh
 source src/onion_domain/make_onion_domain.sh
 source src/onion_domain/onion_domain_exists.sh
@@ -31,6 +33,8 @@ source src/ssl_certs/add_ssl_certs_to_service/add_to_gitlab/add_to_gitlab.sh
 source src/ssl_certs/add_ssl_certs_to_service/add_to_gitlab/verify_ssl_certs.sh
 source src/ssl_certs/add_root_ca_as_trusted/manage_add_root_ca_cert.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_ubuntu.sh
+source src/ssl_certs/add_root_ca_as_trusted/to_brave.sh
+source src/ssl_certs/add_root_ca_as_trusted/to_browser.sh
 source src/ssl_certs/add_root_ca_as_trusted/to_firefox.sh
 source src/ssl_certs/delete_ssl_certs.sh
 source src/ssl_certs/ssl_certs_exist.sh
@@ -40,6 +44,7 @@ source src/tor_status/create_tor_connection.sh
 source src/tor_status/tor_status.sh
 source src/tor_status/verify_https_onion_is_available.sh
 source src/uninstallation/uninstall_apt.sh
+source src/uninstallation/uninstall_snap.sh
 source src/verification/assert_exists.sh
 source src/verification/assert_not_exists.sh
 source src/website/run_dash_in_background.sh

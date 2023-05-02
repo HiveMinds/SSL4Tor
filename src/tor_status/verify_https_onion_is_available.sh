@@ -8,7 +8,8 @@ verify_service_is_reachable_on_onion() {
   ensure_https_services_run_locally "$local_project_port" "$project_name"
 
   # TODO: include support for GitLab onion.
-  if [[ "$project_name" != "gitlab" ]] && [[ "$project_name" != "ssh" ]]; then
+  #if [[ "$project_name" != "gitlab" ]] && [[ "$project_name" != "ssh" ]]; then
+  if [[ "$project_name" != "ssh" ]]; then
     kill_tor_if_already_running
     verify_onion_address_is_reachable "$project_name" "$public_port_to_access_onion"
   elif [[ "$project_name" == "ssh" ]]; then

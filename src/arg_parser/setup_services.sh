@@ -63,6 +63,7 @@ apply_ssl_certs_to_service() {
     assert_is_non_empty_string "${onion_domain}"
 
     # TODO: also support onion urls.
-    add_private_and_public_ssl_certs_to_gitlab "$project_name" "localhost" "$SSL_PRIVATE_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME"
+    # add_private_and_public_ssl_certs_to_gitlab "$project_name" "localhost" "$SSL_PRIVATE_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME"
+    add_private_and_public_ssl_certs_to_gitlab "$project_name" "$onion_domain" "$SSL_PRIVATE_KEY_FILENAME" "$SSL_PUBLIC_KEY_FILENAME"
   fi
 }

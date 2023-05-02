@@ -11,6 +11,7 @@ get_root_ca_into_client() {
   create_ssl_cert_storage_directories
   create_root_certificate_directories
 
+  # TODO: change cert ca.crt to ca.pem?
   copy_files_from_server_into_client "$server_username" "$server_onion_domain" "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME" "certificates/root/$CA_PUBLIC_CERT_FILENAME"
   manual_assert_file_exists "certificates/root/$CA_PUBLIC_CERT_FILENAME"
 
