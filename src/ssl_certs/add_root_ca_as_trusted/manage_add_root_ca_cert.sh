@@ -1,7 +1,7 @@
 #!/bin/bash
 
 add_root_ca_certificates_to_server() {
-  assert_ssl_certs_for_root_ca_exist
+  assert_any_ssl_certs_for_root_ca_exist
 
   # Add root ca to Ubuntu.
   # TODO: write check to see if root ca is already added to Ubuntu. If not, add it.

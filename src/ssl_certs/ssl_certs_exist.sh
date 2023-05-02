@@ -26,7 +26,7 @@ ssl_certs_for_project_exist() {
 }
 
 # Returns FOUND if any of the root ca SSL certificate files exist.
-ssl_certs_for_root_ca_exist() {
+any_ssl_certs_for_root_ca_exist() {
   if test -f "certificates/root/$CA_PRIVATE_KEY_FILENAME"; then
     echo "FOUND"
     return 0
@@ -53,8 +53,8 @@ ssl_certs_for_root_ca_exist() {
   fi
 }
 
-assert_ssl_certs_for_root_ca_exist() {
-  if [[ "$(ssl_certs_for_root_ca_exist)" != "FOUND" ]]; then
+assert_any_ssl_certs_for_root_ca_exist() {
+  if [[ "$(any_ssl_certs_for_root_ca_exist)" != "FOUND" ]]; then
     echo "Error root ca certificate not found."
     exit 6
   fi

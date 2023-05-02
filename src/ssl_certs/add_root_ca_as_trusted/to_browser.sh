@@ -5,11 +5,11 @@ add_self_signed_root_cert_to_browser() {
   local policies_filepath="$1"
   local browser_name="$2"
 
-  local root_ca_filepath="$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
+  local ubuntu_root_ca_filepath="$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
 
   if [ "$(file_exists "$policies_filepath")" == "FOUND" ]; then
 
-    if [ "$(file_contains_string "$root_ca_filepath" "$policies_filepath")" == "NOTFOUND" ]; then
+    if [ "$(file_contains_string "$ubuntu_root_ca_filepath" "$policies_filepath")" == "NOTFOUND" ]; then
 
       # Create a backup of the existing policies.
       mkdir -p "backups/$browser_name/"
@@ -20,7 +20,7 @@ add_self_signed_root_cert_to_browser() {
       local new_json_content
       # shellcheck disable=SC2086
       new_json_content=$(jq '.policies.Certificates += {
-                    "Install": ["'$root_ca_filepath'"]
+                    "Install": ["'$ubuntu_root_ca_filepath'"]
                }' $policies_filepath)
 
       # Append the content
@@ -31,12 +31,12 @@ add_self_signed_root_cert_to_browser() {
       exit 6
     fi
   else
-    new_json_content="$(create_policies_content_to_add_root_ca "$root_ca_filepath")"
+    new_json_content="$(create_policies_content_to_add_root_ca "$ubuntu_root_ca_filepath")"
     echo "$new_json_content" | sudo tee "$policies_filepath" >/dev/null
   fi
 
   # Assert the policy is in the file.
-  if [ "$(file_contains_string "$root_ca_filepath" "$policies_filepath")" == "NOTFOUND" ]; then
+  if [ "$(file_contains_string "$ubuntu_root_ca_filepath" "$policies_filepath")" == "NOTFOUND" ]; then
 
     red_msg "Error, policy was not found in file:$policies_filepath" "true"
     exit 5
@@ -47,28 +47,28 @@ add_self_signed_root_cert_to_browser() {
 has_added_self_signed_root_ca_cert_to_browser() {
   local policies_filepath="$1"
 
-  local root_ca_filepath="$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
+  local ubuntu_root_ca_filepath="$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME"
 
   # Assert the root project for this run/these services is created.
   if [ "$(file_exists "certificates/root/$CA_PUBLIC_CERT_FILENAME")" != "FOUND" ]; then
     echo "NOTFOUND"
     return 0
   fi
-  if [ "$(file_exists "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME")" != "FOUND" ]; then
+  if [ "$(file_exists "$ubuntu_root_ca_filepath")" != "FOUND" ]; then
     echo "NOTFOUND"
     return 0
   fi
   # Assert the root ca hash is as expected.
-  if [[ "$(md5sum_is_identical "$UBUNTU_CERTIFICATE_DIR$CA_PUBLIC_CERT_FILENAME" "certificates/root/$CA_PUBLIC_CERT_FILENAME")" != "FOUND" ]]; then
+  if [[ "$(md5sum_is_identical "$ubuntu_root_ca_filepath" "certificates/root/$CA_PUBLIC_KEY_FILENAME")" != "FOUND" ]]; then
     echo "NOTFOUND"
     return 0
   fi
 
   if [ "$(file_exists "$policies_filepath")" == "FOUND" ]; then
-    if [ "$(file_contains_string "$root_ca_filepath" "$policies_filepath")" == "NOTFOUND" ]; then
+    if [ "$(file_contains_string "$ubuntu_root_ca_filepath" "$policies_filepath")" == "NOTFOUND" ]; then
       echo "NOTFOUND"
       return 0
-    elif [ "$(file_contains_string "$root_ca_filepath" "$policies_filepath")" == "FOUND" ]; then
+    elif [ "$(file_contains_string "$ubuntu_root_ca_filepath" "$policies_filepath")" == "FOUND" ]; then
       echo "FOUND"
       return 0
     fi
@@ -80,6 +80,7 @@ has_added_self_signed_root_ca_cert_to_browser() {
 assert_has_added_self_signed_root_ca_cert_to_browser() {
   local policies_filepath="$1"
   if [[ "$(has_added_self_signed_root_ca_cert_to_browser "$policies_filepath")" != "FOUND" ]]; then
+    echo "policies_filepath=$policies_filepath"
     echo "Error, root ca certificate was not added to apt Firefox."
     exit 6
   fi
@@ -101,10 +102,10 @@ close_restart_close_browser() {
 }
 
 create_policies_content_to_add_root_ca() {
-  local root_ca_filepath="$1"
+  local ubuntu_root_ca_filepath="$1"
   local inner
   inner=$(
-    jq -n --argjson Install '["'"$root_ca_filepath"'"]' \
+    jq -n --argjson Install '["'"$ubuntu_root_ca_filepath"'"]' \
       '$ARGS.named'
   )
 
