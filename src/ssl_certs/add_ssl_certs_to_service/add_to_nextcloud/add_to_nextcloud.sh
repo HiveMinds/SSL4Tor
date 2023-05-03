@@ -19,11 +19,13 @@ add_onion_to_nextcloud_trusted_domain() {
   # TODO: verify format of incoming onion address.
 
   #add Hidden Service address like a trusted domain in NextCloud instance
-  sudo /snap/bin/nextcloud.occ config:system:set trusted_domains 1 --value="$domain_name"
+  # TODO: make 1 into 2 for onion domain, and 1 for localhost.
+  read -p "domain_name=$domain_name"
+  sudo /snap/bin/nextcloud.occ config:system:set trusted_domains 2 --value="$domain_name"
   green_msg "The Hidden Service address has been added like trusted domain successfully."
 
   # TODO: verify output:
-  sudo /snap/bin/nextcloud.occ config:system:get trusted_domains
+  read -p "$(sudo /snap/bin/nextcloud.occ config:system:get trusted_domains)"
 }
 
 add_certs_to_nextcloud() {
