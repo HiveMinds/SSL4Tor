@@ -48,8 +48,8 @@ add_certs_to_nextcloud() {
   # Source: https://github.com/nextcloud-snap/nextcloud-snap/issues/256
   # (see nextcloud.enable-https custom -h command).
   #sudo cp ca.pem /var/snap/nextcloud/current/ca.pem
-  sudo cp "$ssl_private_key_filepath" /var/snap/nextcloud/current/"$ssl_public_key_filename"
-  sudo cp "$ssl_public_key_filepath" /var/snap/nextcloud/current/"$ssl_private_key_filename"
+  sudo cp "$ssl_private_key_filepath" /var/snap/nextcloud/current/"$ssl_private_key_filename"
+  sudo cp "$ssl_public_key_filepath" /var/snap/nextcloud/current/"$ssl_public_key_filename"
   sudo cp "$merged_ca_ssl_cert_filepath" /var/snap/nextcloud/current/"$merged_ca_ssl_cert_filename"
 
   # Assert local private and public certificate exist for service.
@@ -60,4 +60,6 @@ add_certs_to_nextcloud() {
   # CLI sudo /snap/bin/nextcloud.enable-https custom Says:
   sudo /snap/bin/nextcloud.enable-https custom "/var/snap/nextcloud/current/$ssl_public_key_filename" "/var/snap/nextcloud/current/$ssl_private_key_filename" "/var/snap/nextcloud/current/$merged_ca_ssl_cert_filename"
   #sudo /snap/bin/nextcloud.enable-https custom "/var/snap/nextcloud/current/cert.pem" "/var/snap/nextcloud/current/cert-key.pem" "/var/snap/nextcloud/current/fullchain.pem"
+
+  sudo /snap/bin/nextcloud.enable-https self-signed
 }
