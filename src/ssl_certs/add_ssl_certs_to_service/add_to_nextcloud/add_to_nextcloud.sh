@@ -61,5 +61,5 @@ add_certs_to_nextcloud() {
   sudo /snap/bin/nextcloud.enable-https custom "/var/snap/nextcloud/current/$ssl_public_key_filename" "/var/snap/nextcloud/current/$ssl_private_key_filename" "/var/snap/nextcloud/current/$merged_ca_ssl_cert_filename"
   #sudo /snap/bin/nextcloud.enable-https custom "/var/snap/nextcloud/current/cert.pem" "/var/snap/nextcloud/current/cert-key.pem" "/var/snap/nextcloud/current/fullchain.pem"
 
-  sudo /snap/bin/nextcloud.enable-https self-signed
+  # sudo /snap/bin/nextcloud.enable-https self-signed
 }
