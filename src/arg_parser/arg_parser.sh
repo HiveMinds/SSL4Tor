@@ -3,6 +3,7 @@ parse_args() {
   # The incoming function arguments are the cli arguments.
 
   # Specify default argument values.
+  local add_root_ca_to_ubuntu_flag='false'
   local delete_onion_domain_flag='false'
   local delete_projects_ssl_certs_flag='false'
   local delete_root_ca_certs_flag='false'
@@ -17,6 +18,10 @@ parse_args() {
   # the shift command eats the first element of that array, making it shorter.
   while [[ $# -gt 0 ]]; do
     case $1 in
+      -aru | --add-root-ca-to-ubuntu)
+        add_root_ca_to_ubuntu_flag='true'
+        shift # past argument
+        ;;
       -do | --delete-onion-domain)
         delete_onion_domain_flag='true'
         shift # past argument
@@ -118,4 +123,6 @@ parse_args() {
   process_get_onion_domain_flag "$get_onion_domain_flag" "$services"
 
   process_record_cli_flag "$record_cli_flag" "$cli_record_filename"
+
+  process_add_root_ca_to_ubuntu_flag "$add_root_ca_to_ubuntu_flag"
 }

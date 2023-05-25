@@ -84,3 +84,12 @@ process_record_cli_flag() {
     record_cli "$cli_record_filename"
   fi
 }
+
+process_add_root_ca_to_ubuntu_flag() {
+  local add_root_ca_to_ubuntu_flag="$1"
+  if [ "$add_root_ca_to_ubuntu_flag" == "true" ]; then
+    assert_is_non_empty_string "$CA_PUBLIC_KEY_FILENAME"
+    assert_is_non_empty_string "$CA_PUBLIC_CERT_FILENAME"
+    install_the_ca_cert_as_a_trusted_root_ca "$CA_PUBLIC_KEY_FILENAME" "$CA_PUBLIC_CERT_FILENAME"
+  fi
+}
