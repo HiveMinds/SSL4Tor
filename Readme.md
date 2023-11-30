@@ -2,6 +2,10 @@
 
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
+**Note**: there is a rewrite over [here](https://github.com/HiveMinds/bash-ssh-over-tor) to separate
+the code into re-usable modules and improve logging, code quality and reduce the amount of 
+duplicate code within this organisation.
+
 Create your own <httpS://example31415926535.onion> websites, with your own
 self-signed https certificates, **in a single command**.
 
